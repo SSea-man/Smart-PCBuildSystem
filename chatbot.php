@@ -55,7 +55,7 @@ include __DIR__ . '/templates/header.php';
           </div>
           <div class="d-flex justify-content-between mt-2">
             <small class="text-muted"><i class="bi bi-shield-check me-1"></i>Responses may not reflect live prices</small>
-            <small class="text-muted" id="rate-info">Rate limit: 20 msg/hour</small>
+            <small class="text-muted" id="rate-info">Unlimited Messages</small>
           </div>
         </div>
       </div>
@@ -112,6 +112,20 @@ async function sendMessage(text) {
       const reply = data.content || data.text || 'Sorry, I could not generate a response.';
       appendMsg('ai', reply);
       history.push({ role: 'assistant', content: reply });
+      
+      if (data.action) {
+        const html = document.documentElement;
+        const btnIcon = document.querySelector('#theme-toggle i');
+        if (data.action === 'set_theme_dark') {
+          html.setAttribute('data-bs-theme', 'dark');
+          localStorage.setItem('theme', 'dark');
+          if (btnIcon) btnIcon.className = 'bi bi-moon-stars-fill';
+        } else if (data.action === 'set_theme_light') {
+          html.setAttribute('data-bs-theme', 'light');
+          localStorage.setItem('theme', 'light');
+          if (btnIcon) btnIcon.className = 'bi bi-sun-fill';
+        }
+      }
     }
   } catch (err) {
     removeTyping();

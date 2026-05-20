@@ -50,16 +50,16 @@ if (is_post()) {
             'current_cpu'=>$cpu,'current_gpu'=>$gpu,'upgrade'=>$upgrade,'budget'=>$budget,
         ];
 
-        db_exec('INSERT INTO upgradesuggestion (user_id, build_id, component_id) VALUES (?,0,?)',
+        db_exec('INSERT INTO upgradesuggestion (user_id, build_id, component_id) VALUES (?, NULL, ?)',
             [get_auth_user()['id'], $upgrade ? (int)$upgrade['id'] : 0]);
     }
 }
 
-$cpus = db_query("SELECT component_id as id, component_name as name, benchmark_score,
+$cpus = db_query("SELECT c.component_id as id, c.component_name as name, c.benchmark_score,
     COALESCE(sa.price,0) as price_bdt FROM component c
     LEFT JOIN (SELECT component_id, MIN(price) as price FROM storeavailability GROUP BY component_id) sa ON sa.component_id=c.component_id
     WHERE c.type LIKE 'CPU%' ORDER BY COALESCE(sa.price,0)");
-$gpus = db_query("SELECT component_id as id, component_name as name, benchmark_score,
+$gpus = db_query("SELECT c.component_id as id, c.component_name as name, c.benchmark_score,
     COALESCE(sa.price,0) as price_bdt FROM component c
     LEFT JOIN (SELECT component_id, MIN(price) as price FROM storeavailability GROUP BY component_id) sa ON sa.component_id=c.component_id
     WHERE c.type LIKE 'GPU%' ORDER BY COALESCE(sa.price,0)");
