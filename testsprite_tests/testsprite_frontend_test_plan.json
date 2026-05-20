@@ -1,0 +1,1835 @@
+[
+  {
+    "id": "TC001",
+    "title": "Log in with a registered account",
+    "description": "A registered user can sign in and reach the dashboard with an authenticated session.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /myproject/login.php"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user lands on the dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the session is authenticated"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC002",
+    "title": "Register a new account successfully",
+    "description": "A new visitor can create an account and is sent to the login page after a successful registration.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /myproject/register.php"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the name field with a valid full name"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with a new valid email address"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with a valid password"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password confirmation field with the same valid password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is redirected to the login page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the registration succeeds without validation errors"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC003",
+    "title": "Save a finalized build",
+    "description": "An authenticated user can save a complete build and receive a persisted build record.",
+    "category": "Save Build API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the build save flow"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a build name"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid purpose"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid BDT budget"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid set of component IDs"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid FPS value"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid wattage value"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid build score"
+      },
+      {
+        "type": "action",
+        "description": "Submit the build save form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a saved build confirmation is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the build is available in the user's saved builds"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC004",
+    "title": "Register a new account and reach the dashboard",
+    "description": "A new user can register, log in, and land on the dashboard with an authenticated session.",
+    "category": "Registration and session handling",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the registration page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the registration form with valid new account details"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the dashboard is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify authenticated account content is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC005",
+    "title": "Delete an owned build",
+    "description": "An authenticated user can delete their own saved build and see it removed from the dashboard.",
+    "category": "Save build and delete build ownership/CSRF protection",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Open one saved build from the list"
+      },
+      {
+        "type": "action",
+        "description": "Delete the build"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a deletion confirmation is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the build no longer appears in the dashboard"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC006",
+    "title": "Log out from an authenticated session",
+    "description": "An authenticated user can end their session and return to the public home page.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /myproject/login.php"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Click the logout control"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is redirected to the public home page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the authenticated session is cleared"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC007",
+    "title": "Block build save without authentication",
+    "description": "A user without an authenticated session cannot save a build.",
+    "category": "Save Build API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the build save flow"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a build name"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid purpose"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid BDT budget"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid set of component IDs"
+      },
+      {
+        "type": "action",
+        "description": "Submit the build save form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an authentication required message is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the build is not saved"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC008",
+    "title": "Detect an incompatible CPU and motherboard pairing",
+    "description": "An authenticated user can see a compatibility issue when the chosen CPU and motherboard do not match.",
+    "category": "Compatibility Check API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /myproject/login.php"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to the build compatibility page"
+      },
+      {
+        "type": "action",
+        "description": "Select a CPU"
+      },
+      {
+        "type": "action",
+        "description": "Select a motherboard with a different socket"
+      },
+      {
+        "type": "action",
+        "description": "Check build compatibility"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the build is marked incompatible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a socket mismatch issue is shown"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC009",
+    "title": "Reject an invalid login attempt",
+    "description": "A user who enters the wrong password stays signed out and sees a login error.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /myproject/login.php"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with an incorrect password"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a login error is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user remains signed out"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC010",
+    "title": "Log out and end the authenticated session",
+    "description": "An authenticated user can log out and is returned to a signed-out state.",
+    "category": "Registration and session handling",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the account menu"
+      },
+      {
+        "type": "action",
+        "description": "Log out of the account"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the signed-out state is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify authenticated dashboard content is no longer visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC011",
+    "title": "Validate compatible core parts for a build",
+    "description": "An authenticated user can check a full set of selected parts and see that the build is compatible when the parts match.",
+    "category": "Compatibility Check API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /myproject/login.php"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to the build compatibility page"
+      },
+      {
+        "type": "action",
+        "description": "Select a CPU"
+      },
+      {
+        "type": "action",
+        "description": "Select a motherboard"
+      },
+      {
+        "type": "action",
+        "description": "Select a GPU"
+      },
+      {
+        "type": "action",
+        "description": "Select RAM"
+      },
+      {
+        "type": "action",
+        "description": "Select a PSU"
+      },
+      {
+        "type": "action",
+        "description": "Check build compatibility"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the build is marked compatible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no compatibility issues are shown"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC012",
+    "title": "Prevent deleting a build the user does not own",
+    "description": "An authenticated user cannot delete another user's build and sees an ownership protection message.",
+    "category": "Save build and delete build ownership/CSRF protection",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open a build detail page that is not owned by the current user"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to delete the build"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an ownership protection message is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the build remains available"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC013",
+    "title": "Reject build deletion with invalid CSRF token",
+    "description": "The system blocks a build deletion attempt when the CSRF token is invalid.",
+    "category": "Delete Build API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open a saved build detail view"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to delete the build with an invalid CSRF token"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a CSRF validation error is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the build remains available"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC014",
+    "title": "Reject component browsing without authentication",
+    "description": "A visitor without a valid session cannot access authenticated component browsing results.",
+    "category": "Component Store API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the component browsing page"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to load the component list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an unauthorized access state is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify components are not displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC015",
+    "title": "Add a component to the watchlist",
+    "description": "An authenticated user can add a component to their watchlist and see it persisted in the watchlist view.",
+    "category": "Watchlist add/remove",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open a component detail view"
+      },
+      {
+        "type": "action",
+        "description": "Add the component to the watchlist"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the component appears in the watchlist"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the watchlist shows the added item"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC016",
+    "title": "Block deletion of another user's build",
+    "description": "An authenticated user cannot delete a build they do not own.",
+    "category": "Delete Build API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open a build detail view for a build the user does not own"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to delete the build"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an access denied message is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the build remains available"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC017",
+    "title": "Remove a component from the watchlist",
+    "description": "An authenticated user can remove a watched component and see it disappear from the watchlist.",
+    "category": "Watchlist add/remove",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the watchlist"
+      },
+      {
+        "type": "action",
+        "description": "Remove one watched component"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the component is removed from the watchlist"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the watchlist updates to reflect the removal"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC018",
+    "title": "Load filtered component results for an authenticated user",
+    "description": "An authenticated user can retrieve matching components by category and budget and see a populated result list.",
+    "category": "Component Store API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /myproject/login.php"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to the component browsing page"
+      },
+      {
+        "type": "action",
+        "description": "Select a GPU category filter"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid maximum budget"
+      },
+      {
+        "type": "action",
+        "description": "Submit the component search"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify matching components are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify each result reflects the selected filter"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC019",
+    "title": "Allocate a budget for a gaming build",
+    "description": "A user can choose a gaming purpose and budget and receive category allocations that favor core performance parts.",
+    "category": "Budget Allocator",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the build wizard"
+      },
+      {
+        "type": "action",
+        "description": "Select the gaming purpose profile"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid total budget in BDT"
+      },
+      {
+        "type": "action",
+        "description": "Submit the budget allocation request"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify category allocation values are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the GPU and CPU allocations are higher than less critical categories"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC020",
+    "title": "Access the dashboard with an authenticated session",
+    "description": "A logged-in user can open the dashboard and see saved build information.",
+    "category": "Dashboard access to saved builds and build details",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the dashboard"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify saved builds are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dashboard-level account content is visible"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC021",
+    "title": "Open a saved build from the dashboard",
+    "description": "A logged-in user can open a saved build from the dashboard and view its details.",
+    "category": "Dashboard access to saved builds and build details",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the dashboard"
+      },
+      {
+        "type": "action",
+        "description": "Open one saved build from the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify build details are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the selected build is shown in detail view"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC022",
+    "title": "Block watchlist changes without authentication",
+    "description": "A user without an authenticated session cannot modify the watchlist.",
+    "category": "Watchlist API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to a component detail page"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to add the component to the watchlist"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an authentication required message is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the component is not watched"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC023",
+    "title": "View price history for a component",
+    "description": "An authenticated user can open a component price history view and see chart data for the selected date range.",
+    "category": "Price History API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open a component detail view that supports price history"
+      },
+      {
+        "type": "action",
+        "description": "Select a supported date range"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify price history labels are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify price history values are displayed"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC024",
+    "title": "Show validation errors for incomplete registration",
+    "description": "A visitor who submits invalid registration details sees validation feedback and cannot create an account.",
+    "category": "User Authentication",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /myproject/register.php"
+      },
+      {
+        "type": "action",
+        "description": "Submit the registration form without entering required fields"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify registration validation errors are visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the account is not created"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC025",
+    "title": "Use the chatbot for build guidance",
+    "description": "An authenticated user can send a message to the chatbot and receive a reply in the chat interface.",
+    "category": "Chatbot Proxy API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the chatbot panel"
+      },
+      {
+        "type": "action",
+        "description": "Send a build guidance message"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a chatbot reply is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the conversation contains the user message and assistant reply"
+      }
+    ],
+    "priority": "High"
+  },
+  {
+    "id": "TC026",
+    "title": "Reject mismatched build totals",
+    "description": "The system rejects a build save when the submitted totals do not match the selected components.",
+    "category": "Save Build API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the build save flow"
+      },
+      {
+        "type": "action",
+        "description": "Select a valid set of component IDs"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a build name"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid purpose"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid BDT budget"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a mismatched build score"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a mismatched wattage value"
+      },
+      {
+        "type": "action",
+        "description": "Submit the build save form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a build validation error is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the build is not saved"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC027",
+    "title": "Allocate a budget for an office build",
+    "description": "A user can choose an office purpose and budget and receive category allocations that reflect a productivity-focused build.",
+    "category": "Budget Allocator",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the build wizard"
+      },
+      {
+        "type": "action",
+        "description": "Select the office purpose profile"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid total budget in BDT"
+      },
+      {
+        "type": "action",
+        "description": "Submit the budget allocation request"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify category allocation values are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the CPU, RAM, and storage allocations are displayed for the selected purpose"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC028",
+    "title": "Show a broader component list without filters",
+    "description": "An authenticated user can browse components without narrowing filters and still receive results.",
+    "category": "Component Store API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /myproject/login.php"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to the component browsing page"
+      },
+      {
+        "type": "action",
+        "description": "Clear any active category filter"
+      },
+      {
+        "type": "action",
+        "description": "Clear any active budget filter"
+      },
+      {
+        "type": "action",
+        "description": "Submit the component search"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a broader component list is displayed"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC029",
+    "title": "Score valid candidate builds in ranked order",
+    "description": "This verifies that submitting valid build candidates for a purpose produces ranked recommendations ordered by composite score.",
+    "category": "Build Scoring Engine",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the build scoring flow"
+      },
+      {
+        "type": "action",
+        "description": "Submit a valid purpose and budget with multiple complete build candidates"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify ranked build recommendations are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the top candidates are ordered by score"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC030",
+    "title": "Prefer stronger and available parts in scoring",
+    "description": "This verifies that a build with stronger benchmark scores and in-stock parts is ranked above a weaker or less available alternative.",
+    "category": "Build Scoring Engine",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the build scoring flow"
+      },
+      {
+        "type": "action",
+        "description": "Submit two valid build candidates with the same purpose and budget"
+      },
+      {
+        "type": "action",
+        "description": "Ensure one candidate uses stronger in-stock parts"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the stronger in-stock build is ranked higher"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify availability is reflected in the ranking output"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC031",
+    "title": "Allocate a budget for a general build",
+    "description": "A user can choose a general purpose and budget and receive a balanced allocation across component categories.",
+    "category": "Budget Allocator",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the build wizard"
+      },
+      {
+        "type": "action",
+        "description": "Select the general purpose profile"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid total budget in BDT"
+      },
+      {
+        "type": "action",
+        "description": "Submit the budget allocation request"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify category allocation values are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the allocations are balanced across major component categories"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC032",
+    "title": "Reject an incomplete build save",
+    "description": "The system rejects invalid build data when required build fields are missing or malformed.",
+    "category": "Save Build API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the build save flow"
+      },
+      {
+        "type": "action",
+        "description": "Leave the component selection empty"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a build name"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid purpose"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid BDT budget"
+      },
+      {
+        "type": "action",
+        "description": "Submit the build save form"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a build validation error is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the build is not saved"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC033",
+    "title": "Create a component through the admin panel",
+    "description": "An admin can add a new component and see it appear in the component list.",
+    "category": "admin component CRUD",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the admin credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the admin component page"
+      },
+      {
+        "type": "action",
+        "description": "Create a new component with valid details"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new component appears in the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the component detail content is available"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC034",
+    "title": "Edit an existing component as an admin",
+    "description": "An admin can update a component and see the revised data reflected in the admin list or detail view.",
+    "category": "admin component CRUD",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the admin credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open an existing component in the admin panel"
+      },
+      {
+        "type": "action",
+        "description": "Edit the component details"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated component data is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the component remains available after editing"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC035",
+    "title": "Prefer better value for budget when comparing builds",
+    "description": "This verifies that two valid builds with different BDT totals are ranked in a way that reflects value relative to budget.",
+    "category": "Build Scoring Engine",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the build scoring flow"
+      },
+      {
+        "type": "action",
+        "description": "Submit two valid build candidates with different total BDT costs"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify value-weighted ranking is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the better value build is ranked appropriately"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC036",
+    "title": "Delete a component as an admin",
+    "description": "An admin can delete a component and see it removed from the admin listing.",
+    "category": "admin component CRUD",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the admin credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open an existing component in the admin panel"
+      },
+      {
+        "type": "action",
+        "description": "Delete the component"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the component is removed from the list"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a deletion confirmation is visible"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC037",
+    "title": "Reject invalid watchlist requests",
+    "description": "The system shows a validation error when watchlist parameters are missing or invalid.",
+    "category": "Watchlist API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /login"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the username field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the watchlist action UI"
+      },
+      {
+        "type": "action",
+        "description": "Submit the watchlist action without a valid component selection"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a watchlist validation error is visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the watchlist count is unchanged"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC038",
+    "title": "Bulk update component pricing and stock as an admin",
+    "description": "An admin can submit a bulk pricing and stock update and see the affected component data change in the admin view.",
+    "category": "admin bulk price/stock updates",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the admin credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the admin bulk update page"
+      },
+      {
+        "type": "action",
+        "description": "Submit a bulk pricing and stock update"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify updated price and stock data are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the affected components reflect the new values"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC039",
+    "title": "Rank builds with performance and availability weighting",
+    "description": "This verifies that candidates with stronger performance and availability characteristics receive higher composite scores.",
+    "category": "Build Scoring Engine",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the build scoring flow"
+      },
+      {
+        "type": "action",
+        "description": "Submit multiple valid build candidates with different performance and stock profiles"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify higher-performing and available builds receive higher scores"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the ranking reflects composite scoring rather than only total cost"
+      }
+    ],
+    "priority": "Medium"
+  },
+  {
+    "id": "TC040",
+    "title": "Show chatbot rate limiting after repeated messages",
+    "description": "An authenticated user eventually receives a rate limit message after sending too many chatbot requests.",
+    "category": "Chatbot Proxy API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the chatbot panel"
+      },
+      {
+        "type": "action",
+        "description": "Send repeated build guidance messages until the limit is exceeded"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a rate limit message is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify additional chatbot replies are blocked"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC041",
+    "title": "Reduce ranking quality for incomplete build data",
+    "description": "This verifies that incomplete build inputs do not produce a misleading high-confidence ranking and are handled as weak candidates.",
+    "category": "Build Scoring Engine",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the build scoring flow"
+      },
+      {
+        "type": "action",
+        "description": "Submit a build candidate set with missing component data"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the scoring output reflects reduced confidence or rejected candidates"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify incomplete candidates are not presented as fully valid recommendations"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC042",
+    "title": "Handle malformed component selections in compatibility checking",
+    "description": "An authenticated user who submits invalid component selections sees validation feedback instead of a successful compatibility result.",
+    "category": "Compatibility Check API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to /myproject/login.php"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the email field with {{LOGIN_USER}}"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the password field with {{LOGIN_PASSWORD}}"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Navigate to the build compatibility page"
+      },
+      {
+        "type": "action",
+        "description": "Enter an invalid component selection for one or more categories"
+      },
+      {
+        "type": "action",
+        "description": "Check build compatibility"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify validation issues are visible"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a compatible result is not shown"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC043",
+    "title": "Handle invalid build combinations in scoring",
+    "description": "This verifies that clearly invalid build combinations are not accepted as top recommendations in the scoring output.",
+    "category": "Build Scoring Engine",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the build scoring flow"
+      },
+      {
+        "type": "action",
+        "description": "Submit a build candidate set with an invalid component combination"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify invalid candidates are not ranked as valid recommendations"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the output indicates the candidate set is unsuitable"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC044",
+    "title": "Reject an unsupported purpose in budget allocation",
+    "description": "A user entering an unsupported purpose receives validation or fallback behavior instead of a usable allocation.",
+    "category": "Budget Allocator",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the build wizard"
+      },
+      {
+        "type": "action",
+        "description": "Select an unsupported purpose value"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a valid total budget in BDT"
+      },
+      {
+        "type": "action",
+        "description": "Submit the budget allocation request"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a validation or fallback message is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify category allocation values are not produced"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC045",
+    "title": "Reject an invalid budget amount",
+    "description": "A user cannot submit a negative or non-numeric budget and receive allocations.",
+    "category": "Budget Allocator",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the build wizard"
+      },
+      {
+        "type": "action",
+        "description": "Select a purpose profile"
+      },
+      {
+        "type": "action",
+        "description": "Fill in a negative or non-numeric budget value"
+      },
+      {
+        "type": "action",
+        "description": "Submit the budget allocation request"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a budget validation error is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify category allocation values are not produced"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC046",
+    "title": "Block chatbot access without a session",
+    "description": "A guest user cannot use the chatbot and is shown an unauthorized state.",
+    "category": "Chatbot Proxy API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the chatbot panel"
+      },
+      {
+        "type": "action",
+        "description": "Send a build guidance message"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an unauthorized state is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no chatbot reply is displayed"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC047",
+    "title": "Handle missing component selection for price history",
+    "description": "An authenticated user requesting price history without choosing a component sees a validation error instead of chart data.",
+    "category": "Price History API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open the price history view without selecting a component"
+      },
+      {
+        "type": "action",
+        "description": "Request price history data"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify a component selection validation error is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify price history chart data is not displayed"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC048",
+    "title": "Open price history with an out-of-range date range",
+    "description": "An authenticated user can request an unsupported range and still see handled price history output for the component.",
+    "category": "Price History API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open a component detail view that supports price history"
+      },
+      {
+        "type": "action",
+        "description": "Select an unsupported date range"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify price history output is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the chart data is handled without a crash"
+      }
+    ],
+    "priority": "Low"
+  },
+  {
+    "id": "TC049",
+    "title": "Show an empty price history state for a fresh install",
+    "description": "An authenticated user viewing a component with no tracking data sees an empty chart state rather than broken output.",
+    "category": "Price History API",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the login page"
+      },
+      {
+        "type": "action",
+        "description": "Fill in the login credentials"
+      },
+      {
+        "type": "action",
+        "description": "Submit the login form"
+      },
+      {
+        "type": "action",
+        "description": "Open a component detail view that has no tracked price data"
+      },
+      {
+        "type": "action",
+        "description": "Select a supported date range"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an empty price history state is displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no chart values are shown"
+      }
+    ],
+    "priority": "Low"
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "status": "init",
+  "executionArgs": {
+    "projectName": "myproject",
+    "projectPath": "/opt/lampp/htdocs/myproject",
+    "testIds": [],
+    "additionalInstruction": "Use http://localhost/myproject/ as the base URL. Admin credentials are shadman1@pcbuild.com / pass1234. Wait for elements to load.",
+    "serverMode": "production",
+    "envs": {
+      "API_KEY": "sk-user-cKRXWp0AwY5jiyxUK9AhyVYCM-4msawLUKYaymAEuh1VzZkylHCD6X3gGKyrpU4zVTv_b-rM_NoUWCOu3XovMMGuQWR1XG3V3n9H__OcYZL6-LKVGyn5LiGOEfPmpGqxX7M"
+    }
+  }
+}
