@@ -7,13 +7,13 @@ require_once __DIR__ . '/includes/functions.php';
 require_auth();
 $user = get_auth_user();
 
-$page_title = 'AI PC Builder Chatbot';
+$page_title = 'PC Builder Chatbot';
 include __DIR__ . '/templates/header.php';
 ?>
 <div class="container-xl py-4">
   <div class="text-center mb-4">
-    <h1 class="section-title"><i class="bi bi-robot me-2 text-accent"></i>AI PC Builder Assistant</h1>
-    <p class="section-sub">Powered by Claude AI. Ask anything about PC building, components, or BDT prices.</p>
+    <h1 class="section-title"><i class="bi bi-robot me-2 text-accent"></i>PC Builder Assistant</h1>
+    <p class="section-sub">Ask anything about PC building, components, or BDT prices.</p>
   </div>
 
   <div class="row justify-content-center">
@@ -39,7 +39,7 @@ include __DIR__ . '/templates/header.php';
           <div class="msg ai">
             <div class="msg-avatar"><i class="bi bi-robot"></i></div>
             <div class="msg-bubble">
-              Hi <?= sanitise($user['name']) ?>! 👋 I'm your AI PC building assistant. Ask me about component compatibility, budget recommendations, or the best deals from Star Tech, Ryans, and Techland. What are you building today?
+              Hi <?= sanitise($user['name']) ?>! 👋 I'm your PC building assistant. Ask me about component compatibility, budget recommendations, or the best deals from Star Tech, Ryans, and Techland. What are you building today?
             </div>
           </div>
         </div>

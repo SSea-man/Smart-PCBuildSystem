@@ -8,7 +8,7 @@
           <span class="brand-icon"><i class="bi bi-cpu-fill"></i></span>
           <span>PC<span class="text-accent">Builder</span> BD</span>
         </a>
-        <p class="text-muted small">AI-powered PC build recommendations for the Bangladeshi market. Live prices from Star Tech, Ryans &amp; Techland.</p>
+        <p class="text-muted small">Smart PC build recommendations for the Bangladeshi market. Live prices from Star Tech, Ryans &amp; Techland.</p>
       </div>
       <div class="col-6 col-lg-2">
         <h6 class="footer-heading">Build</h6>
@@ -31,7 +31,7 @@
         <ul class="list-unstyled">
           <li><a href="<?= BASE_URL ?>/dashboard.php" class="footer-link">Dashboard</a></li>
           <li><a href="<?= BASE_URL ?>/register.php" class="footer-link">Register</a></li>
-          <li><a href="<?= BASE_URL ?>/chatbot.php" class="footer-link">AI Chatbot</a></li>
+          <li><a href="<?= BASE_URL ?>/chatbot.php" class="footer-link">Chatbot</a></li>
         </ul>
       </div>
       <div class="col-6 col-lg-2">

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="<?= sanitise($page_description ?? 'AI-powered PC Builder for the Bangladeshi market. Get optimised builds, compatibility checks, and price comparisons.') ?>">
+  <meta name="description" content="<?= sanitise($page_description ?? 'Smart PC Builder for the Bangladeshi market. Get optimised builds, compatibility checks, and price comparisons.') ?>">
   <title><?= sanitise($page_title ?? 'PC Builder BD') ?> — PC Builder BD</title>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
@@ -34,7 +34,7 @@
           ['href' => 'purpose.php',        'icon' => 'bi-magic',          'label' => 'Build Wizard'],
           ['href' => 'compare.php',        'icon' => 'bi-layout-split',   'label' => 'Compare'],
           ['href' => 'forum.php',          'icon' => 'bi-chat-square-text', 'label' => 'Forum'],
-          ['href' => 'chatbot.php',        'icon' => 'bi-robot',          'label' => 'AI Chat'],
+          ['href' => 'chatbot.php',        'icon' => 'bi-robot',          'label' => 'Chatbot'],
         ];
         $cur = basename($_SERVER['PHP_SELF']);
         foreach ($nav_links as $link):
