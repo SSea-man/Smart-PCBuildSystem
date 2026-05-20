@@ -1,5 +1,4 @@
 /**
- * assets/js/compare.js — Side-by-side comparison logic
  */
 'use strict';
 
@@ -9,13 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Highlight the best value in each spec row.
- * Rows where higher = better: price (lower), benchmark, wattage (lower).
  */
 function highlightWinners() {
   document.querySelectorAll('tr[data-compare-row]').forEach(row => {
-    const metric = row.dataset.compareRow;   // 'higher' | 'lower'
-    const cells  = Array.from(row.querySelectorAll('td[data-value]'));
+    const metric = row.dataset.compareRow;
+    const cells = Array.from(row.querySelectorAll('td[data-value]'));
     if (cells.length < 2) return;
 
     const vals = cells.map(c => parseFloat(c.dataset.value) || 0);

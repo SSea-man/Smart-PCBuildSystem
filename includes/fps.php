@@ -1,7 +1,6 @@
 <?php
 /**
- * includes/fps.php — adapted for project_alpha schema.
- * fps_profiles table created via migration.sql.
+ 
  */
 
 function estimate_fps(int $cpu_id, int $gpu_id, string $game_slug): ?array {

@@ -25,7 +25,6 @@ if (is_post()) {
         db_exec('INSERT INTO post (user_id, title, content, created_at) VALUES (?, ?, ?, NOW())', [$user_id, $title, $content]);
         $post_id = db_row('SELECT LAST_INSERT_ID() AS id')['id'];
         
-        // Handle tags
         if ($tags_input) {
             $tags = array_unique(array_filter(array_map('trim', explode(',', strtolower($tags_input)))));
             foreach ($tags as $t) {

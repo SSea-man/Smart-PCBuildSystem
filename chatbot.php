@@ -18,8 +18,8 @@ include __DIR__ . '/templates/header.php';
 
   <div class="row justify-content-center">
     <div class="col-lg-8">
-      <!-- Quick chips -->
-      <div class="chip-row mb-2">
+
+    <div class="chip-row mb-2">
         <?php
         $chips = [
           'Best gaming PC under ৳80,000?',

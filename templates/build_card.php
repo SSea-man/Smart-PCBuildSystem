@@ -1,7 +1,6 @@
 <?php
 /**
- * templates/build_card.php
- * Variables: $build_data, $build_index, $purpose, $show_save
+
  */
 $bc     = $build_data['components'] ?? [];
 $total  = (float)($build_data['total_bdt'] ?? 0);

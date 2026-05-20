@@ -1,5 +1,4 @@
 <?php
-// upgrade.php — uses component table (component_id PK) and component_base_sql()
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/auth.php';
@@ -39,7 +38,6 @@ if (is_post()) {
         if ($bottleneck === 'GPU' && $gpu) $current_price = (float)$gpu['price_bdt'];
         $max_price = $current_price + $budget;
 
-        // Find best upgrade using JOIN query
         $upgrade = db_row(
             component_base_sql() .
             " WHERE c.type LIKE ? AND COALESCE(sa.price,0) <= ? AND COALESCE(sa.price,0) > ?

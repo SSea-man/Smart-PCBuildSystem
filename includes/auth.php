@@ -1,7 +1,6 @@
 <?php
 /**
- * includes/auth.php — Session + JWT auth adapted for project_alpha schema.
- * user table: user_id, user_name, email, user_password, role
+ 
  */
 
 function _jwt_base64url_encode(string $data): string {
@@ -63,11 +62,10 @@ function require_auth(string $role = 'user'): void {
 }
 
 /**
- * Login: supports both plain-text (legacy) and bcrypt passwords.
- * Upgrades plain-text to bcrypt on first successful login.
+
  */
 function attempt_login(string $email, string $password): ?array {
-    // project_alpha: table=user, pk=user_id, name=user_name, pw=user_password
+
     $user = db_row('SELECT * FROM `user` WHERE email = ?', [strtolower(trim($email))]);
     if (!$user) return null;
 
@@ -77,7 +75,7 @@ function attempt_login(string $email, string $password): ?array {
     if (password_verify($password, $hash)) {
         $ok = true;
     } elseif ($hash === $password) {
-        // Plain-text legacy password — upgrade to bcrypt
+
         $ok = true;
         $new_hash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
         db_exec('UPDATE `user` SET user_password=? WHERE user_id=?', [$new_hash, $user['user_id']]);

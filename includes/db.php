@@ -1,8 +1,5 @@
 <?php
-/**
- * includes/db.php — PDO singleton
- * Returns a shared PDO connection configured from config.php
- */
+
 
 function get_db(): PDO {
     static $pdo = null;
@@ -31,7 +28,6 @@ function get_db(): PDO {
 }
 
 /**
- * Convenience: run a prepared query and return all rows.
  */
 function db_query(string $sql, array $params = []): array {
     $stmt = get_db()->prepare($sql);
@@ -40,7 +36,6 @@ function db_query(string $sql, array $params = []): array {
 }
 
 /**
- * Convenience: run a prepared query and return one row.
  */
 function db_row(string $sql, array $params = []): ?array {
     $stmt = get_db()->prepare($sql);
@@ -50,7 +45,6 @@ function db_row(string $sql, array $params = []): ?array {
 }
 
 /**
- * Convenience: run a prepared INSERT/UPDATE/DELETE and return lastInsertId.
  */
 function db_exec(string $sql, array $params = []): string {
     $stmt = get_db()->prepare($sql);

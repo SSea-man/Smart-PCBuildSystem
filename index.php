@@ -9,7 +9,6 @@ $page_description = 'Build your perfect PC with AI-powered recommendations, live
 include __DIR__ . '/templates/header.php';
 ?>
 
-<!-- Hero -->
 <section class="hero">
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
@@ -36,8 +35,8 @@ include __DIR__ . '/templates/header.php';
         </div>
       </div>
       <div class="col-lg-6 fade-in-up-d2">
-        <!-- Animated stat cards -->
-        <div class="row g-3">
+
+      <div class="row g-3">
           <?php
           $stats = [
             ['icon'=>'bi-cpu-fill',      'val'=>'500+',  'label'=>'Components', 'color'=>'#4f8ef7'],
@@ -64,7 +63,7 @@ include __DIR__ . '/templates/header.php';
   </div>
 </section>
 
-<!-- Feature cards -->
+
 <section class="py-6 container-xl" style="padding-top:5rem;padding-bottom:5rem">
   <div class="text-center mb-5">
     <h2 class="section-title">Everything You Need to Build Right</h2>
@@ -94,7 +93,7 @@ include __DIR__ . '/templates/header.php';
   </div>
 </section>
 
-<!-- CTA -->
+
 <section class="py-5" style="background:linear-gradient(135deg,rgba(79,142,247,.08),rgba(124,58,237,.08))">
   <div class="container-xl text-center">
     <h2 class="section-title mb-3">Ready to Build Your Perfect PC?</h2>

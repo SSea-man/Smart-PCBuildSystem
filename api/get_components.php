@@ -1,5 +1,4 @@
 <?php
-// api/get_components.php — project_alpha: queries component + storeavailability + store
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
@@ -28,7 +27,6 @@ $where_sql = $where ? ' WHERE ' . implode(' AND ', $where) : '';
 $sql       = $base . $where_sql . ' ORDER BY c.benchmark_score DESC LIMIT 50';
 $rows      = db_query($sql, $params);
 
-// Normalise stock status
 foreach ($rows as &$r) {
     $r['stock_status'] = normalize_stock($r['stock_status_raw'] ?? '');
 }

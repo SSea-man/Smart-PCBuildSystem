@@ -1,11 +1,9 @@
 <?php
 /**
- * includes/budget_allocator.php — Budget allocation by purpose (M03)
- *
- * allocate_budget(float $total_bdt, string $purpose): array<string,float>
+ 
  */
 
-// PRD-defined percentages per purpose profile
+
 const BUDGET_PROFILES = [
     'gaming' => [
         'CPU'         => 0.20,
@@ -50,11 +48,6 @@ const BUDGET_PROFILES = [
 ];
 
 /**
- * Returns category => BDT amount map for a given total budget and purpose.
- *
- * @param  float  $total_bdt  Total budget in BDT
- * @param  string $purpose    'gaming'|'video_editing'|'office'|'general'
- * @return array<string,float>
  */
 function allocate_budget(float $total_bdt, string $purpose): array {
     $profile = BUDGET_PROFILES[$purpose] ?? BUDGET_PROFILES['general'];
@@ -65,9 +58,7 @@ function allocate_budget(float $total_bdt, string $purpose): array {
     return $result;
 }
 
-/** Returns the profile percentages (for chart rendering). */
 function get_budget_profile(string $purpose): array {
     return BUDGET_PROFILES[$purpose] ?? BUDGET_PROFILES['general'];
 }
 
-// purpose_label() is defined in includes/functions.php

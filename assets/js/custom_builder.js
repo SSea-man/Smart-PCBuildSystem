@@ -1,10 +1,9 @@
 /**
- * assets/js/custom_builder.js — Live compatibility checker for custom builder
  */
 'use strict';
 
 let debounceTimer = null;
-const selectedIds = {};    // category -> component_id
+const selectedIds = {};
 const DEBOUNCE_MS = 500;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -66,7 +65,7 @@ function setCompatResult(data) {
 
 function updateSummary() {
   let total = 0;
-  let tdp   = 0;
+  let tdp = 0;
 
   document.querySelectorAll('.component-select').forEach(sel => {
     const opt = sel.options[sel.selectedIndex];
@@ -74,7 +73,7 @@ function updateSummary() {
     const price = parseFloat(opt.dataset.price || 0);
     const comp_tdp = parseInt(opt.dataset.tdp || 0);
     total += price;
-    tdp   += comp_tdp;
+    tdp += comp_tdp;
   });
 
   const totalEl = document.getElementById('builder-total');
@@ -84,6 +83,6 @@ function updateSummary() {
   if (tdpEl) tdpEl.textContent = tdp + 'W';
 
   const minPsu = Math.ceil((tdp * 1.20) / 50) * 50;
-  const psuEl  = document.getElementById('builder-min-psu');
+  const psuEl = document.getElementById('builder-min-psu');
   if (psuEl) psuEl.textContent = minPsu + 'W recommended';
 }

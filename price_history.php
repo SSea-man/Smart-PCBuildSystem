@@ -1,5 +1,4 @@
 <?php
-// price_history.php — uses component (via component_base_sql) + pricetracking tables
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/auth.php';
@@ -24,7 +23,6 @@ if ($component_id) {
     }
 }
 
-// All components for picker
 $all_components = db_query('SELECT component_id as id, component_name as name, type FROM component ORDER BY type, component_name');
 
 $page_title = 'Price History';

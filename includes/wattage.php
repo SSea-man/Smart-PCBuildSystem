@@ -1,8 +1,6 @@
 <?php
 /**
- * includes/wattage.php — adapted for project_alpha
- * Components now carry tdp_watts (added via migration).
- * build.wattage stores the pre-calculated total for saved builds.
+
  */
 
 function calculate_tdp(array $components): int {

@@ -1,10 +1,9 @@
 <?php
 /**
- * includes/functions.php — Shared utility helpers
- * Adapted for project_alpha schema.
+ 
  */
 
-// ── Formatting ────────────────────────────────────────────────────────────────
+/
 function format_bdt(float $n): string {
     return '৳' . number_format($n, 0, '.', ',');
 }
@@ -12,7 +11,6 @@ function sanitise(mixed $input): string {
     return htmlspecialchars((string)$input, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
-// ── Flash messages ────────────────────────────────────────────────────────────
 function flash_message(string $type, string $msg): void {
     $_SESSION['flash'][] = ['type' => $type, 'msg' => $msg];
 }
@@ -29,7 +27,6 @@ function render_flash(): void {
     }
 }
 
-// ── CSRF ──────────────────────────────────────────────────────────────────────
 function csrf_token(): string {
     if (empty($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(CSRF_TOKEN_LENGTH));
@@ -46,7 +43,6 @@ function verify_csrf(): void {
     }
 }
 
-// ── Pagination ────────────────────────────────────────────────────────────────
 function paginate(int $total, int $page, int $per_page = 20): array {
     $page        = max(1, $page);
     $total_pages = (int)ceil($total / $per_page);
@@ -65,13 +61,11 @@ function render_pagination(array $p, string $url_base): void {
     echo '</ul></nav>';
 }
 
-// ── Redirects ─────────────────────────────────────────────────────────────────
 function redirect(string $path): never {
     header('Location: ' . BASE_URL . '/' . ltrim($path, '/'));
     exit;
 }
 
-// ── Request helpers ───────────────────────────────────────────────────────────
 function is_post(): bool { return $_SERVER['REQUEST_METHOD'] === 'POST'; }
 function input(string $key, mixed $default = ''): mixed {
     return $_POST[$key] ?? $_GET[$key] ?? $default;
@@ -83,10 +77,8 @@ function json_response(mixed $data, int $code = 200): never {
     exit;
 }
 
-// ── Schema helpers (project_alpha) ────────────────────────────────────────────
 
 /**
- * Map component.type (verbose) to a short category label.
  */
 function type_to_category(string $type): string {
     return match(true) {
@@ -103,7 +95,6 @@ function type_to_category(string $type): string {
 }
 
 /**
- * Map storeavailability.stock_status (natural text) to internal key.
  */
 function normalize_stock(string $s): string {
     return match(strtolower(trim($s))) {
@@ -116,9 +107,7 @@ function normalize_stock(string $s): string {
 }
 
 /**
- * Returns the base SELECT … FROM component c LEFT JOIN … SQL fragment.
- * Gives every component a normalised set of aliased columns so the rest
- * of the app can use them the same way as the original schema.
+ 
  */
 function component_base_sql(): string {
     return "SELECT
@@ -154,7 +143,6 @@ function component_base_sql(): string {
 }
 
 /**
- * Fetch one component row (with price/stock) by component_id.
  */
 function get_component(int $id): ?array {
     $sql = component_base_sql() . ' WHERE c.component_id = ?';
@@ -164,7 +152,6 @@ function get_component(int $id): ?array {
 }
 
 /**
- * Fetch multiple components (with price/stock) by category.
  */
 function get_components_by_category(string $category, float $max_price = 0): array {
     $type_prefix = match($category) {
@@ -188,7 +175,6 @@ function get_components_by_category(string $category, float $max_price = 0): arr
     return $rows;
 }
 
-/** purpose_label helper */
 function purpose_label(string $purpose): string {
     return match($purpose) {
         'gaming'        => 'Gaming',

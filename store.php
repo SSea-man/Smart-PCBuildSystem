@@ -11,7 +11,6 @@ $category_types = [
     'GPU'=>'GPU%','Storage'=>'Storage%','PSU'=>'PSU%','Case'=>'Case%','Cooling'=>'Cooling%'
 ];
 
-// Filters
 $cat      = input('category', '');
 $retailer = input('retailer', '');
 $search   = trim(input('search', ''));
@@ -21,7 +20,6 @@ $stock    = input('stock', '');
 $page_num = max(1, (int)input('page', 1));
 $per_page = 12;
 
-// Build WHERE against component + storeavailability join
 $base  = component_base_sql();
 $where = []; $params = [];
 if ($cat)      { $where[] = 'c.type LIKE ?';                     $params[] = "{$cat}%"; }
@@ -44,7 +42,6 @@ $components = db_query(
 foreach ($components as &$c) { $c['stock_status'] = normalize_stock($c['stock_status_raw'] ?? ''); }
 unset($c);
 
-// Watchlist IDs
 $watchlist_ids = [];
 if (is_logged_in()) {
     $rows = db_query('SELECT component_id FROM watchlist WHERE user_id = ?', [get_auth_user()['id']]);
@@ -56,8 +53,8 @@ $page_title  = 'Component Store';
 include __DIR__ . '/templates/header.php';
 ?>
 <div class="container-xl py-4">
-  <!-- Top Section: Title & Pills -->
-  <div class="mb-4">
+
+<div class="mb-4">
     <h3 class="text-accent mb-2">Computer Components Price in Bangladesh</h3>
     <p class="text-muted small mb-3">
       PC Component Price in Bangladesh varies depending on the product type and brand. Build your PC with the latest components at the best price. Browse below and order yours now!
@@ -70,16 +67,16 @@ include __DIR__ . '/templates/header.php';
   </div>
 
   <div class="row g-4">
-    <!-- Sidebar -->
-    <div class="col-lg-3">
+
+  <div class="col-lg-3">
       <form method="GET" id="filter-form">
-        <!-- Preserve other query params like category, search, etc. -->
-        <?php if($cat): ?><input type="hidden" name="category" value="<?=sanitise($cat)?>"><?php endif; ?>
+
+      <?php if($cat): ?><input type="hidden" name="category" value="<?=sanitise($cat)?>"><?php endif; ?>
         <?php if($search): ?><input type="hidden" name="search" value="<?=sanitise($search)?>"><?php endif; ?>
         <?php if($retailer): ?><input type="hidden" name="retailer" value="<?=sanitise($retailer)?>"><?php endif; ?>
 
-        <!-- Price Range Card -->
-        <div class="card shadow-sm border-0 mb-3">
+
+          <div class="card shadow-sm border-0 mb-3">
           <div class="card-body">
             <h6 class="fw-bold mb-3">Price Range</h6>
             <div class="d-flex gap-2 align-items-center">
@@ -91,7 +88,7 @@ include __DIR__ . '/templates/header.php';
           </div>
         </div>
 
-        <!-- Availability Card -->
+
         <div class="card shadow-sm border-0 mb-3">
           <div class="card-body">
             <h6 class="fw-bold mb-3 d-flex justify-content-between align-items-center">
@@ -114,10 +111,10 @@ include __DIR__ . '/templates/header.php';
       </form>
     </div>
 
-    <!-- Grid -->
+
     <div class="col-lg-9">
-      <!-- Top Bar of Grid -->
-      <div class="card shadow-sm border-0 mb-3">
+
+    <div class="card shadow-sm border-0 mb-3">
         <div class="card-body py-2 d-flex align-items-center justify-content-between flex-wrap gap-2">
           <div class="fw-bold fs-5">Component</div>
           <div class="d-flex align-items-center gap-3">

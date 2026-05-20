@@ -1,7 +1,6 @@
 <?php
 /**
- * includes/scoring.php — adapted for project_alpha schema.
- * Uses component_base_sql() from functions.php to get normalised rows.
+ 
  */
 
 require_once __DIR__ . '/compatibility.php';
@@ -58,7 +57,7 @@ function get_top_builds(string $purpose, float $budget_bdt, int $limit = TOP_BUI
         $max   = ($allocation[$cat] ?? ($budget_bdt * 0.10)) * 1.15;
         $rows  = get_components_by_category($cat, $max);
         if (empty($rows)) {
-            // Fallback: cheapest available
+
             $rows = get_components_by_category($cat);
         }
         $candidates[$cat] = array_slice($rows, 0, 3);

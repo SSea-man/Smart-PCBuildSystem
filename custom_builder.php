@@ -8,7 +8,6 @@ require_once __DIR__ . '/includes/wattage.php';
 $categories = ['CPU','Motherboard','RAM','GPU','Storage','PSU','Case','Cooling'];
 $purpose    = $_SESSION['purpose'] ?? 'general';
 
-// Load all components grouped by category for selects
 $all_components = [];
 foreach ($categories as $cat) {
     $all_components[$cat] = get_components_by_category($cat);
@@ -26,8 +25,8 @@ include __DIR__ . '/templates/header.php';
   </div>
 
   <div class="row g-4">
-    <!-- Selector column -->
-    <div class="col-lg-8">
+
+  <div class="col-lg-8">
       <div class="card p-4">
         <div id="compat-result" class="d-none mb-3"></div>
 
@@ -60,7 +59,6 @@ include __DIR__ . '/templates/header.php';
       </div>
     </div>
 
-    <!-- Live summary -->
     <div class="col-lg-4">
       <div class="card p-4 sticky-top" style="top:80px">
         <h5 class="fw-700 mb-3"><i class="bi bi-receipt me-2 text-accent"></i>Build Summary</h5>

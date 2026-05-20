@@ -21,7 +21,6 @@ if (!$post) {
     redirect('forum.php');
 }
 
-// Handle comment submission
 if (is_post() && is_logged_in()) {
     verify_csrf();
     $content = trim(input('content', ''));
@@ -33,7 +32,6 @@ if (is_post() && is_logged_in()) {
     }
 }
 
-// Fetch comments
 $comments = db_query("
     SELECT c.*, u.user_name,
         (SELECT COUNT(*) FROM vote v WHERE v.comment_id = c.comment_id AND v.vote_type = 'upvote') - 
@@ -44,7 +42,6 @@ $comments = db_query("
     ORDER BY c.created_at ASC
 ", [$post_id]);
 
-// Fetch tags
 $tags = db_query("
     SELECT t.name 
     FROM tag t 
@@ -60,17 +57,15 @@ include __DIR__ . '/templates/header.php';
         <a href="<?= BASE_URL ?>/forum.php" class="text-decoration-none text-muted"><i class="bi bi-arrow-left me-1"></i>Back to Forum</a>
     </div>
 
-    <!-- Post Details -->
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-body p-4 d-flex gap-4">
-            <!-- Vote Sidebar -->
-            <div class="d-flex flex-column align-items-center gap-1" style="width: 50px;">
+
+        <div class="d-flex flex-column align-items-center gap-1" style="width: 50px;">
                 <button class="btn btn-sm btn-ghost fs-5 vote-btn" data-type="post" data-id="<?= $post_id ?>" data-vote="upvote"><i class="bi bi-caret-up-fill"></i></button>
                 <span class="fs-5 fw-bold" id="score-post-<?= $post_id ?>"><?= (int)$post['score'] ?></span>
                 <button class="btn btn-sm btn-ghost fs-5 vote-btn" data-type="post" data-id="<?= $post_id ?>" data-vote="downvote"><i class="bi bi-caret-down-fill"></i></button>
             </div>
             
-            <!-- Post Content -->
             <div class="flex-grow-1">
                 <h1 class="h3 fw-700 mb-2"><?= sanitise($post['title']) ?></h1>
                 
@@ -91,15 +86,14 @@ include __DIR__ . '/templates/header.php';
         </div>
     </div>
 
-    <!-- Comments Section -->
     <h4 class="mb-3"><i class="bi bi-chat-text me-2 text-accent"></i><?= count($comments) ?> Comments</h4>
     
     <div class="card shadow-sm border-0 mb-4">
         <div class="list-group list-group-flush rounded">
             <?php foreach ($comments as $comment): ?>
             <div class="list-group-item p-4 d-flex gap-3">
-                <!-- Vote Sidebar for Comment -->
-                <div class="d-flex flex-column align-items-center gap-0" style="width: 40px;">
+
+            <div class="d-flex flex-column align-items-center gap-0" style="width: 40px;">
                     <button class="btn btn-sm btn-ghost vote-btn" data-type="comment" data-id="<?= $comment['comment_id'] ?>" data-vote="upvote"><i class="bi bi-caret-up-fill"></i></button>
                     <span class="fw-bold small" id="score-comment-<?= $comment['comment_id'] ?>"><?= (int)$comment['score'] ?></span>
                     <button class="btn btn-sm btn-ghost vote-btn" data-type="comment" data-id="<?= $comment['comment_id'] ?>" data-vote="downvote"><i class="bi bi-caret-down-fill"></i></button>
@@ -117,7 +111,6 @@ include __DIR__ . '/templates/header.php';
         </div>
     </div>
 
-    <!-- Add Comment Form -->
     <?php if (is_logged_in()): ?>
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
@@ -147,9 +140,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            const targetType = btn.dataset.type; // 'post' or 'comment'
+            const targetType = btn.dataset.type; 
             const targetId = btn.dataset.id;
-            const voteType = btn.dataset.vote; // 'upvote' or 'downvote'
+            const voteType = btn.dataset.vote; 
             
             try {
                 const fd = new FormData();

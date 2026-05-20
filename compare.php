@@ -1,5 +1,4 @@
 <?php
-// compare.php — uses component + storeavailability JOIN via component_base_sql()
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/auth.php';

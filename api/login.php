@@ -1,8 +1,5 @@
 <?php
 /**
- * api/login.php — JSON API endpoint for programmatic login (no CSRF required).
- * Returns a session cookie. Used by automated tests and mobile clients.
- * Security: rate-limited by IP via failed attempt tracking.
  */
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/db.php';
@@ -35,7 +32,7 @@ $user_safe = [
     'role'  => $user['role'] ?? 'user',
 ];
 
-login_user($user); // This still sets the cookie and session
+login_user($user); 
 $token = generate_jwt(['user' => $user_safe]);
 
 json_response([

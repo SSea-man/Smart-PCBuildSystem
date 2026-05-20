@@ -1,14 +1,12 @@
 /**
- * assets/js/app.js — Global JavaScript utilities
- * PC Builder BD
+
  */
 
 'use strict';
 
-/* ── Theme toggle ────────────────────────────────────────── */
 (function () {
-  const html   = document.documentElement;
-  const btn    = document.getElementById('theme-toggle');
+  const html = document.documentElement;
+  const btn = document.getElementById('theme-toggle');
   const stored = localStorage.getItem('theme') || 'dark';
   html.setAttribute('data-bs-theme', stored);
   updateThemeIcon(stored);
@@ -28,7 +26,6 @@
   }
 })();
 
-/* ── Flash message auto-dismiss ──────────────────────────── */
 document.querySelectorAll('#flash-container .alert').forEach(el => {
   setTimeout(() => {
     const bsAlert = bootstrap.Alert.getOrCreateInstance(el);
@@ -36,12 +33,10 @@ document.querySelectorAll('#flash-container .alert').forEach(el => {
   }, 5000);
 });
 
-/* ── CSRF helper ─────────────────────────────────────────── */
 function csrfHeaders() {
   return { 'X-CSRF-Token': window.CSRF_TOKEN || '', 'Content-Type': 'application/json' };
 }
 
-/* ── Generic JSON fetch wrapper ──────────────────────────── */
 async function apiFetch(url, body = null, method = 'POST') {
   const opts = {
     method,
@@ -54,13 +49,12 @@ async function apiFetch(url, body = null, method = 'POST') {
   return res.json();
 }
 
-/* ── Watchlist toggle ────────────────────────────────────── */
 document.addEventListener('click', async (e) => {
   const btn = e.target.closest('.watchlist-btn');
   if (!btn || !window.IS_LOGGED_IN) return;
   e.preventDefault();
 
-  const id     = btn.dataset.id;
+  const id = btn.dataset.id;
   const action = btn.dataset.action;
   btn.disabled = true;
 
@@ -82,15 +76,14 @@ document.addEventListener('click', async (e) => {
   }
 });
 
-/* ── Compare toggle ──────────────────────────────────────── */
 const compareIds = JSON.parse(sessionStorage.getItem('compare_ids') || '[]');
 
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('.compare-toggle-btn');
   if (!btn) return;
-  const id   = parseInt(btn.dataset.id);
+  const id = parseInt(btn.dataset.id);
   const name = btn.dataset.name || '';
-  const idx  = compareIds.indexOf(id);
+  const idx = compareIds.indexOf(id);
 
   if (idx === -1) {
     if (compareIds.length >= 4) {
@@ -136,7 +129,6 @@ window.clearCompare = function () {
 };
 updateCompareBar();
 
-/* ── Save build ──────────────────────────────────────────── */
 document.addEventListener('click', async (e) => {
   const btn = e.target.closest('.save-build-btn');
   if (!btn) return;
@@ -158,7 +150,6 @@ document.addEventListener('click', async (e) => {
   }
 });
 
-/* ── Share build ─────────────────────────────────────────── */
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('.share-build-btn');
   if (!btn) return;
@@ -170,7 +161,6 @@ document.addEventListener('click', (e) => {
   }
 });
 
-/* ── Toast notification ──────────────────────────────────── */
 function showToast(message, type = 'info') {
   let container = document.getElementById('toast-container');
   if (!container) {
@@ -180,8 +170,8 @@ function showToast(message, type = 'info') {
     container.style.zIndex = '1100';
     document.body.appendChild(container);
   }
-  const id   = 'toast-' + Date.now();
-  const icon = { success:'bi-check-circle-fill', danger:'bi-x-circle-fill', warning:'bi-exclamation-triangle-fill', info:'bi-info-circle-fill' }[type] || 'bi-info-circle-fill';
+  const id = 'toast-' + Date.now();
+  const icon = { success: 'bi-check-circle-fill', danger: 'bi-x-circle-fill', warning: 'bi-exclamation-triangle-fill', info: 'bi-info-circle-fill' }[type] || 'bi-info-circle-fill';
   container.insertAdjacentHTML('beforeend', `
     <div id="${id}" class="toast align-items-center text-bg-${type === 'info' ? 'primary' : type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="d-flex">

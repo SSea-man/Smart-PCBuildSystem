@@ -1,5 +1,4 @@
 <?php
-// admin/index.php — project_alpha schema
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';

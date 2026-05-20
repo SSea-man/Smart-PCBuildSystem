@@ -1,6 +1,5 @@
 <?php
-// admin/components.php — uses component table (component_id PK, component_name, type)
-// Prices/stock managed via storeavailability table
+
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
@@ -10,14 +9,13 @@ require_auth('admin');
 $categories = ['CPU (processing)','Motherboard (connection)','RAM (temporary memory)',
                'Storage (HDD/SSD)','GPU (graphics)','PSU (power)','Case (body)','Cooling'];
 
-// DELETE
+
 if (input('action')==='delete' && is_post()) {
     verify_csrf();
     db_exec('DELETE FROM component WHERE component_id=?', [(int)input('id')]);
     flash_message('success','Component deleted.'); redirect('admin/components.php');
 }
 
-// ADD / EDIT
 if (input('action')==='save' && is_post()) {
     verify_csrf();
     $id   = (int)input('id',0);
@@ -28,10 +26,8 @@ if (input('action')==='save' && is_post()) {
     $m2   = (int)input('m2_slots'); $sata=(int)input('sata_ports'); $rslots=(int)input('ram_slots');
     $psuW = (int)input('psu_wattage'); $siface=input('storage_interface');
     
-    // Handle image upload
     $image_url = null;
     if ($id) {
-        // preserve existing image if not overwritten
         $image_url = db_row('SELECT image_url FROM component WHERE component_id=?', [$id])['image_url'] ?? null;
     }
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {

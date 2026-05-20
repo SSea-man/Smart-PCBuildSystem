@@ -1,5 +1,5 @@
 <?php
-// admin/users.php — project_alpha: user table, user_id/user_name/email/role columns
+
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';

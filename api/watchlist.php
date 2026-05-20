@@ -1,5 +1,4 @@
 <?php
-// api/watchlist.php — project_alpha schema (watchlist table created by migration)
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';

@@ -1,5 +1,4 @@
 <?php
-// admin/prices.php — project_alpha: updates storeavailability.price + inserts into pricetracking
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
@@ -17,17 +16,17 @@ if (is_post()) {
         $new_price= (float)($prices[$i] ?? 0);
         $stock    = sanitise($stocks[$i] ?? 'In Stock');
         if (!$cid || $new_price <= 0) continue;
-        // Get old price
+
         $old = db_row('SELECT price FROM storeavailability WHERE component_id=? LIMIT 1', [$cid]);
         $old_price = $old ? (float)$old['price'] : 0;
-        // Update storeavailability
+
         $exists = db_row('SELECT availability_id FROM storeavailability WHERE component_id=? LIMIT 1', [$cid]);
         if ($exists) {
             db_exec('UPDATE storeavailability SET price=?, stock_status=? WHERE component_id=?', [$new_price, $stock, $cid]);
         } else {
             db_exec('INSERT INTO storeavailability (store_id, component_id, stock_status, price) VALUES (1,?,?,?)', [$cid, $stock, $new_price]);
         }
-        // Record in pricetracking
+
         db_exec('INSERT INTO pricetracking (component_id, old_price, new_price) VALUES (?,?,?)', [$cid, $old_price, $new_price]);
         $updated++;
     }

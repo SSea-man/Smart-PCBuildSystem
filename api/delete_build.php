@@ -1,5 +1,4 @@
 <?php
-// api/delete_build.php — project_alpha: build.build_id PK
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';

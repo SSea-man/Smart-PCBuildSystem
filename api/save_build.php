@@ -1,6 +1,5 @@
 <?php
-// api/save_build.php — project_alpha: build table (build_id, user_id, total_price, fps, wattage, name, purpose, score)
-// Also inserts into buildcomponent junction table.
+
 require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
@@ -18,12 +17,12 @@ $name    = sanitise($body['name']     ?? 'My Build');
 $fps     = (int)($body['fps']         ?? 0);
 $wattage = (int)($body['wattage']     ?? 0);
 if (empty($comps) || $total <= 0) { json_response(['error'=>'Invalid build data'],400); }
-// Insert into build table
+
 $build_id = (int)db_exec(
     'INSERT INTO `build` (user_id, total_price, fps, wattage, name, purpose, score) VALUES (?,?,?,?,?,?,?)',
     [$uid, $total, $fps, $wattage, $name, $purpose, $score]
 );
-// Insert component links into buildcomponent
+
 foreach ($comps as $cid) {
     if ($cid) db_exec('INSERT IGNORE INTO buildcomponent (build_id, component_id) VALUES (?,?)', [$build_id, $cid]);
 }

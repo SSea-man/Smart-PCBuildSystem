@@ -1,20 +1,13 @@
--- ============================================================
--- migration.sql — Adapt project_alpha to PC Builder app
--- Run AFTER importing your existing SQL dump.
--- This only ADDS columns/tables; nothing is dropped.
--- ============================================================
+
 
 USE `project_alpha`;
 
--- ── Add role + created_at to user ────────────────────────────
 ALTER TABLE `user`
   ADD COLUMN IF NOT EXISTS `role` ENUM('user','admin') NOT NULL DEFAULT 'user',
   ADD COLUMN IF NOT EXISTS `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 
--- Make first user admin (Shadman)
 UPDATE `user` SET `role` = 'admin' WHERE `user_id` = 1;
 
--- ── Add technical spec columns to component ───────────────────
 ALTER TABLE `component`
   ADD COLUMN IF NOT EXISTS `brand`             VARCHAR(100) NOT NULL DEFAULT '',
   ADD COLUMN IF NOT EXISTS `benchmark_score`   DECIMAL(8,2) NOT NULL DEFAULT 0.00,
@@ -30,14 +23,12 @@ ALTER TABLE `component`
   ADD COLUMN IF NOT EXISTS `psu_wattage`       SMALLINT UNSIGNED NOT NULL DEFAULT 0,
   ADD COLUMN IF NOT EXISTS `storage_interface` VARCHAR(10) NOT NULL DEFAULT '';
 
--- ── Add name / purpose / score / created_at to build ─────────
 ALTER TABLE `build`
   ADD COLUMN IF NOT EXISTS `name`       VARCHAR(200) NOT NULL DEFAULT 'My Build',
   ADD COLUMN IF NOT EXISTS `purpose`    VARCHAR(50)  NOT NULL DEFAULT 'general',
   ADD COLUMN IF NOT EXISTS `score`      DECIMAL(6,2) NOT NULL DEFAULT 0.00,
   ADD COLUMN IF NOT EXISTS `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
 
--- ── Watchlist (new table) ─────────────────────────────────────
 CREATE TABLE IF NOT EXISTS `watchlist` (
   `id`           INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id`      INT NOT NULL,
@@ -49,7 +40,6 @@ CREATE TABLE IF NOT EXISTS `watchlist` (
   CONSTRAINT `fk_wl_comp` FOREIGN KEY (`component_id`) REFERENCES `component` (`component_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── FPS profiles (new table) ──────────────────────────────────
 CREATE TABLE IF NOT EXISTS `fps_profiles` (
   `id`                INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `game_slug`         VARCHAR(80)  NOT NULL,
@@ -72,7 +62,6 @@ INSERT IGNORE INTO `fps_profiles` (`game_slug`,`game_name`,`difficulty_factor`,`
 ('apex-legends','Apex Legends',0.900,'1080p','High'),
 ('davinci-resolve','DaVinci Resolve',1.800,'4K','Ultra');
 
--- ── Chatbot rate limits (new table) ──────────────────────────
 CREATE TABLE IF NOT EXISTS `chatbot_rate_limits` (
   `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id`       INT NOT NULL,
@@ -83,7 +72,6 @@ CREATE TABLE IF NOT EXISTS `chatbot_rate_limits` (
   CONSTRAINT `fk_rl_user2` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ── Seed benchmark scores for existing components ─────────────
 UPDATE `component` SET `benchmark_score`=72, `tdp_watts`=125,  `socket`='LGA1700', `brand`='Intel' WHERE `component_name`='Intel Core i5 14600K';
 UPDATE `component` SET `benchmark_score`=96, `tdp_watts`=120,  `socket`='AM5',     `brand`='AMD'   WHERE `component_name`='AMD Ryzen 7 7800X3D';
 UPDATE `component` SET `benchmark_score`=0,  `tdp_watts`=0,    `ram_gen`='DDR5', `form_factor`='ATX', `ram_slots`=4, `m2_slots`=2, `sata_ports`=4 WHERE `component_name`='ASUS ROG B650';

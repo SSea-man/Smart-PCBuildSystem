@@ -1,11 +1,5 @@
 <?php
 /**
- * templates/component_card.php
- *
- * Required variables:
- *   $comp   — DB row from components table
- *   (optional) $in_watchlist  — bool
- *   (optional) $compare_ids   — array of component IDs currently in compare list
  */
 $in_wl   = $in_watchlist ?? false;
 $cmp_ids = $compare_ids  ?? [];
@@ -42,13 +36,11 @@ if (!empty($comp['form_factor'])) $specs[] = 'Form Factor: ' . sanitise($comp['f
 if (!empty($comp['length_mm'])) $specs[] = 'Length: ' . (int)$comp['length_mm'] . 'mm';
 if (!empty($comp['psu_wattage'])) $specs[] = 'Wattage: ' . (int)$comp['psu_wattage'] . 'W';
 
-// Keep max 4 specs for card height consistency
 $specs = array_slice($specs, 0, 4);
 ?>
 <div class="card component-card h-100 border-0 shadow-sm" data-component-id="<?= (int)$comp['id'] ?>">
   <div class="card-body d-flex flex-column p-3 position-relative">
     
-    <!-- Badges -->
     <div class="d-flex justify-content-between align-items-center position-absolute w-100" style="top: 10px; left: 0; padding: 0 10px; z-index: 1;">
       <?php if (!empty($comp['benchmark_score']) && $comp['benchmark_score'] > 80): ?>
       <span class="badge bg-danger" style="border-radius: 4px;">Top Tier</span>
@@ -58,7 +50,6 @@ $specs = array_slice($specs, 0, 4);
       <span class="badge <?= $stock_class ?>" style="border-radius: 4px;"><?= $stock_label ?></span>
     </div>
 
-    <!-- Product Image -->
     <div class="text-center my-3" style="min-height: 180px; display: flex; align-items: center; justify-content: center;">
       <?php if (!empty($comp['image_url'])): ?>
         <?php $img_src = str_starts_with($comp['image_url'], 'http') ? $comp['image_url'] : BASE_URL . '/' . $comp['image_url']; ?>
@@ -70,10 +61,8 @@ $specs = array_slice($specs, 0, 4);
       <?php endif; ?>
     </div>
 
-    <!-- Name -->
     <h6 class="fw-bold mb-3" style="font-size: 0.95rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"><?= sanitise($comp['name']) ?></h6>
 
-    <!-- Specs Bullets -->
     <ul class="text-muted small mb-3 ps-3" style="list-style-type: disc;">
       <?php foreach ($specs as $spec): ?>
       <li class="mb-1"><?= $spec ?></li>
@@ -85,12 +74,10 @@ $specs = array_slice($specs, 0, 4);
     </ul>
 
     <div class="mt-auto">
-      <!-- Price -->
       <div class="text-center mb-3">
         <span class="text-danger fw-bold fs-5"><?= format_bdt((float)$comp['price_bdt']) ?></span>
       </div>
 
-      <!-- Buy Now Button -->
       <a href="<?= !empty($comp['retailer_url']) ? sanitise($comp['retailer_url']) : '#' ?>" 
          class="btn btn-light text-primary fw-bold w-100 mb-2" 
          style="background: #f0f4f9; border-radius: 6px;"
@@ -98,7 +85,6 @@ $specs = array_slice($specs, 0, 4);
         <i class="bi bi-cart3 me-2"></i>Buy Now
       </a>
 
-      <!-- Add to Compare -->
       <div class="text-center">
         <button class="btn btn-link text-decoration-none text-muted p-0 small compare-toggle-btn <?= $in_cmp ? 'text-accent' : '' ?>"
                 data-id="<?= (int)$comp['id'] ?>"

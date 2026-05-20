@@ -53,7 +53,7 @@ include __DIR__ . '/templates/header.php';
       </div>
     </div>
 
-    <!-- Live allocation chart -->
+
     <div class="card p-4 mb-4">
       <h5 class="fw-700 mb-3"><i class="bi bi-pie-chart me-2 text-accent"></i>Budget Allocation Preview</h5>
       <div class="row align-items-center g-3">

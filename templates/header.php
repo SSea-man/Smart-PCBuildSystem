@@ -6,23 +6,17 @@
   <meta name="description" content="<?= sanitise($page_description ?? 'AI-powered PC Builder for the Bangladeshi market. Get optimised builds, compatibility checks, and price comparisons.') ?>">
   <title><?= sanitise($page_title ?? 'PC Builder BD') ?> — PC Builder BD</title>
 
-  <!-- Bootstrap 5 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-  <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <!-- Custom CSS -->
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css?v=<?= time() ?>">
 </head>
 <body>
 
-<!-- ── Navbar ──────────────────────────────────────────────────────────────── -->
 <nav class="navbar navbar-expand-lg sticky-top" id="main-nav">
   <div class="container-xl">
-    <!-- Brand -->
     <a class="navbar-brand fw-800 d-flex align-items-center gap-2" href="<?= BASE_URL ?>/index.php">
       <span class="brand-icon"><i class="bi bi-cpu-fill"></i></span>
       <span>PC<span class="text-accent">Builder</span> BD</span>
@@ -71,8 +65,8 @@
       </form>
 
       <div class="d-flex align-items-center gap-2">
-        <!-- Dark/light toggle -->
-        <button class="btn btn-sm btn-ghost" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+
+      <button class="btn btn-sm btn-ghost" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
           <i class="bi bi-moon-stars-fill"></i>
         </button>
 
@@ -104,10 +98,8 @@
   </div>
 </nav>
 
-<!-- ── Flash messages ──────────────────────────────────────────────────────── -->
 <div class="container-xl mt-3" id="flash-container">
   <?php render_flash(); ?>
 </div>
 
-<!-- ── Page content starts ─────────────────────────────────────────────────── -->
 <main id="main-content">

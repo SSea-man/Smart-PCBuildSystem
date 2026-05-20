@@ -6,14 +6,12 @@ require_once __DIR__ . '/includes/functions.php';
 
 require_auth();
 $user = get_auth_user();
-$uid  = $user['id'];  // normalised id from session
+$uid  = $user['id'];  
 
-// Saved builds (build table, user_id FK)
 $builds = db_query(
     'SELECT * FROM `build` WHERE user_id=? ORDER BY created_at DESC LIMIT 10', [$uid]
 );
 
-// Watchlist (created by migration)
 $watchlist = db_query(
     'SELECT c.component_id as id, c.component_name as name, c.type,
             COALESCE(sa.price,0) as price_bdt, COALESCE(s.store_name,"") as retailer,
@@ -26,7 +24,6 @@ $watchlist = db_query(
     [$uid]
 );
 
-// Price trend for first watched item
 $trend_labels = $trend_values = [];
 if (!empty($watchlist)) {
     $first_id = $watchlist[0]['id'];
