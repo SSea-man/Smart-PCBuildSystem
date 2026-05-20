@@ -1,9 +1,5 @@
 <?php
-/**
- 
- */
 
-/
 function format_bdt(float $n): string {
     return '৳' . number_format($n, 0, '.', ',');
 }
