@@ -186,20 +186,40 @@ $components = [
     ['Walton WUPS 1200VA', 'UPS', 'Walton', 75, 0, '', '', 0, 5200]
 ];
 
+$typeMap = [
+    'CPU'                      => 'CPU (processing)',
+    'CPU Cooler'               => 'Output devices',
+    'Motherboard'              => 'Motherboard (connection)',
+    'RAM'                      => 'RAM (temporary memory)',
+    'Storage'                  => 'Storage (HDD/SSD)',
+    'Graphics Card'            => 'GPU (graphics)',
+    'Power Supply'             => 'PSU (power)',
+    'Casing'                   => 'Case (body)',
+    'Casing Cooler'            => 'Output devices',
+    'Monitor'                  => 'Output devices',
+    'Speaker & Home Theater'   => 'Output devices',
+    'Headphone'                => 'Output devices',
+    'Keyboard'                 => 'Input devices',
+    'Mouse'                    => 'Input devices',
+    'Wifi Adapter / LAN Card'  => 'Input devices',
+    'Anti Virus'               => 'Input devices',
+    'UPS'                      => 'Output devices',
+];
+
 $pdo = get_db();
 $pdo->beginTransaction();
 
 try {
-    
     $stmt = $pdo->prepare("INSERT INTO component (component_name, type, brand, benchmark_score, tdp_watts, socket, ram_gen, psu_wattage) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    
     $store_stmt = $pdo->prepare("INSERT INTO storeavailability (component_id, store_id, price, stock_status) VALUES (?, 1, ?, 'in_stock')");
 
     $count = 0;
     foreach ($components as $c) {
+        $rawType    = $c[1];
+        $mappedType = $typeMap[$rawType] ?? 'Output devices';
         $stmt->execute([
             $c[0],
-            $c[1],
+            $mappedType,
             $c[2],
             $c[3],
             $c[4],

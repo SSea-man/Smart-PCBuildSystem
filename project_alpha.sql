@@ -193,6 +193,64 @@ INSERT INTO `comment` VALUES (1,2,1,'RTX 4070 Super is excellent.','2026-05-16 0
 UNLOCK TABLES;
 
 --
+-- Table structure for table `community`
+--
+
+DROP TABLE IF EXISTS `community`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `community` (
+  `community_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `description` text DEFAULT NULL,
+  `created_by` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`community_id`),
+  UNIQUE KEY `name` (`name`),
+  KEY `fk_comm_creator` (`created_by`),
+  CONSTRAINT `fk_comm_creator` FOREIGN KEY (`created_by`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `community`
+--
+
+LOCK TABLES `community` WRITE;
+/*!40000 ALTER TABLE `community` DISABLE KEYS */;
+INSERT INTO `community` VALUES (1,'PCBuilding','Share your PC builds, look for part advice, and show off your setup!',1,'2026-05-29 16:25:30'),(2,'Gaming','Discuss the latest PC games, optimization guides, and gameplay clips.',1,'2026-05-29 16:25:30'),(3,'Overclocking','Push your hardware to the absolute limit. Air, water, or LN2 cooling!',1,'2026-05-29 16:25:31'),(4,'TechSupport','Troubleshoot software, hardware, and performance issues with the community.',1,'2026-05-29 16:25:31'),(5,'WaterCooling','Showcase custom loops, hardline piping, and liquid cooling setups.',1,'2026-05-29 16:25:31'),(6,'GamingComp2026','This Community is for gamers',40,'2026-05-31 16:31:30');
+/*!40000 ALTER TABLE `community` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `community_member`
+--
+
+DROP TABLE IF EXISTS `community_member`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `community_member` (
+  `community_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `joined_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`community_id`,`user_id`),
+  KEY `fk_cm_user` (`user_id`),
+  CONSTRAINT `fk_cm_community` FOREIGN KEY (`community_id`) REFERENCES `community` (`community_id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_cm_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `community_member`
+--
+
+LOCK TABLES `community_member` WRITE;
+/*!40000 ALTER TABLE `community_member` DISABLE KEYS */;
+INSERT INTO `community_member` VALUES (1,2,'2026-05-29 16:25:31'),(1,3,'2026-05-29 16:25:31'),(1,9,'2026-05-29 16:25:33'),(1,10,'2026-05-29 16:25:34'),(1,15,'2026-05-29 16:25:34'),(1,21,'2026-05-29 16:25:36'),(1,23,'2026-05-29 16:25:37'),(1,28,'2026-05-29 16:25:39'),(1,29,'2026-05-29 16:25:40'),(1,30,'2026-05-29 16:25:40'),(1,33,'2026-05-29 16:25:40'),(1,34,'2026-05-29 16:25:41'),(1,35,'2026-05-29 16:25:41'),(1,37,'2026-05-29 16:25:41'),(1,38,'2026-05-29 16:25:41'),(1,39,'2026-05-29 16:25:41'),(2,1,'2026-05-29 16:25:31'),(2,3,'2026-05-29 16:25:31'),(2,4,'2026-05-29 16:25:31'),(2,5,'2026-05-29 16:25:31'),(2,6,'2026-05-29 16:25:33'),(2,8,'2026-05-29 16:25:33'),(2,13,'2026-05-29 16:25:34'),(2,16,'2026-05-29 16:25:34'),(2,18,'2026-05-29 16:25:35'),(2,20,'2026-05-29 16:25:35'),(2,21,'2026-05-29 16:25:36'),(2,22,'2026-05-29 16:25:36'),(2,23,'2026-05-29 16:25:37'),(2,24,'2026-05-29 16:25:37'),(2,26,'2026-05-29 16:25:39'),(2,31,'2026-05-29 16:25:40'),(2,33,'2026-05-29 16:25:40'),(2,34,'2026-05-29 16:25:41'),(3,1,'2026-05-29 16:25:31'),(3,4,'2026-05-29 16:25:31'),(3,8,'2026-05-29 16:25:33'),(3,9,'2026-05-29 16:25:34'),(3,10,'2026-05-29 16:25:34'),(3,13,'2026-05-29 16:25:34'),(3,16,'2026-05-29 16:25:35'),(3,17,'2026-05-29 16:25:35'),(3,18,'2026-05-29 16:25:35'),(3,20,'2026-05-29 16:25:36'),(3,21,'2026-05-29 16:25:36'),(3,24,'2026-05-29 16:25:37'),(3,25,'2026-05-29 16:25:38'),(3,26,'2026-05-29 16:25:39'),(3,27,'2026-05-29 16:25:39'),(3,28,'2026-05-29 16:25:39'),(3,29,'2026-05-29 16:25:40'),(3,30,'2026-05-29 16:25:40'),(3,31,'2026-05-29 16:25:40'),(3,33,'2026-05-29 16:25:40'),(3,35,'2026-05-29 16:25:41'),(3,37,'2026-05-29 16:25:41'),(4,3,'2026-05-29 16:25:31'),(4,5,'2026-05-29 16:25:32'),(4,11,'2026-05-29 16:25:34'),(4,13,'2026-05-29 16:25:34'),(4,14,'2026-05-29 16:25:34'),(4,15,'2026-05-29 16:25:34'),(4,16,'2026-05-29 16:25:35'),(4,19,'2026-05-29 16:25:35'),(4,20,'2026-05-29 16:25:36'),(4,22,'2026-05-29 16:25:37'),(4,24,'2026-05-29 16:25:37'),(4,25,'2026-05-29 16:25:39'),(4,26,'2026-05-29 16:25:39'),(4,27,'2026-05-29 16:25:39'),(4,28,'2026-05-29 16:25:40'),(4,29,'2026-05-29 16:25:40'),(4,30,'2026-05-29 16:25:40'),(4,31,'2026-05-29 16:25:40'),(4,33,'2026-05-29 16:25:40'),(4,35,'2026-05-29 16:25:41'),(4,38,'2026-05-29 16:25:41'),(5,3,'2026-05-29 16:25:31'),(5,4,'2026-05-29 16:25:31'),(5,5,'2026-05-29 16:25:32'),(5,8,'2026-05-29 16:25:33'),(5,9,'2026-05-29 16:25:34'),(5,11,'2026-05-29 16:25:34'),(5,12,'2026-05-29 16:25:34'),(5,13,'2026-05-29 16:25:34'),(5,16,'2026-05-29 16:25:35'),(5,18,'2026-05-29 16:25:35'),(5,21,'2026-05-29 16:25:36'),(5,23,'2026-05-29 16:25:37'),(5,25,'2026-05-29 16:25:39'),(5,27,'2026-05-29 16:25:39'),(5,29,'2026-05-29 16:25:40'),(5,35,'2026-05-29 16:25:41'),(5,38,'2026-05-29 16:25:41'),(5,39,'2026-05-29 16:25:41'),(6,40,'2026-05-31 16:34:23');
+/*!40000 ALTER TABLE `community_member` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `comparison`
 --
 
@@ -261,7 +319,7 @@ CREATE TABLE `component` (
 
 LOCK TABLES `component` WRITE;
 /*!40000 ALTER TABLE `component` DISABLE KEYS */;
-INSERT INTO `component` (`component_id`, `component_name`, `type`, `brand`, `benchmark_score`, `tdp_watts`, `socket`, `ram_gen`, `form_factor`, `length_mm`, `height_mm`, `m2_slots`, `sata_ports`, `ram_slots`, `psu_wattage`, `storage_interface`, `image_url`) VALUES (1,'Intel Core i5 14600K','CPU (processing)','Intel',72.00,125,'LGA1700','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cef2c7f791.webp'),(2,'AMD Ryzen 7 7800X3D','CPU (processing)','AMD',96.00,120,'AM5','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cee4134643.webp'),(3,'ASUS ROG B650','Motherboard (connection)','',0.00,0,'','DDR5','ATX',0,0,2,4,4,0,'','uploads/components/comp_6a0cf50737c10.webp'),(5,'Corsair 32GB DDR5','RAM (temporary memory)','Corsair',0.00,7,'','DDR5','',0,0,0,0,0,0,'','uploads/components/comp_6a0cf4bfe77af.webp'),(6,'Kingston Fury 16GB','RAM (temporary memory)','Kingston',0.00,5,'','DDR4','',0,0,0,0,0,0,'','uploads/components/comp_6a0cf480e441c.jpg'),(8,'WD Blue 2TB HDD','Storage (HDD/SSD)','WD',0.00,8,'','','',0,0,0,0,0,0,'SATA','uploads/components/comp_6a0cf46c7eaa0.webp'),(9,'RTX 4070 Super','GPU (graphics)','NVIDIA',94.00,200,'','','',336,0,0,0,0,0,'','uploads/components/comp_6a0cf2ef39065.webp'),(10,'RX 7900 XT','GPU (graphics)','AMD',96.00,315,'','','',336,0,0,0,0,0,'','uploads/components/comp_6a0cf5212347f.jpg'),(11,'RTX 5080','GPU (graphics)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cf5396c1f9.webp'),(12,'RTX 5090','GPU (graphics)','NVIDIA',99.00,575,'','','',336,0,0,0,0,0,'','uploads/components/comp_6a0cf52d74742.webp'),(13,'Ryzen 9 9950X','CPU (processing)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cf2d1ab8b0.webp'),(14,'Intel Core Ultra 9','CPU (processing)','Intel',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cef1a8bbe5.webp'),(15,'Gigabyte X870','Motherboard (connection)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cf4f4347ce.webp'),(16,'ASRock B760','Motherboard (connection)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cf5121f438.webp'),(17,'G.Skill Trident Z 64GB','RAM (temporary memory)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cf49824baf.webp'),(18,'Crucial DDR5 32GB','RAM (temporary memory)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cf4aec2e9c.webp'),(20,'Corsair RM1000x','PSU (power)','Corsair',99.00,0,'','','',0,0,0,0,0,1000,'','uploads/components/comp_6a0cf4d0d6fbf.jpg'),(22,'Test','CPU (processing)','',0.00,0,'','','',0,0,0,0,0,0,'',NULL);
+INSERT INTO `component` VALUES (1,'Intel Core i5 14600K','CPU (processing)','Intel',72.00,125,'LGA1700','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cef2c7f791.webp',NULL,NULL),(2,'AMD Ryzen 7 7800X3D','CPU (processing)','AMD',96.00,120,'AM5','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cee4134643.webp',NULL,NULL),(3,'ASUS ROG B650','Motherboard (connection)','',0.00,0,'','DDR5','ATX',0,0,2,4,4,0,'','uploads/components/comp_6a0cf50737c10.webp',NULL,NULL),(5,'Corsair 32GB DDR5','RAM (temporary memory)','Corsair',0.00,7,'','DDR5','',0,0,0,0,0,0,'','uploads/components/comp_6a0cf4bfe77af.webp',NULL,NULL),(6,'Kingston Fury 16GB','RAM (temporary memory)','Kingston',0.00,5,'','DDR4','',0,0,0,0,0,0,'','uploads/components/comp_6a0cf480e441c.jpg',NULL,NULL),(8,'WD Blue 2TB HDD','Storage (HDD/SSD)','WD',0.00,8,'','','',0,0,0,0,0,0,'SATA','uploads/components/comp_6a0cf46c7eaa0.webp',NULL,NULL),(9,'RTX 4070 Super','GPU (graphics)','NVIDIA',94.00,200,'','','',336,0,0,0,0,0,'','uploads/components/comp_6a0cf2ef39065.webp',NULL,NULL),(10,'RX 7900 XT','GPU (graphics)','AMD',96.00,315,'','','',336,0,0,0,0,0,'','uploads/components/comp_6a0cf5212347f.jpg',NULL,NULL),(11,'RTX 5080','GPU (graphics)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cf5396c1f9.webp',NULL,NULL),(12,'RTX 5090','GPU (graphics)','NVIDIA',99.00,575,'','','',336,0,0,0,0,0,'','uploads/components/comp_6a0cf52d74742.webp',NULL,NULL),(13,'Ryzen 9 9950X','CPU (processing)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cf2d1ab8b0.webp',NULL,NULL),(14,'Intel Core Ultra 9','CPU (processing)','Intel',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cef1a8bbe5.webp',NULL,NULL),(15,'Gigabyte X870','Motherboard (connection)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cf4f4347ce.webp',NULL,NULL),(16,'ASRock B760','Motherboard (connection)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cf5121f438.webp',NULL,NULL),(17,'G.Skill Trident Z 64GB','RAM (temporary memory)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cf49824baf.webp',NULL,NULL),(18,'Crucial DDR5 32GB','RAM (temporary memory)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/comp_6a0cf4aec2e9c.webp',NULL,NULL),(20,'Corsair RM1000x','PSU (power)','Corsair',99.00,0,'','','',0,0,0,0,0,1000,'','uploads/components/comp_6a0cf4d0d6fbf.jpg',NULL,NULL),(22,'Test','CPU (processing)','',0.00,0,'','','',0,0,0,0,0,0,'',NULL,NULL,NULL);
 /*!40000 ALTER TABLE `component` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -334,6 +392,7 @@ CREATE TABLE `post` (
   `title` varchar(100) NOT NULL,
   `content` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `image_path` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`post_id`),
   KEY `fk_user_id_post` (`user_id`),
   CONSTRAINT `fk_user_id_post` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -346,7 +405,7 @@ CREATE TABLE `post` (
 
 LOCK TABLES `post` WRITE;
 /*!40000 ALTER TABLE `post` DISABLE KEYS */;
-INSERT INTO `post` VALUES (1,1,'Best Gaming GPU','Which GPU is best for 1440p?','2026-05-16 05:40:07'),(2,2,'Budget PC Build','Need build under 60k.','2026-05-16 05:40:07'),(3,3,'RTX vs RX','Which one should I buy?','2026-05-16 05:40:07'),(4,4,'Need Editing Setup','Best PC for Adobe Premiere?','2026-05-16 05:40:07'),(5,5,'SSD Recommendation','Suggest fast SSD.','2026-05-16 05:40:07'),(6,6,'CPU Temperature Issue','CPU getting too hot.','2026-05-16 05:40:07'),(7,7,'Best RGB Fans','Need aesthetic fans.','2026-05-16 05:40:07'),(8,8,'Laptop vs Desktop','Which is better for gaming?','2026-05-16 05:40:07'),(9,9,'Need Silent Build','Suggest low-noise setup.','2026-05-16 05:40:07'),(10,10,'Upgrade Advice','Should I upgrade GPU first?','2026-05-16 05:40:07'),(11,11,'Need RTX Build','Suggest RTX 5080 build.','2026-05-16 05:40:07'),(12,12,'Best CPU Cooler','Which cooler is best?','2026-05-16 05:40:07'),(13,13,'Need Budget GPU','GPU under 30k?','2026-05-16 05:40:07'),(14,14,'4K Gaming Setup','Need high-end gaming PC.','2026-05-16 05:40:07'),(15,15,'Best SSD Brand','Samsung or WD?','2026-05-16 05:40:07'),(16,16,'RGB Build Ideas','Need aesthetic setup.','2026-05-16 05:40:07'),(17,17,'High FPS Build','Need 240 FPS build.','2026-05-16 05:40:07'),(18,18,'PC Upgrade Help','Should I upgrade RAM?','2026-05-16 05:40:07'),(19,19,'Best PSU','Need reliable PSU.','2026-05-16 05:40:07'),(20,20,'Streaming PC Advice','Need dual PC setup.','2026-05-16 05:40:07'),(21,1,'What is the best CPU for gaming in 2026?','I am looking to build a new PC and I am torn between the Intel Core i9-14900K and the AMD Ryzen 9 9950X. What are your thoughts on value for money in Bangladesh?','2026-05-19 22:58:59'),(22,32,'Research-Based PC Build Discussion','I am planning to build a high-performance research workstation for:\r\n\r\nAI & Machine Learning\r\nDeep Learning & Diffusion Models\r\nfMRI / EEG / Neuroscience Research\r\nComputer Vision & YOLOv8\r\n3D CNN Training\r\nLarge Dataset Processing\r\nOCR & AI Applications\r\nPyQt6 Development\r\nCUDA & GPU-intensive workloads\r\n\r\nI would highly appreciate opinions from researchers, AI engineers, data scientists, and PC experts regarding the best configuration in 2026.\r\n\r\nCurrent focus:\r\n\r\nHigh VRAM GPU\r\nPowerful multi-core CPU\r\nFast NVMe SSD\r\nFuture-proof motherboard\r\nStable cooling system\r\nLinux + Windows compatibility\r\n\r\nQuestions:\r\n\r\nAMD or Intel for AI research workloads?\r\nBest GPU for deep learning within a reasonable budget?\r\nDDR5 RAM recommendation for large-scale datasets?\r\nIs Threadripper worth it for research purposes?\r\nBest motherboard + PSU combination for long-term stability?\r\nAny bottleneck issues I should avoid?\r\n\r\nPlease share your recommended configurations, experiences, benchmarks, or suggestions. Your expert opinions would be valuable for my research journey.','2026-05-19 23:04:43'),(23,32,'Test01','Hi \r\nThis is Seaman','2026-05-19 23:53:13');
+INSERT INTO `post` VALUES (1,1,'Best Gaming GPU','Which GPU is best for 1440p?','2026-05-16 05:40:07',NULL),(2,2,'Budget PC Build','Need build under 60k.','2026-05-16 05:40:07',NULL),(3,3,'RTX vs RX','Which one should I buy?','2026-05-16 05:40:07',NULL),(4,4,'Need Editing Setup','Best PC for Adobe Premiere?','2026-05-16 05:40:07',NULL),(5,5,'SSD Recommendation','Suggest fast SSD.','2026-05-16 05:40:07',NULL),(6,6,'CPU Temperature Issue','CPU getting too hot.','2026-05-16 05:40:07',NULL),(7,7,'Best RGB Fans','Need aesthetic fans.','2026-05-16 05:40:07',NULL),(8,8,'Laptop vs Desktop','Which is better for gaming?','2026-05-16 05:40:07',NULL),(9,9,'Need Silent Build','Suggest low-noise setup.','2026-05-16 05:40:07',NULL),(10,10,'Upgrade Advice','Should I upgrade GPU first?','2026-05-16 05:40:07',NULL),(11,11,'Need RTX Build','Suggest RTX 5080 build.','2026-05-16 05:40:07',NULL),(12,12,'Best CPU Cooler','Which cooler is best?','2026-05-16 05:40:07',NULL),(13,13,'Need Budget GPU','GPU under 30k?','2026-05-16 05:40:07',NULL),(14,14,'4K Gaming Setup','Need high-end gaming PC.','2026-05-16 05:40:07',NULL),(15,15,'Best SSD Brand','Samsung or WD?','2026-05-16 05:40:07',NULL),(16,16,'RGB Build Ideas','Need aesthetic setup.','2026-05-16 05:40:07',NULL),(17,17,'High FPS Build','Need 240 FPS build.','2026-05-16 05:40:07',NULL),(18,18,'PC Upgrade Help','Should I upgrade RAM?','2026-05-16 05:40:07',NULL),(19,19,'Best PSU','Need reliable PSU.','2026-05-16 05:40:07',NULL),(20,20,'Streaming PC Advice','Need dual PC setup.','2026-05-16 05:40:07',NULL),(21,1,'What is the best CPU for gaming in 2026?','I am looking to build a new PC and I am torn between the Intel Core i9-14900K and the AMD Ryzen 9 9950X. What are your thoughts on value for money in Bangladesh?','2026-05-19 22:58:59',NULL),(22,32,'Research-Based PC Build Discussion','I am planning to build a high-performance research workstation for:\r\n\r\nAI & Machine Learning\r\nDeep Learning & Diffusion Models\r\nfMRI / EEG / Neuroscience Research\r\nComputer Vision & YOLOv8\r\n3D CNN Training\r\nLarge Dataset Processing\r\nOCR & AI Applications\r\nPyQt6 Development\r\nCUDA & GPU-intensive workloads\r\n\r\nI would highly appreciate opinions from researchers, AI engineers, data scientists, and PC experts regarding the best configuration in 2026.\r\n\r\nCurrent focus:\r\n\r\nHigh VRAM GPU\r\nPowerful multi-core CPU\r\nFast NVMe SSD\r\nFuture-proof motherboard\r\nStable cooling system\r\nLinux + Windows compatibility\r\n\r\nQuestions:\r\n\r\nAMD or Intel for AI research workloads?\r\nBest GPU for deep learning within a reasonable budget?\r\nDDR5 RAM recommendation for large-scale datasets?\r\nIs Threadripper worth it for research purposes?\r\nBest motherboard + PSU combination for long-term stability?\r\nAny bottleneck issues I should avoid?\r\n\r\nPlease share your recommended configurations, experiences, benchmarks, or suggestions. Your expert opinions would be valuable for my research journey.','2026-05-19 23:04:43',NULL),(23,32,'Test01','Hi \r\nThis is Seaman','2026-05-19 23:53:13',NULL);
 /*!40000 ALTER TABLE `post` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -669,7 +728,6 @@ CREATE TABLE `watchlist` (
 
 LOCK TABLES `watchlist` WRITE;
 /*!40000 ALTER TABLE `watchlist` DISABLE KEYS */;
-INSERT INTO `watchlist` VALUES (1,1,20,'2026-05-20 04:05:55');
 /*!40000 ALTER TABLE `watchlist` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -682,4 +740,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-20 12:51:12
+-- Dump completed on 2026-06-02  0:43:35
