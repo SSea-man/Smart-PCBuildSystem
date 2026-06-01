@@ -1,9 +1,4 @@
 <?php
-/**
-
- */
-
-
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'project_alpha');
 define('DB_USER', 'root');
@@ -11,7 +6,7 @@ define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');
 
 define('APP_ENV',   'local');         
-define('BASE_URL',  'http://localhost/myproject');
+define('BASE_URL',  'http://localhost:5173/myproject');
 define('APP_NAME',  'PC Builder BD');
 
 define('JWT_SECRET',        'CHANGE_ME_TO_A_256BIT_RANDOM_STRING_BEFORE_DEPLOY');

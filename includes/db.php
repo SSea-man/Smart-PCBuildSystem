@@ -1,6 +1,5 @@
 <?php
 
-
 function get_db(): PDO {
     static $pdo = null;
     if ($pdo !== null) return $pdo;
@@ -27,16 +26,12 @@ function get_db(): PDO {
     return $pdo;
 }
 
-/**
- */
 function db_query(string $sql, array $params = []): array {
     $stmt = get_db()->prepare($sql);
     $stmt->execute($params);
     return $stmt->fetchAll();
 }
 
-/**
- */
 function db_row(string $sql, array $params = []): ?array {
     $stmt = get_db()->prepare($sql);
     $stmt->execute($params);
@@ -44,8 +39,6 @@ function db_row(string $sql, array $params = []): ?array {
     return $row !== false ? $row : null;
 }
 
-/**
- */
 function db_exec(string $sql, array $params = []): string {
     $stmt = get_db()->prepare($sql);
     $stmt->execute($params);

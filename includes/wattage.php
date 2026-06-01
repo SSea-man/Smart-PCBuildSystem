@@ -1,8 +1,4 @@
 <?php
-/**
-
- */
-
 function calculate_tdp(array $components): int {
     $total = 0;
     foreach ($components as $comp) {

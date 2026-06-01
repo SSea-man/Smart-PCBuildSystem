@@ -1,8 +1,4 @@
 <?php
-/**
- 
- */
-
 function _jwt_base64url_encode(string $data): string {
     return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 }
@@ -53,6 +49,10 @@ function is_admin(): bool {
     $u = get_auth_user();
     return $u && ($u['role'] ?? '') === 'admin';
 }
+function is_moderator(): bool {
+    $u = get_auth_user();
+    return $u && (in_array($u['role'] ?? '', ['moderator', 'admin']));
+}
 function require_auth(string $role = 'user'): void {
     $user = get_auth_user();
     if (!$user) { flash_message('warning','Please log in to continue.'); redirect('login.php'); }
@@ -61,9 +61,6 @@ function require_auth(string $role = 'user'): void {
     }
 }
 
-/**
-
- */
 function attempt_login(string $email, string $password): ?array {
 
     $user = db_row('SELECT * FROM `user` WHERE email = ?', [strtolower(trim($email))]);

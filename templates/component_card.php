@@ -1,20 +1,11 @@
 <?php
-/**
- */
 $in_wl   = $in_watchlist ?? false;
 $cmp_ids = $compare_ids  ?? [];
 $in_cmp  = in_array((int)($comp['id'] ?? 0), array_map('intval', $cmp_ids));
 
-$stock_class = match($comp['stock_status'] ?? '') {
-    'in_stock'    => 'badge-stock-in',
-    'out_of_stock'=> 'badge-stock-out',
-    default       => 'badge-stock-pre',
-};
-$stock_label = match($comp['stock_status'] ?? '') {
-    'in_stock'    => 'In Stock',
-    'out_of_stock'=> 'Out of Stock',
-    default       => 'Pre-Order',
-};
+$stock_lbl = sanitise($comp['stock_status_raw'] ?? 'In Stock');
+$savings   = ceil((float)$comp['price_bdt'] * 0.08);
+$old_price = (float)$comp['price_bdt'] + $savings;
 
 $cat_icon = match($comp['category'] ?? '') {
     'CPU'         => 'bi-cpu',
@@ -30,69 +21,76 @@ $cat_icon = match($comp['category'] ?? '') {
 
 $specs = [];
 if (!empty($comp['socket'])) $specs[] = 'Socket: ' . sanitise($comp['socket']);
-if (!empty($comp['ram_gen'])) $specs[] = 'RAM: ' . sanitise($comp['ram_gen']);
-if (!empty($comp['tdp_watts'])) $specs[] = 'TDP: ' . (int)$comp['tdp_watts'] . 'W';
+if (!empty($comp['ram_gen'])) $specs[] = 'RAM Gen: ' . sanitise($comp['ram_gen']);
+if (!empty($comp['tdp_watts'])) $specs[] = 'TDP Watts: ' . (int)$comp['tdp_watts'] . 'W';
 if (!empty($comp['form_factor'])) $specs[] = 'Form Factor: ' . sanitise($comp['form_factor']);
-if (!empty($comp['length_mm'])) $specs[] = 'Length: ' . (int)$comp['length_mm'] . 'mm';
-if (!empty($comp['psu_wattage'])) $specs[] = 'Wattage: ' . (int)$comp['psu_wattage'] . 'W';
-
-$specs = array_slice($specs, 0, 4);
+if (!empty($comp['length_mm'])) $specs[] = 'GPU Length clearance: ' . (int)$comp['length_mm'] . 'mm';
+if (!empty($comp['psu_wattage'])) $specs[] = 'PSU Wattage: ' . (int)$comp['psu_wattage'] . 'W';
+$specs = array_slice($specs, 0, 3);
 ?>
-<div class="card component-card h-100 border-0 shadow-sm" data-component-id="<?= (int)$comp['id'] ?>">
-  <div class="card-body d-flex flex-column p-3 position-relative">
+<div class="col-md-4 col-sm-6 mb-4">
+  <div class="card h-100 product-card-startech border-0" data-component-id="<?= (int)$comp['id'] ?>" style="background: #ffffff; border-radius: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.04); display: flex; flex-direction: column; justify-content: space-between; position: relative;">
     
-    <div class="d-flex justify-content-between align-items-center position-absolute w-100" style="top: 10px; left: 0; padding: 0 10px; z-index: 1;">
-      <?php if (!empty($comp['benchmark_score']) && $comp['benchmark_score'] > 80): ?>
-      <span class="badge bg-danger" style="border-radius: 4px;">Top Tier</span>
-      <?php else: ?>
-      <span></span>
-      <?php endif; ?>
-      <span class="badge <?= $stock_class ?>" style="border-radius: 4px;"><?= $stock_label ?></span>
-    </div>
+    <?php if ($comp['price_bdt'] > 0): ?>
+      <span class="save-badge-corner" style="position: absolute; top: 0; left: 0; background: #6b21a8; color: #ffffff; font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.6rem; border-bottom-right-radius: 8px; z-index: 5;">
+        Save: ৳<?= number_format($savings) ?>
+      </span>
+    <?php endif; ?>
 
-    <div class="text-center my-3" style="min-height: 180px; display: flex; align-items: center; justify-content: center;">
-      <?php if (!empty($comp['image_url'])): ?>
-        <?php $img_src = str_starts_with($comp['image_url'], 'http') ? $comp['image_url'] : BASE_URL . '/' . $comp['image_url']; ?>
-        <img src="<?= sanitise($img_src) ?>" alt="<?= sanitise($comp['name']) ?>" class="img-fluid" style="max-height: 160px; object-fit: contain;">
-      <?php else: ?>
-        <div class="text-muted opacity-25">
-          <i class="<?= $cat_icon ?>" style="font-size: 5rem;"></i>
+    <div style="padding: 1.25rem 1.25rem 0.5rem 1.25rem;">
+      <a href="<?= BASE_URL ?>/product.php?id=<?= (int)$comp['id'] ?>" class="text-decoration-none">
+        <div class="text-center my-2" style="height: 160px; display: flex; align-items: center; justify-content: center;">
+          <?php if (!empty($comp['image_url'])): ?>
+            <?php $img_src = str_starts_with($comp['image_url'], 'http') ? $comp['image_url'] : BASE_URL . '/' . $comp['image_url']; ?>
+            <img src="<?= sanitise($img_src) ?>" alt="<?= sanitise($comp['name']) ?>" class="img-fluid" style="max-height: 140px; object-fit: contain;">
+          <?php else: ?>
+            <div class="text-muted opacity-25">
+              <i class="<?= $cat_icon ?>" style="font-size: 4.5rem;"></i>
+            </div>
+          <?php endif; ?>
         </div>
-      <?php endif; ?>
-    </div>
-
-    <h6 class="fw-bold mb-3" style="font-size: 0.95rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"><?= sanitise($comp['name']) ?></h6>
-
-    <ul class="text-muted small mb-3 ps-3" style="list-style-type: disc;">
-      <?php foreach ($specs as $spec): ?>
-      <li class="mb-1"><?= $spec ?></li>
-      <?php endforeach; ?>
-      <?php if (empty($specs)): ?>
-      <li class="mb-1">Brand: <?= sanitise($comp['brand'] ?? 'Unknown') ?></li>
-      <li class="mb-1">Type: <?= sanitise($comp['category'] ?? 'Component') ?></li>
-      <?php endif; ?>
-    </ul>
-
-    <div class="mt-auto">
-      <div class="text-center mb-3">
-        <span class="text-danger fw-bold fs-5"><?= format_bdt((float)$comp['price_bdt']) ?></span>
-      </div>
-
-      <a href="<?= !empty($comp['retailer_url']) ? sanitise($comp['retailer_url']) : '#' ?>" 
-         class="btn btn-light text-primary fw-bold w-100 mb-2" 
-         style="background: #f0f4f9; border-radius: 6px;"
-         target="_blank" rel="noopener">
-        <i class="bi bi-cart3 me-2"></i>Buy Now
       </a>
 
-      <div class="text-center">
-        <button class="btn btn-link text-decoration-none text-muted p-0 small compare-toggle-btn <?= $in_cmp ? 'text-accent' : '' ?>"
-                data-id="<?= (int)$comp['id'] ?>"
-                data-name="<?= sanitise($comp['name']) ?>"
-                style="font-size: 0.85rem;">
-          <i class="bi <?= $in_cmp ? 'bi-check-circle-fill' : 'bi-plus-square' ?> me-1"></i> 
-          <?= $in_cmp ? 'Added to Compare' : 'Add to Compare' ?>
-        </button>
+      <a href="<?= BASE_URL ?>/product.php?id=<?= (int)$comp['id'] ?>" class="text-decoration-none text-dark">
+        <h6 class="product-title-text mb-3" style="font-size: 0.88rem; font-weight: 700; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 38px; color: #1e293b;">
+          <?= sanitise($comp['name']) ?>
+        </h6>
+      </a>
+
+      <ul class="text-secondary small mb-4 ps-3" style="list-style-type: disc; line-height: 1.6; font-size: 0.78rem; min-height: 75px;">
+        <?php foreach ($specs as $spec): ?>
+          <li class="mb-1"><?= $spec ?></li>
+        <?php endforeach; ?>
+        <?php if (empty($specs)): ?>
+          <li class="mb-1">Brand: <?= sanitise($comp['brand'] ?? 'Various') ?></li>
+          <li class="mb-1">Category: <?= sanitise($comp['category'] ?? 'PC Component') ?></li>
+        <?php endif; ?>
+      </ul>
+    </div>
+
+    <div style="border-top: 1px solid #f1f5f9; padding: 0.75rem 1.25rem 1.25rem 1.25rem; text-align: center;">
+      <div class="mb-3">
+        <?php if ($comp['price_bdt'] > 0): ?>
+          <span class="text-danger fw-bold" style="font-size: 1.05rem;">৳<?= number_format((float)$comp['price_bdt']) ?></span>
+          <span class="text-muted text-decoration-line-through ms-2" style="font-size: 0.82rem;">৳<?= number_format($old_price) ?></span>
+        <?php else: ?>
+          <span class="text-muted fw-bold" style="font-size: 0.95rem;">Price Unlisted</span>
+        <?php endif; ?>
+      </div>
+
+      <div class="d-flex flex-column gap-2">
+        <a href="<?= BASE_URL ?>/custom_builder.php?add_component=<?= (int)$comp['id'] ?>" class="btn btn-outline-primary btn-sm w-100 btn-add-build-custom" style="border-radius: 8px; font-weight: 700; font-size: 0.82rem; padding: 0.45rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem; border-color: rgba(63, 185, 80, 0.2); color: #3fb950; background: #ffffff;">
+          <i class="bi bi-cart3"></i> Buy Now
+        </a>
+        <div class="d-flex justify-content-center align-items-center mt-1">
+          <button class="btn btn-link text-decoration-none text-muted p-0 small compare-toggle-btn <?= $in_cmp ? 'text-accent' : '' ?>"
+                  data-id="<?= (int)$comp['id'] ?>"
+                  data-name="<?= sanitise($comp['name']) ?>"
+                  style="font-size: 0.72rem; font-weight:600;">
+            <i class="bi <?= $in_cmp ? 'bi-check-circle-fill' : 'bi-plus-square' ?> me-1"></i> 
+            <?= $in_cmp ? 'Added' : 'Compare' ?>
+          </button>
+        </div>
       </div>
     </div>
 

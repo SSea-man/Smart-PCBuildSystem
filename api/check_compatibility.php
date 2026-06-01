@@ -13,7 +13,6 @@ $ids  = $body['component_ids'] ?? [];
 
 if (empty($ids)) { json_response(['compatible'=>true,'pass'=>true,'issues'=>[],'errors'=>[]]); }
 
-// Load component rows
 $components = [];
 foreach ($ids as $cat => $id) {
     $id = (int)$id;
@@ -23,7 +22,6 @@ foreach ($ids as $cat => $id) {
 }
 
 $result = check_compatibility($components);
-// Normalise: return both 'compatible' (test expectation) and 'pass' (legacy key)
 json_response([
     'compatible' => $result['pass'],
     'pass'       => $result['pass'],

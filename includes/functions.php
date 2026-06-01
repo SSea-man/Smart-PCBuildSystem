@@ -73,25 +73,20 @@ function json_response(mixed $data, int $code = 200): never {
     exit;
 }
 
-
-/**
- */
 function type_to_category(string $type): string {
     return match(true) {
-        str_starts_with($type, 'CPU')         => 'CPU',
-        str_starts_with($type, 'Motherboard') => 'Motherboard',
-        str_starts_with($type, 'RAM')         => 'RAM',
-        str_starts_with($type, 'Storage')     => 'Storage',
-        str_starts_with($type, 'GPU')         => 'GPU',
-        str_starts_with($type, 'PSU')         => 'PSU',
-        str_starts_with($type, 'Case')        => 'Case',
-        str_starts_with($type, 'Cooling')     => 'Cooling',
-        default                               => $type,
+        $type === 'CPU' || str_starts_with($type, 'CPU (')                 => 'CPU',
+        $type === 'Motherboard' || str_starts_with($type, 'Motherboard (') => 'Motherboard',
+        $type === 'RAM' || str_starts_with($type, 'RAM (')                 => 'RAM',
+        $type === 'Storage' || str_starts_with($type, 'Storage (')         => 'Storage',
+        $type === 'GPU (graphics)' || $type === 'Graphics Card'            => 'GPU',
+        $type === 'PSU (power)' || $type === 'Power Supply'                => 'PSU',
+        $type === 'Casing'                                                 => 'Case',
+        $type === 'CPU Cooler' || $type === 'Casing Cooler'                => 'Cooling',
+        default                                                            => $type,
     };
 }
 
-/**
- */
 function normalize_stock(string $s): string {
     return match(strtolower(trim($s))) {
         'in stock'     => 'in_stock',
@@ -102,23 +97,20 @@ function normalize_stock(string $s): string {
     };
 }
 
-/**
- 
- */
 function component_base_sql(): string {
     return "SELECT
         c.component_id                                  AS id,
         c.component_name                                AS name,
         c.type,
         CASE
-            WHEN c.type LIKE 'CPU%'         THEN 'CPU'
-            WHEN c.type LIKE 'Motherboard%' THEN 'Motherboard'
-            WHEN c.type LIKE 'RAM%'         THEN 'RAM'
-            WHEN c.type LIKE 'Storage%'     THEN 'Storage'
-            WHEN c.type LIKE 'GPU%'         THEN 'GPU'
-            WHEN c.type LIKE 'PSU%'         THEN 'PSU'
-            WHEN c.type LIKE 'Case%'        THEN 'Case'
-            WHEN c.type LIKE 'Cooling%'     THEN 'Cooling'
+            WHEN c.type = 'CPU' OR c.type LIKE 'CPU (%' THEN 'CPU'
+            WHEN c.type = 'Motherboard' OR c.type LIKE 'Motherboard (%' THEN 'Motherboard'
+            WHEN c.type = 'RAM' OR c.type LIKE 'RAM (%' THEN 'RAM'
+            WHEN c.type = 'Storage' OR c.type LIKE 'Storage (%' THEN 'Storage'
+            WHEN c.type = 'GPU (graphics)' OR c.type = 'Graphics Card' THEN 'GPU'
+            WHEN c.type = 'PSU (power)' OR c.type = 'Power Supply' THEN 'PSU'
+            WHEN c.type = 'Casing' THEN 'Case'
+            WHEN c.type = 'CPU Cooler' OR c.type = 'Casing Cooler' THEN 'Cooling'
             ELSE c.type
         END                                             AS category,
         c.brand, c.benchmark_score, c.tdp_watts, c.socket,
@@ -138,8 +130,6 @@ function component_base_sql(): string {
     LEFT JOIN store s ON s.store_id = sa.store_id";
 }
 
-/**
- */
 function get_component(int $id): ?array {
     $sql = component_base_sql() . ' WHERE c.component_id = ?';
     $row = db_row($sql, [$id]);
@@ -147,26 +137,32 @@ function get_component(int $id): ?array {
     return $row;
 }
 
-/**
- */
 function get_components_by_category(string $category, float $max_price = 0): array {
-    $type_prefix = match($category) {
-        'CPU'         => 'CPU',
-        'Motherboard' => 'Motherboard',
-        'RAM'         => 'RAM',
-        'Storage'     => 'Storage',
-        'GPU'         => 'GPU',
-        'PSU'         => 'PSU',
-        'Case'        => 'Case',
-        'Cooling'     => 'Cooling',
-        default       => $category,
+    $types = match($category) {
+        'CPU'         => ['CPU', 'CPU (processing)'],
+        'Motherboard' => ['Motherboard', 'Motherboard (connection)'],
+        'RAM'         => ['RAM', 'RAM (temporary memory)'],
+        'Storage'     => ['Storage', 'Storage (HDD/SSD)'],
+        'GPU'         => ['GPU (graphics)', 'Graphics Card'],
+        'PSU'         => ['PSU (power)', 'Power Supply'],
+        'Case'        => ['Casing'],
+        'Cooling'     => ['CPU Cooler', 'Casing Cooler'],
+        default       => [$category],
     };
-    $sql    = component_base_sql() . " WHERE c.type LIKE ?";
-    $params = ["{$type_prefix}%"];
-    if ($max_price > 0) { $sql .= ' AND COALESCE(sa.price,0) <= ?'; $params[] = $max_price; }
+    
+    $placeholders = implode(',', array_fill(0, count($types), '?'));
+    $sql    = component_base_sql() . " WHERE c.type IN ($placeholders) AND sa.component_id IS NOT NULL AND COALESCE(sa.price, 0) > 0";
+    $params = $types;
+    
+    if ($max_price > 0) {
+        $sql .= ' AND COALESCE(sa.price,0) <= ?';
+        $params[] = $max_price;
+    }
     $sql .= ' ORDER BY c.benchmark_score DESC, sa.price DESC';
     $rows = db_query($sql, $params);
-    foreach ($rows as &$r) $r['stock_status'] = normalize_stock($r['stock_status_raw'] ?? '');
+    foreach ($rows as &$r) {
+        $r['stock_status'] = normalize_stock($r['stock_status_raw'] ?? '');
+    }
     unset($r);
     return $rows;
 }

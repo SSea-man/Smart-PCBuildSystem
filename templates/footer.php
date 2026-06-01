@@ -1,5 +1,4 @@
 </main>
-<!-- ── Footer ──────────────────────────────────────────────────────────────── -->
 <footer class="site-footer mt-5">
   <div class="container-xl">
     <div class="row g-4 py-5">
@@ -8,7 +7,8 @@
           <span class="brand-icon"><i class="bi bi-cpu-fill"></i></span>
           <span>PC<span class="text-accent">Builder</span> BD</span>
         </a>
-        <p class="text-muted small">Smart PC build recommendations for the Bangladeshi market. Live prices from Star Tech, Ryans &amp; Techland.</p>
+        <p class="text-muted small mb-2">Smart PC build recommendations for the Bangladeshi market. Live prices from Star Tech, Ryans &amp; Techland.</p>
+        <p class="text-muted small mb-0"><i class="bi bi-geo-alt-fill text-accent me-1"></i>Location: United City, Madani Avenue, Dhaka</p>
       </div>
       <div class="col-6 col-lg-2">
         <h6 class="footer-heading">Build</h6>
@@ -55,7 +55,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script>
-  window.BASE_URL  = '<?= BASE_URL ?>';
+  window.BASE_URL  = '<?= rtrim(parse_url(BASE_URL, PHP_URL_PATH), "/") ?>';
   window.CSRF_TOKEN = '<?= csrf_token() ?>';
   window.IS_LOGGED_IN = <?= is_logged_in() ? 'true' : 'false' ?>;
 </script>
@@ -69,4 +69,3 @@
 <script><?= $inline_script ?></script>
 <?php endif; ?>
 </body>
-</html>

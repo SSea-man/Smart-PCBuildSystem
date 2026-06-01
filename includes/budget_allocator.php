@@ -1,9 +1,4 @@
 <?php
-/**
- 
- */
-
-
 const BUDGET_PROFILES = [
     'gaming' => [
         'CPU'         => 0.20,
@@ -47,8 +42,6 @@ const BUDGET_PROFILES = [
     ],
 ];
 
-/**
- */
 function allocate_budget(float $total_bdt, string $purpose): array {
     $profile = BUDGET_PROFILES[$purpose] ?? BUDGET_PROFILES['general'];
     $result  = [];

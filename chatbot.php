@@ -10,54 +10,358 @@ $user = get_auth_user();
 $page_title = 'PC Builder Chatbot';
 include __DIR__ . '/templates/header.php';
 ?>
-<div class="container-xl py-4">
-  <div class="text-center mb-4">
-    <h1 class="section-title"><i class="bi bi-robot me-2 text-accent"></i>PC Builder Assistant</h1>
-    <p class="section-sub">Ask anything about PC building, components, or BDT prices.</p>
+
+<style>
+.chatbot-container-wrapper {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.chat-layout {
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  gap: 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .chat-layout {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+  .assistant-status-sidebar {
+    display: none !important;
+  }
+}
+
+.chat-area {
+  display: flex;
+  flex-direction: column;
+  height: 60vh;
+  min-height: 480px;
+  justify-content: space-between;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 4px;
+}
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+.chat-messages::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+.msg.user {
+  align-self: flex-end;
+  max-width: 75%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.msg.user .msg-content {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  padding: 0.65rem 1.15rem;
+  border-radius: 20px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.msg.ai {
+  align-self: flex-start;
+  display: flex;
+  gap: 0.75rem;
+  max-width: 85%;
+  align-items: flex-start;
+}
+
+.msg.ai .msg-avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.msg.ai .msg-content {
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  padding-top: 0.25rem;
+}
+
+.msg.ai .msg-content p {
+  margin-bottom: 0.5rem;
+}
+.msg.ai .msg-content ul, .msg.ai .msg-content ol {
+  padding-left: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.chat-suggestions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.suggestion-chip {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.suggestion-chip:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.suggestion-chip i {
+  font-size: 0.9rem;
+}
+
+.chat-input-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chat-input-container textarea {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  resize: none;
+  width: 100%;
+  outline: none;
+  padding: 0;
+  font-family: var(--font-body);
+}
+
+.chat-input-container textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.chat-input-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-input-actions-left {
+  display: flex;
+  align-items: center;
+}
+
+.chat-input-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-circle-action {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.btn-circle-action:hover {
+  background: var(--bg-input);
+  color: var(--text-primary);
+}
+
+.btn-circle-action.btn-plus {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.btn-circle-action.btn-mic {
+  background: var(--bg-input);
+  color: var(--text-primary);
+}
+
+.btn-circle-action.btn-send {
+  background: linear-gradient(135deg, #ff4757, #ff6b81);
+  color: #ffffff;
+}
+
+.btn-circle-action.btn-send:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 10px rgba(255, 71, 87, 0.3);
+}
+
+.assistant-status-sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 0.5rem;
+  border-left: 1px solid var(--border);
+  padding-left: 1.5rem;
+}
+
+.assistant-profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.assistant-profile-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--border);
+}
+
+.assistant-profile-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.assistant-profile-role {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.floating-toolbelt {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.floating-toolbelt .btn-tool {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.floating-toolbelt .btn-tool:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+</style>
+
+<div class="container-xl py-4 chatbot-container-wrapper">
+  <div class="text-center mb-3">
+    <h1 class="section-title" style="font-size: 1.5rem;"><i class="bi bi-robot me-2 text-accent"></i>PC Builder AI Assistant</h1>
+    <p class="section-sub" style="font-size: 0.85rem;">Get instant recommendations on builds, parts compatibility, and local pricing.</p>
   </div>
 
-  <div class="row justify-content-center">
-    <div class="col-lg-8">
-
-    <div class="chip-row mb-2">
-        <?php
-        $chips = [
-          'Best gaming PC under ৳80,000?',
-          'CPU vs GPU bottleneck explained',
-          'DDR4 vs DDR5 in Bangladesh?',
-          'Best motherboard for Ryzen 7',
-          'How much PSU wattage do I need?',
-        ];
-        foreach ($chips as $chip): ?>
-        <span class="chip" onclick="sendChip(this)"><?= sanitise($chip) ?></span>
-        <?php endforeach; ?>
-      </div>
-
-      <!-- Chat container -->
-      <div class="chat-container">
-        <div class="chat-messages" id="chat-messages">
-          <div class="msg ai">
-            <div class="msg-avatar"><i class="bi bi-robot"></i></div>
-            <div class="msg-bubble">
-              Hi <?= sanitise($user['name']) ?>! 👋 I'm your PC building assistant. Ask me about component compatibility, budget recommendations, or the best deals from Star Tech, Ryans, and Techland. What are you building today?
-            </div>
+  <div class="chat-layout">
+    <div class="chat-area">
+      <div class="chat-messages" id="chat-messages">
+        <div class="msg ai">
+          <img src="<?= BASE_URL ?>/assets/img/assistant_avatar.png" class="msg-avatar-img" alt="Lina avatar">
+          <div class="msg-content">
+            Good morning! Here's your assistant brief:
+            <ul>
+              <li>Get custom build recommendations under your budget</li>
+              <li>Instantly compare CPU & GPU bottlenecks</li>
+              <li>Check real-time stock compatibility</li>
+            </ul>
+            What specs are you looking to build or upgrade today?
           </div>
         </div>
+      </div>
 
-        <div class="chat-input-area">
-          <div class="d-flex gap-2">
-            <input type="text" id="chat-input" class="form-control"
-                   placeholder="Ask about PC builds, components, prices…"
-                   aria-label="Chat message" autocomplete="off">
-            <button class="btn btn-accent px-3" id="send-btn" aria-label="Send message">
+      <div class="chat-input-container">
+        <textarea id="chat-input" rows="1" placeholder="Type a message or ask anything..." autocomplete="off"></textarea>
+        
+        <div class="chat-input-actions">
+          <div class="chat-input-actions-left">
+            <button class="btn-circle-action btn-plus" aria-label="Add attachments">
+              <i class="bi bi-plus-lg"></i>
+            </button>
+          </div>
+          <div class="chat-input-actions-right">
+            <button class="btn-circle-action btn-mic" aria-label="Voice input">
+              <i class="bi bi-mic-fill"></i>
+            </button>
+            <button class="btn-circle-action btn-send" id="send-btn" aria-label="Send">
               <i class="bi bi-send-fill"></i>
             </button>
           </div>
-          <div class="d-flex justify-content-between mt-2">
-            <small class="text-muted"><i class="bi bi-shield-check me-1"></i>Responses may not reflect live prices</small>
-            <small class="text-muted" id="rate-info">Unlimited Messages</small>
-          </div>
         </div>
+      </div>
+    </div>
+
+    <div class="assistant-status-sidebar">
+      <div class="assistant-profile-card">
+        <img src="<?= BASE_URL ?>/assets/img/assistant_avatar.png" class="assistant-profile-img" alt="Lina profile">
+        <h3 class="assistant-profile-name">Lina</h3>
+        <p class="assistant-profile-role">AI Assistant</p>
+      </div>
+
+      <div class="floating-toolbelt">
+        <button class="btn-tool" title="Magic Assist"><i class="bi bi-magic"></i></button>
+        <button class="btn-tool" title="Quick Settings"><i class="bi bi-gear-fill"></i></button>
+        <button class="btn-tool" title="System Status"><i class="bi bi-cpu-fill"></i></button>
       </div>
     </div>
   </div>
@@ -69,31 +373,48 @@ const inputEl    = document.getElementById('chat-input');
 const sendBtn    = document.getElementById('send-btn');
 const history    = [];
 
+inputEl.addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = (this.scrollHeight) + 'px';
+});
+
 function appendMsg(role, text) {
   const div = document.createElement('div');
   div.className = 'msg ' + role;
-  const avatar = role === 'ai'
-    ? '<div class="msg-avatar"><i class="bi bi-robot"></i></div>'
-    : '<div class="msg-avatar"><i class="bi bi-person"></i></div>';
-  div.innerHTML = avatar + '<div class="msg-bubble">' + text.replace(/\n/g,'<br>') + '</div>';
+  
+  if (role === 'ai') {
+    const avatar = `<img src="${window.BASE_URL}/assets/img/assistant_avatar.png" class="msg-avatar-img" alt="Lina">`;
+    div.innerHTML = avatar + '<div class="msg-content">' + text.replace(/\n/g, '<br>') + '</div>';
+  } else {
+    div.innerHTML = '<div class="msg-content">' + text.replace(/\n/g, '<br>') + '</div>';
+  }
+  
   messagesEl.appendChild(div);
   messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
 function showTyping() {
   const div = document.createElement('div');
-  div.className = 'msg ai'; div.id = 'typing-indicator';
-  div.innerHTML = '<div class="msg-avatar"><i class="bi bi-robot"></i></div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>';
+  div.className = 'msg ai'; 
+  div.id = 'typing-indicator';
+  
+  const avatar = `<img src="${window.BASE_URL}/assets/img/assistant_avatar.png" class="msg-avatar-img" alt="Lina">`;
+  div.innerHTML = avatar + '<div class="msg-content text-muted italic-text">Thinking...</div>';
+  
   messagesEl.appendChild(div);
   messagesEl.scrollTop = messagesEl.scrollHeight;
 }
-function removeTyping() { document.getElementById('typing-indicator')?.remove(); }
+
+function removeTyping() { 
+  document.getElementById('typing-indicator')?.remove(); 
+}
 
 async function sendMessage(text) {
   if (!text.trim()) return;
   appendMsg('user', text);
   history.push({ role: 'user', content: text });
   inputEl.value = '';
+  inputEl.style.height = 'auto';
   sendBtn.disabled = true;
   showTyping();
 
@@ -137,8 +458,15 @@ async function sendMessage(text) {
 }
 
 sendBtn.addEventListener('click', () => sendMessage(inputEl.value));
-inputEl.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(inputEl.value); } });
+inputEl.addEventListener('keydown', e => { 
+  if (e.key === 'Enter' && !e.shiftKey) { 
+    e.preventDefault(); 
+    sendMessage(inputEl.value); 
+  } 
+});
 
-window.sendChip = function(el) { sendMessage(el.textContent); };
+window.sendChip = function(text) { 
+  sendMessage(text); 
+};
 JS;
 include __DIR__ . '/templates/footer.php'; ?>

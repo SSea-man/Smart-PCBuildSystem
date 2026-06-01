@@ -1,4 +1,8 @@
-
+-- ============================================================
+-- migration.sql — Adapt project_alpha to PC Builder app
+-- Run AFTER importing your existing SQL dump.
+-- This only ADDS columns/tables; nothing is dropped.
+-- ============================================================
 
 USE `project_alpha`;
 

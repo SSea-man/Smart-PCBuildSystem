@@ -1,7 +1,4 @@
 <?php
-/**
-
- */
 $bc     = $build_data['components'] ?? [];
 $total  = (float)($build_data['total_bdt'] ?? 0);
 $score  = (float)($build_data['score']     ?? 0);

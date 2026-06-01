@@ -12,6 +12,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/style.css?v=<?= time() ?>">
+<?php csrf_token(); ?>
+<script>
+    window.BASE_URL = '<?= BASE_URL ?>';
+    window.CSRF_TOKEN = '<?= $_SESSION['csrf_token'] ?? '' ?>';
+    window.IS_LOGGED_IN = <?= is_logged_in() ? 'true' : 'false' ?>;
+</script>
 </head>
 <body>
 
@@ -30,12 +36,18 @@
       <ul class="navbar-nav me-auto gap-1">
         <?php
         $nav_links = [
-          ['href' => 'store.php',          'icon' => 'bi-shop',           'label' => 'Store'],
-          ['href' => 'purpose.php',        'icon' => 'bi-magic',          'label' => 'Build Wizard'],
-          ['href' => 'compare.php',        'icon' => 'bi-layout-split',   'label' => 'Compare'],
-          ['href' => 'forum.php',          'icon' => 'bi-chat-square-text', 'label' => 'Forum'],
-          ['href' => 'chatbot.php',        'icon' => 'bi-robot',          'label' => 'Chatbot'],
+          ['href' => 'store.php', 'icon' => 'bi-shop', 'label' => 'Store'],
         ];
+        if (!is_logged_in()) {
+          $nav_links[] = ['href' => 'about.php', 'icon' => 'bi-info-circle', 'label' => 'About Us'];
+        }
+        if (is_logged_in()) {
+          $nav_links[] = ['href' => 'purpose.php',  'icon' => 'bi-magic',            'label' => 'Build Wizard'];
+          $nav_links[] = ['href' => 'forum.php',    'icon' => 'bi-chat-square-text', 'label' => 'Forum'];
+          $nav_links[] = ['href' => 'chatbot.php',  'icon' => 'bi-robot',            'label' => 'Chatbot'];
+        }
+        $nav_links[] = ['href' => 'blog.php', 'icon' => 'bi-journal-richtext', 'label' => 'Blog'];
+
         $cur = basename($_SERVER['PHP_SELF']);
         foreach ($nav_links as $link):
           $active = ($cur === $link['href']) ? 'active' : '';
@@ -86,7 +98,7 @@
           </ul>
         </div>
         <?php else: ?>
-        <a class="btn btn-sm btn-outline-light" href="<?= BASE_URL ?>/login.php">
+        <a class="btn btn-sm btn-login" href="<?= BASE_URL ?>/login.php">
           <i class="bi bi-box-arrow-in-right me-1"></i>Login
         </a>
         <a class="btn btn-sm btn-accent" href="<?= BASE_URL ?>/register.php">

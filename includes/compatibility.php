@@ -1,8 +1,4 @@
 <?php
-/**
-
- */
-
 require_once __DIR__ . '/wattage.php';
 
 function check_compatibility(array $components): array {
@@ -11,11 +7,11 @@ function check_compatibility(array $components): array {
     $cpu  = $components['CPU']          ?? null;
     $mb   = $components['Motherboard']  ?? null;
     $ram  = $components['RAM']          ?? null;
-    $gpu  = $components['GPU']          ?? null;
-    $psu  = $components['PSU']          ?? null;
-    $case = $components['Case']         ?? null;
-    $cool = $components['Cooling']      ?? null;
-    $stor = $components['Storage']      ?? null;
+    $gpu  = $components['GPU']          ?? $components['Graphics Card'] ?? null;
+    $psu  = $components['PSU']          ?? $components['Power Supply']  ?? null;
+    $case = $components['Case']         ?? $components['Casing']        ?? null;
+    $cool = $components['Cooling']      ?? $components['CPU Cooler']    ?? null;
+    $stor = $components['Storage']       ?? null;
 
     if ($cpu && $mb) {
         if (!empty($cpu['socket']) && !empty($mb['socket']) &&
@@ -26,10 +22,11 @@ function check_compatibility(array $components): array {
     }
 
     if ($ram && $mb) {
-        if (!empty($ram['ram_gen']) && !empty($mb['ram_gen']) &&
-            $ram['ram_gen'] !== $mb['ram_gen']) {
-            $errors[] = "RAM type <strong>{$ram['ram_gen']}</strong> is incompatible with "
-                      . "motherboard <strong>{$mb['ram_gen']}</strong> slots.";
+        $ramGen = trim((string)($ram['ram_gen'] ?? ''));
+        $mbGen  = trim((string)($mb['ram_gen']  ?? ''));
+        if ($ramGen !== '' && $mbGen !== '' && strtoupper($ramGen) !== strtoupper($mbGen)) {
+            $errors[] = "RAM type <strong>{$ramGen}</strong> is incompatible with "
+                      . "motherboard <strong>{$mbGen}</strong> slots.";
         }
     }
 
@@ -73,15 +70,15 @@ function check_compatibility(array $components): array {
 
    
     if ($stor && $mb) {
-        $iface = $stor['storage_interface'] ?? '';
+        $iface = trim((string)($stor['storage_interface'] ?? ''));
         if ($iface === 'NVMe') {
             $m2 = (int)($mb['m2_slots'] ?? 0);
-            if ($m2 === 0) {
+            if ($m2 === 0 && array_key_exists('m2_slots', $mb)) {
                 $errors[] = "Motherboard has <strong>no M.2/NVMe slots</strong> for the selected NVMe storage.";
             }
         } elseif ($iface === 'SATA') {
             $sata = (int)($mb['sata_ports'] ?? 0);
-            if ($sata === 0) {
+            if ($sata === 0 && array_key_exists('sata_ports', $mb)) {
                 $errors[] = "Motherboard has <strong>no SATA ports</strong> for the selected SATA storage.";
             }
         }

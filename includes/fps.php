@@ -1,8 +1,4 @@
 <?php
-/**
- 
- */
-
 function estimate_fps(int $cpu_id, int $gpu_id, string $game_slug): ?array {
     $cpu  = db_row('SELECT benchmark_score FROM component WHERE component_id=?', [$cpu_id]);
     $gpu  = db_row('SELECT benchmark_score FROM component WHERE component_id=?', [$gpu_id]);

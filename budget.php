@@ -5,6 +5,8 @@ require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/functions.php';
 require_once __DIR__ . '/includes/budget_allocator.php';
 
+require_auth();
+
 $purpose = $_SESSION['purpose'] ?? 'general';
 
 if (is_post()) {
@@ -52,7 +54,6 @@ include __DIR__ . '/templates/header.php';
         </div>
       </div>
     </div>
-
 
     <div class="card p-4 mb-4">
       <h5 class="fw-700 mb-3"><i class="bi bi-pie-chart me-2 text-accent"></i>Budget Allocation Preview</h5>

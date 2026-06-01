@@ -5,6 +5,8 @@ require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/functions.php';
 require_once __DIR__ . '/includes/budget_allocator.php';
 
+require_auth();
+
 if (is_post()) {
     $purpose = input('purpose');
     if (!in_array($purpose, ['gaming','video_editing','office','general'])) {

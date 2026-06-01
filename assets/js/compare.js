@@ -1,5 +1,3 @@
-/**
- */
 'use strict';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -7,8 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initStickyHeader();
 });
 
-/**
- */
 function highlightWinners() {
   document.querySelectorAll('tr[data-compare-row]').forEach(row => {
     const metric = row.dataset.compareRow;

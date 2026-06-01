@@ -4,6 +4,9 @@ require_once __DIR__ . '/includes/db.php';
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/functions.php';
 require_once __DIR__ . '/includes/scoring.php';
+
+require_auth();
+
 require_once __DIR__ . '/includes/budget_allocator.php';
 
 $purpose = $_SESSION['purpose'] ?? 'general';
@@ -26,7 +29,7 @@ include __DIR__ . '/templates/header.php';
     <p class="section-sub">
       <strong class="text-accent"><?= sanitise(purpose_label($purpose)) ?></strong> build ·
       Budget <strong class="text-accent"><?= format_bdt($budget) ?></strong> ·
-      Ranked by AI composite score
+      Ranked by composite score
     </p>
   </div>
 
@@ -55,7 +58,7 @@ include __DIR__ . '/templates/header.php';
       <i class="bi bi-sliders me-1"></i>Custom Builder
     </a>
     <a href="<?= BASE_URL ?>/chatbot.php" class="btn btn-outline-light px-4">
-      <i class="bi bi-robot me-1"></i>Ask AI Chatbot
+      <i class="bi bi-robot me-1"></i>Ask Chatbot
     </a>
   </div>
   <?php endif; ?>

@@ -38,12 +38,21 @@ if (is_post()) {
         if ($bottleneck === 'GPU' && $gpu) $current_price = (float)$gpu['price_bdt'];
         $max_price = $current_price + $budget;
 
-        $upgrade = db_row(
-            component_base_sql() .
-            " WHERE c.type LIKE ? AND COALESCE(sa.price,0) <= ? AND COALESCE(sa.price,0) > ?
-              ORDER BY c.benchmark_score DESC LIMIT 1",
-            ["{$upgrade_cat}%", $max_price, $current_price]
-        );
+        if ($upgrade_cat === 'GPU') {
+            $upgrade = db_row(
+                component_base_sql() .
+                " WHERE c.type IN ('GPU (graphics)', 'Graphics Card') AND COALESCE(sa.price,0) <= ? AND COALESCE(sa.price,0) > ?
+                  ORDER BY c.benchmark_score DESC LIMIT 1",
+                [$max_price, $current_price]
+            );
+        } else {
+            $upgrade = db_row(
+                component_base_sql() .
+                " WHERE c.type IN ('CPU', 'CPU (processing)') AND COALESCE(sa.price,0) <= ? AND COALESCE(sa.price,0) > ?
+                  ORDER BY c.benchmark_score DESC LIMIT 1",
+                [$max_price, $current_price]
+            );
+        }
 
         $suggestion = [
             'bottleneck'=>$bottleneck,'upgrade_cat'=>$upgrade_cat,
@@ -58,11 +67,11 @@ if (is_post()) {
 $cpus = db_query("SELECT c.component_id as id, c.component_name as name, c.benchmark_score,
     COALESCE(sa.price,0) as price_bdt FROM component c
     LEFT JOIN (SELECT component_id, MIN(price) as price FROM storeavailability GROUP BY component_id) sa ON sa.component_id=c.component_id
-    WHERE c.type LIKE 'CPU%' ORDER BY COALESCE(sa.price,0)");
+    WHERE c.type IN ('CPU', 'CPU (processing)') ORDER BY COALESCE(sa.price,0)");
 $gpus = db_query("SELECT c.component_id as id, c.component_name as name, c.benchmark_score,
     COALESCE(sa.price,0) as price_bdt FROM component c
     LEFT JOIN (SELECT component_id, MIN(price) as price FROM storeavailability GROUP BY component_id) sa ON sa.component_id=c.component_id
-    WHERE c.type LIKE 'GPU%' ORDER BY COALESCE(sa.price,0)");
+    WHERE c.type IN ('GPU (graphics)', 'Graphics Card') ORDER BY COALESCE(sa.price,0)");
 
 $page_title = 'Upgrade Advisor';
 include __DIR__ . '/templates/header.php';
