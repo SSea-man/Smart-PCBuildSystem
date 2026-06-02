@@ -123,7 +123,6 @@ include __DIR__ . '/templates/header.php';
   font-family: var(--font-head);
   font-size: 1.6rem;
   font-weight: 800;
-  color: #1e293b;
   margin-bottom: 0.5rem;
 }
 
@@ -142,8 +141,8 @@ include __DIR__ . '/templates/header.php';
 }
 
 .quick-pill-badge {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 20px;
   padding: 0.35rem 0.9rem;
   font-size: 0.78rem;
@@ -159,8 +158,8 @@ include __DIR__ . '/templates/header.php';
 }
 
 .filter-sidebar-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 12px;
   margin-bottom: 1.25rem;
   overflow: hidden;
@@ -168,11 +167,10 @@ include __DIR__ . '/templates/header.php';
 
 .filter-sidebar-header {
   padding: 0.85rem 1.25rem;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
+  background: var(--bg-input);
+  border-bottom: 1px solid var(--border);
   font-weight: 700;
   font-size: 0.88rem;
-  color: #1e293b;
 }
 
 .filter-sidebar-body {
@@ -202,7 +200,7 @@ include __DIR__ . '/templates/header.php';
     <a href="<?= BASE_URL ?>/store.php">Components</a>
     <?php if ($cat): ?>
       <span>/</span>
-      <span class="text-dark fw-600"><?= sanitise($cat) ?></span>
+      <span class="text-primary fw-600"><?= sanitise($cat) ?></span>
     <?php endif; ?>
   </div>
 
@@ -268,9 +266,9 @@ include __DIR__ . '/templates/header.php';
     </div>
 
     <div class="col-lg-9">
-      <div class="card p-2 border-0 shadow-sm mb-4" style="background:#ffffff; border-radius:12px;">
+      <div class="card p-2 border-0 shadow-sm mb-4" style="border-radius:12px;">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 px-2">
-          <div class="fw-bold fs-6 text-dark"><?= $cat ? sanitise($cat) : 'All Components' ?></div>
+          <div class="fw-bold fs-6 text-primary"><?= $cat ? sanitise($cat) : 'All Components' ?></div>
           
           <div class="d-flex align-items-center gap-3">
             <div class="d-flex align-items-center gap-2">

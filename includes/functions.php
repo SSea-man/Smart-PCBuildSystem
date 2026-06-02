@@ -109,8 +109,11 @@ function component_base_sql(): string {
             WHEN c.type = 'Storage' OR c.type LIKE 'Storage (%' THEN 'Storage'
             WHEN c.type = 'GPU (graphics)' OR c.type = 'Graphics Card' THEN 'GPU'
             WHEN c.type = 'PSU (power)' OR c.type = 'Power Supply' THEN 'PSU'
-            WHEN c.type = 'Casing' THEN 'Case'
-            WHEN c.type = 'CPU Cooler' OR c.type = 'Casing Cooler' THEN 'Cooling'
+            WHEN c.type = 'Case' OR c.type = 'Casing' THEN 'Case'
+            WHEN c.type = 'Cooling' OR c.type = 'CPU Cooler' OR c.type = 'Casing Cooler' THEN 'Cooling'
+            WHEN c.type = 'Keyboard' THEN 'Keyboard'
+            WHEN c.type = 'Mouse' THEN 'Mouse'
+            WHEN c.type = 'Monitor' THEN 'Monitor'
             ELSE c.type
         END                                             AS category,
         c.brand, c.benchmark_score, c.tdp_watts, c.socket,
@@ -145,8 +148,11 @@ function get_components_by_category(string $category, float $max_price = 0): arr
         'Storage'     => ['Storage', 'Storage (HDD/SSD)'],
         'GPU'         => ['GPU (graphics)', 'Graphics Card'],
         'PSU'         => ['PSU (power)', 'Power Supply'],
-        'Case'        => ['Casing'],
-        'Cooling'     => ['CPU Cooler', 'Casing Cooler'],
+        'Case'        => ['Case', 'Casing'],
+        'Cooling'     => ['Cooling', 'CPU Cooler', 'Casing Cooler'],
+        'Keyboard'    => ['Keyboard'],
+        'Mouse'       => ['Mouse'],
+        'Monitor'     => ['Monitor'],
         default       => [$category],
     };
     
