@@ -210,16 +210,18 @@ $pdo = get_db();
 $pdo->beginTransaction();
 
 try {
+    // Force the type column to accept any string so we don't need the ENUM generic map
+    $pdo->exec("ALTER TABLE component MODIFY type VARCHAR(100) NOT NULL;");
+
     $stmt = $pdo->prepare("INSERT INTO component (component_name, type, brand, benchmark_score, tdp_watts, socket, ram_gen, psu_wattage) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $store_stmt = $pdo->prepare("INSERT INTO storeavailability (component_id, store_id, price, stock_status) VALUES (?, 1, ?, 'in_stock')");
 
     $count = 0;
     foreach ($components as $c) {
-        $rawType    = $c[1];
-        $mappedType = $typeMap[$rawType] ?? 'Output devices';
+        $rawType = $c[1]; // Use the exact type (e.g., 'CPU Cooler', 'Case')
         $stmt->execute([
             $c[0],
-            $mappedType,
+            $rawType,
             $c[2],
             $c[3],
             $c[4],
