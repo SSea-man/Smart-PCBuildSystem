@@ -56,8 +56,7 @@ A full-stack web platform for the Bangladeshi market that helps users configure,
 - Historical price charts per component
 - Watchlist system with price alert notifications
 
-### AI Chatbot
-- Gemini API-powered PC building assistant
+### Chatbot
 - Rate-limited (20 requests/hour per user)
 - Contextual recommendations based on user purpose/budget
 
@@ -104,7 +103,6 @@ A full-stack web platform for the Bangladeshi market that helps users configure,
 | **Icons** | Bootstrap Icons 1.11.3 |
 | **Typography** | Google Fonts (Inter, Outfit) |
 | **Charts** | Chart.js |
-| **AI** | Google Gemini API (chatbot proxy) |
 | **Server** | Apache (XAMPP) |
 
 ---
