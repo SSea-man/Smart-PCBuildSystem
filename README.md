@@ -721,7 +721,7 @@ Every SQL query and subquery used across the entire project, organized by file.
 
 | Name | Role |
 |------|------|
-| **Shadman Shakib** | Founder & CEO |
+| **Shadman Ahammad Shanto** | Founder & CEO |
 | **Shah Mohammed Seaman** | CTO |
 | **Jim Hossain** | Co-Founder & CFO |
 
