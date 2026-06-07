@@ -18,7 +18,20 @@ if (input('action')==='save' && is_post()) {
     verify_csrf();
     $id   = (int)input('id',0);
     $name = input('name'); $type = input('type');
-    $brand= input('brand'); $bench=(float)input('benchmark_score'); $tdp=(int)input('tdp_watts');
+    
+    $brand = input('brand');
+
+if ($brand === '__new') {
+    $brand = trim(input('new_brand'));
+
+    if ($brand === '') {
+        flash_message('error', 'Brand name required');
+        redirect('admin/components.php');
+        exit;
+    }
+}
+    
+    $bench=(float)input('benchmark_score'); $tdp=(int)input('tdp_watts');
     $sock = input('socket'); $rgen=input('ram_gen'); $ff=input('form_factor');
     $lmm  = (int)input('length_mm'); $hmm=(int)input('height_mm');
     $m2   = (int)input('m2_slots'); $sata=(int)input('sata_ports'); $rslots=(int)input('ram_slots');
@@ -454,91 +467,211 @@ include __DIR__ . '/../templates/header.php';
             </div>
             <form method="POST" enctype="multipart/form-data">
                 <?php csrf_field(); ?>
+
                 <input type="hidden" name="action" value="save">
                 <input type="hidden" name="id" value="<?= (int)($edit['component_id']??0) ?>">
+
                 <div class="modal-body">
                     <div class="row g-3">
+
+                        <!-- NAME -->
                         <div class="col-md-8">
                             <label class="form-label small fw-600">Name</label>
                             <input type="text" name="name" class="form-control form-control-sm"
-                                value="<?= sanitise($edit['component_name']??'') ?>" required
-                                style="border-radius:8px;">
+                                value="<?= sanitise($edit['component_name']??'') ?>" required>
                         </div>
+
+                        <!-- IMAGE -->
                         <div class="col-md-12">
-                            <label class="form-label small fw-600">Image (Optional)</label>
-                            <input type="file" name="image" class="form-control form-control-sm" accept="image/*"
-                                style="border-radius:8px;">
-                            <?php if (!empty($edit['image_url'])): ?>
-                            <?php $img_src = str_starts_with($edit['image_url'], 'http') ? $edit['image_url'] : BASE_URL . '/' . $edit['image_url']; ?>
-                            <small class="text-muted d-block mt-1">Current: <a href="<?= sanitise($img_src) ?>"
-                                    target="_blank">View Image</a></small>
-                            <?php endif; ?>
+                            <label class="form-label small fw-600">Image</label>
+                            <input type="file" name="image" class="form-control form-control-sm">
                         </div>
+
+                        <!-- URL -->
                         <div class="col-md-6">
-                            <label class="form-label small fw-600">StarTech URL (Optional)</label>
+                            <label class="form-label small fw-600">StarTech URL</label>
                             <input type="url" name="startech_url" class="form-control form-control-sm"
-                                placeholder="https://startech.com.bd/..."
-                                value="<?= sanitise($edit['startech_url']??'') ?>" style="border-radius:8px;">
+                                value="<?= sanitise($edit['startech_url']??'') ?>">
                         </div>
+
                         <div class="col-md-6">
-                            <label class="form-label small fw-600">Ryans URL (Optional)</label>
+                            <label class="form-label small fw-600">Ryans URL</label>
                             <input type="url" name="ryans_url" class="form-control form-control-sm"
-                                placeholder="https://ryanscomputers.com/..."
-                                value="<?= sanitise($edit['ryans_url']??'') ?>" style="border-radius:8px;">
+                                value="<?= sanitise($edit['ryans_url']??'') ?>">
                         </div>
+
+                        <!-- TYPE -->
+                        <?php
+                      $categories = ['CPU','Motherboard','RAM','Storage','GPU','PSU','Case','Cooling','Monitor'];
+                        ?>
                         <div class="col-md-4">
                             <label class="form-label small fw-600">Type</label>
-                            <select name="type" class="form-select form-select-sm" required style="border-radius:8px;">
+                            <select name="type" id="typeSelect" class="form-select form-select-sm" required>
                                 <?php foreach ($categories as $ct): ?>
-                                <option value="<?= $ct ?>" <?= ($edit['type']??'')===$ct?'selected':'' ?>><?= $ct ?>
+                                <option value="<?= $ct ?>" <?= ($edit['type']??'')===$ct?'selected':'' ?>>
+                                    <?= $ct ?>
                                 </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
+
+                        <!-- BRAND -->
                         <?php
-            $brands = ['Intel','AMD','NVIDIA','MSI','ASUS','Gigabyte','Corsair','G.Skill','Kingston','Samsung','Western Digital','Seagate','Cooler Master','NZXT','Antec','Thermaltake','DeepCool','XFX','Zotac','Sapphire','ASRock','Palit','EVGA','PNY','Crucial','TeamGroup','Adata','Transcend'];
-            sort($brands);
-            ?>
+$brands = [
+    'Intel','AMD','NVIDIA','MSI','ASUS',
+    'Gigabyte','Corsair','Kingston','Samsung','Seagate'
+];
+sort($brands);
+?>
+
                         <div class="col-md-4">
                             <label class="form-label small fw-600">Brand</label>
-                            <select name="brand" class="form-select form-select-sm" required style="border-radius:8px;">
+
+                            <select name="brand" id="brandSelect" class="form-select form-select-sm" required>
                                 <option value="">-- Select Brand --</option>
+
                                 <?php foreach ($brands as $b): ?>
-                                <option value="<?= $b ?>" <?= ($edit['brand']??'')===$b?'selected':'' ?>><?= $b ?>
+                                <option value="<?= $b ?>" <?= ($edit['brand']??'')===$b?'selected':'' ?>>
+                                    <?= $b ?>
                                 </option>
                                 <?php endforeach; ?>
+
+                                <option value="__new">+ Add New Brand</option>
                             </select>
+
+                            <div id="newBrandBox" style="display:none; margin-top:8px;">
+                                <input type="text" name="new_brand" id="newBrandInput"
+                                    class="form-control form-control-sm" placeholder="Enter new brand name">
+                            </div>
                         </div>
+
+                        <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+
+                            const brandSelect = document.getElementById('brandSelect');
+                            const newBrandBox = document.getElementById('newBrandBox');
+                            const newBrandInput = document.getElementById('newBrandInput');
+
+                            brandSelect.addEventListener('change', function() {
+
+                                if (this.value === '__new') {
+                                    newBrandBox.style.display = 'block';
+                                    newBrandInput.setAttribute('required', 'required');
+                                } else {
+                                    newBrandBox.style.display = 'none';
+                                    newBrandInput.removeAttribute('required');
+                                    newBrandInput.value = '';
+                                }
+
+                            });
+
+                        });
+                        </script>
+
                         <?php
-            $simple_fields = [
-              ['benchmark_score','Benchmark Score','number'],
-              ['tdp_watts','TDP Watts','number'],['socket','Socket','text'],
-              ['ram_gen','RAM Gen','text'],['form_factor','Form Factor','text'],
-              ['length_mm','Length mm','number'],['m2_slots','M.2 Slots','number'],
-              ['sata_ports','SATA Ports','number'],['ram_slots','RAM Slots','number'],
-              ['psu_wattage','PSU Wattage','number'],['storage_interface','Storage IF','text'],
-            ];
-            foreach ($simple_fields as [$fn,$lbl,$tp]):?>
-                        <div class="col-md-4">
+$fields = [
+'cpu' => [
+ ['socket','Socket','text'],
+ ['tdp_watts','TDP Watts','number'],
+],
+'motherboard' => [
+ ['m2_slots','M.2 Slots','number'],
+ ['sata_ports','SATA Ports','number'],
+ ['ram_slots','RAM Slots','number'],
+],
+'ram' => [
+ ['ram_gen','RAM Gen','text'],
+],
+'gpu' => [
+ ['length_mm','Length mm','number'],
+],
+'storage' => [
+ ['storage_interface','Storage Interface','text'],
+],
+'psu' => [
+ ['psu_wattage','PSU Wattage','number'],
+],
+'case' => [
+ ['form_factor','Form Factor','text'],
+],
+'cooling' => [
+ ['height_mm','Height mm','number'],
+],
+'monitor' => [
+ ['screen_size','Screen Size','number'],
+ ['resolution','Resolution','text'],
+ ['refresh_rate','Refresh Rate','number'],
+ ['panel_type','Panel Type','text'],
+]
+];
+
+foreach ($fields as $group => $items):
+foreach ($items as [$fn,$lbl,$tp]): ?>
+                        <div class="col-md-4 field-<?= $group ?>">
                             <label class="form-label small fw-600"><?= $lbl ?></label>
                             <input type="<?= $tp ?>" name="<?= $fn ?>" class="form-control form-control-sm"
-                                value="<?= sanitise((string)($edit[$fn]??'')) ?>" step="any" style="border-radius:8px;">
+                                value="<?= sanitise((string)($edit[$fn]??'')) ?>">
                         </div>
-                        <?php endforeach; ?>
+                        <?php endforeach; endforeach; ?>
+
                     </div>
                 </div>
+
                 <div class="modal-footer" style="border-top:1px solid var(--border);">
+
                     <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal"
-                        style="border-radius:8px;">Cancel</button>
+                        style="border-radius:8px;">
+                        Cancel
+                    </button>
+
                     <button type="submit" class="btn btn-primary btn-sm"
-                        style="background:#7c3aed; border-color:#7c3aed; border-radius:8px;">Save Component</button>
+                        style="background:#7c3aed; border-color:#7c3aed; border-radius:8px;">
+                        Save Component
+                    </button>
+
                 </div>
+
             </form>
+
+
+            <style>
+            [class*="field-"] {
+                display: none;
+            }
+            </style>
+
+
+            <script>
+            const typeSelect = document.getElementById('typeSelect');
+
+            function updateFields() {
+                const type = typeSelect.value.toLowerCase();
+
+                document.querySelectorAll('[class*="field-"]').forEach(el => {
+                    el.style.display = 'none';
+                });
+
+                show('field-' + type);
+            }
+
+            function show(cls) {
+                document.querySelectorAll('.' + cls).forEach(el => {
+                    el.style.display = 'block';
+                });
+            }
+
+            typeSelect.addEventListener('change', updateFields);
+            window.addEventListener('load', updateFields);
+            </script>
+
+            </diconst imageInput=document.getElementById('imageInput'); const
+                previewImg=document.getElementById('previewImg'); imageInput.addEventListener('change', function () {
+                const file=this.files[0]; if (file) { const reader=new FileReader(); reader.onload=function (e) {
+                previewImg.src=e.target.result; previewImg.style.display='block' ; } reader.readAsDataURL(file); } });v>
         </div>
     </div>
-</div>
 
-<?php
+    <?php
 $inline_script = $edit ? "new bootstrap.Modal(document.getElementById('comp-modal')).show();" : '';
 include __DIR__ . '/../templates/footer.php';
 ?>
