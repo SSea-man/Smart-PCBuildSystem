@@ -56,9 +56,11 @@ A full-stack web platform for the Bangladeshi market that helps users configure,
 - Historical price charts per component
 - Watchlist system with price alert notifications
 
-### Chatbot
-- Rate-limited (20 requests/hour per user)
-- Contextual recommendations based on user purpose/budget
+### Chatbot & AI Assistant
+- Interactive PC Build Wizard (Step-by-step: Budget → CPU preference → GPU preference)
+- Native PDF Export (Generates a beautifully formatted invoice of the chatbot's recommended build)
+- Natural language querying for component prices, stock, and detailed specifications
+- Rate-limited and context-aware responses
 
 ### Community Forum
 - Create posts with chip-style tag selection (12 presets + custom tags)
@@ -680,8 +682,8 @@ Every SQL query and subquery used across the entire project, organized by file.
 | Q116 | 295–302 | SELECT + **Subquery** | `SELECT * FROM (component_base_sql()) c WHERE c.price_bdt > 0 ORDER BY c.price_bdt ASC/DESC LIMIT 1` — Cheapest/most expensive lookup |
 | Q117 | 313 | SELECT + **Subquery** | `component_base_sql() WHERE c.brand LIKE ?` — Brand product search |
 | Q118 | 334 | SELECT + **Subquery** | `component_base_sql() WHERE c.type = ? LIMIT 5` — Category listing |
-| Q119 | 351 | SELECT + **Subquery** | `component_base_sql() WHERE c.component_name LIKE ? LIMIT 5` — Product detail/price lookup |
-| Q120 | 460 | SELECT + **Subquery** | `component_base_sql() WHERE c.component_name LIKE ? OR c.brand LIKE ? OR c.type LIKE ? LIMIT 5` — Fallback fuzzy search |
+| Q119 | 456 | SELECT + **Subquery** | `component_base_sql() WHERE c.component_name LIKE ? LIMIT 15` — Product detail/price lookup |
+| Q120 | 565 | SELECT + **Subquery** | `component_base_sql() WHERE c.component_name LIKE ? OR c.brand LIKE ? OR c.type LIKE ? LIMIT 15` — Fallback fuzzy search |
 
 ### 29. `api/check_compatibility.php` — Compatibility Check API
 
