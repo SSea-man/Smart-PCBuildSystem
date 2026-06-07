@@ -29,7 +29,11 @@ if (!empty($comp['psu_wattage'])) $specs[] = 'PSU Wattage: ' . (int)$comp['psu_w
 $specs = array_slice($specs, 0, 3);
 ?>
 <div class="col-md-4 col-sm-6 mb-4">
+<<<<<<< Updated upstream
   <div class="card h-100 product-card-startech border-0" data-component-id="<?= (int)$comp['id'] ?>" style="border-radius: 0; display: flex; flex-direction: column; justify-content: space-between; position: relative;">
+=======
+  <div class="card h-100 product-card-startech border-0" data-component-id="<?= (int)$comp['id'] ?>" style="background: var(--bg-card); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; justify-content: space-between; position: relative;">
+>>>>>>> Stashed changes
     
     <?php if ($comp['price_bdt'] > 0): ?>
       <span class="save-badge-corner" style="position: absolute; top: 0; left: 0; background: #6b21a8; color: #ffffff; font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.6rem; border-bottom-right-radius: 8px; z-index: 5;">
@@ -51,8 +55,13 @@ $specs = array_slice($specs, 0, 3);
         </div>
       </a>
 
+<<<<<<< Updated upstream
       <a href="<?= BASE_URL ?>/product.php?id=<?= (int)$comp['id'] ?>" class="text-decoration-none">
         <h6 class="product-title-text mb-3" style="font-size: 0.88rem; font-weight: 700; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 38px;">
+=======
+      <a href="<?= BASE_URL ?>/product.php?id=<?= (int)$comp['id'] ?>" class="text-decoration-none text-reset">
+        <h6 class="product-title-text mb-3" style="font-size: 0.88rem; font-weight: 700; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 38px; color: var(--text-primary);">
+>>>>>>> Stashed changes
           <?= sanitise($comp['name']) ?>
         </h6>
       </a>
@@ -68,7 +77,7 @@ $specs = array_slice($specs, 0, 3);
       </ul>
     </div>
 
-    <div style="border-top: 1px solid #f1f5f9; padding: 0.75rem 1.25rem 1.25rem 1.25rem; text-align: center;">
+    <div style="border-top: 1px solid var(--border); padding: 0.75rem 1.25rem 1.25rem 1.25rem; text-align: center;">
       <div class="mb-3">
         <?php if ($comp['price_bdt'] > 0): ?>
           <span class="text-danger fw-bold" style="font-size: 1.05rem;">৳<?= number_format((float)$comp['price_bdt']) ?></span>
@@ -79,7 +88,10 @@ $specs = array_slice($specs, 0, 3);
       </div>
 
       <div class="d-flex flex-column gap-2">
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         <div class="d-flex justify-content-center align-items-center mt-1">
           <button class="btn btn-link text-decoration-none text-muted p-0 small compare-toggle-btn <?= $in_cmp ? 'text-accent' : '' ?>"
                   data-id="<?= (int)$comp['id'] ?>"

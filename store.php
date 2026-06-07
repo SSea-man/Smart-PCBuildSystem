@@ -24,41 +24,40 @@ $show_limit = (int)input('show', 15);
 $page_num = max(1, (int)input('page', 1));
 $selected_brands = $_GET['brand'] ?? [];
 
+$base = component_base_sql();
+
 $price_bounds = db_row("
-    SELECT MIN(sa.price) as min_val, MAX(sa.price) as max_val
-    FROM storeavailability sa
-    JOIN component c ON c.component_id = sa.component_id
-    WHERE c.type LIKE ?", [$cat ? "{$cat}%" : '%']);
+    SELECT MIN(sub.price_bdt) as min_val, MAX(sub.price_bdt) as max_val
+    FROM ({$base}) sub
+    WHERE sub.category = ? OR ? = ''", [$cat, $cat]);
 $db_min = $price_bounds['min_val'] ? (int)$price_bounds['min_val'] : 0;
 $db_max = $price_bounds['max_val'] ? (int)$price_bounds['max_val'] : 450000;
 
 if (!$max_p) { $max_p = $db_max; }
 
 $brands_query = db_query("
-    SELECT DISTINCT c.brand 
-    FROM component c 
-    WHERE c.type LIKE ? AND c.brand IS NOT NULL AND c.brand != ''
-    ORDER BY c.brand", [$cat ? "{$cat}%" : '%']);
+    SELECT DISTINCT sub.brand 
+    FROM ({$base}) sub 
+    WHERE (sub.category = ? OR ? = '') AND sub.brand IS NOT NULL AND sub.brand != ''
+    ORDER BY sub.brand", [$cat, $cat]);
 $available_brands = array_column($brands_query, 'brand');
-
-$base = component_base_sql();
 
 $where = []; $params = [];
 
 if ($cat) {
-    $where[] = 'c.type LIKE ?';
-    $params[] = "{$cat}%";
+    $where[] = 'sub.category = ?';
+    $params[] = $cat;
 }
 if ($search) {
-    $where[] = 'c.component_name LIKE ?';
+    $where[] = 'sub.name LIKE ?';
     $params[] = "%{$search}%";
 }
 if ($min_p > 0) {
-    $where[] = 'COALESCE(sa.price, 0) >= ?';
+    $where[] = 'sub.price_bdt >= ?';
     $params[] = $min_p;
 }
 if ($max_p > 0) {
-    $where[] = 'COALESCE(sa.price, 0) <= ?';
+    $where[] = 'sub.price_bdt <= ?';
     $params[] = $max_p;
 }
 
@@ -68,24 +67,24 @@ if (!empty($selected_brands)) {
         $brand_placeholders[] = '?';
         $params[] = $sb;
     }
-    $where[] = 'c.brand IN (' . implode(',', $brand_placeholders) . ')';
+    $where[] = 'sub.brand IN (' . implode(',', $brand_placeholders) . ')';
 }
 
 $where_sql = $where ? ' WHERE ' . implode(' AND ', $where) : '';
 
-$total_count = (int)db_row("SELECT COUNT(*) c FROM ({$base}{$where_sql}) sub", $params)['c'];
+$total_count = (int)db_row("SELECT COUNT(*) c FROM ({$base}) sub {$where_sql}", $params)['c'];
 $pag         = paginate($total_count, $page_num, $show_limit);
 
-$order_by = 'c.component_name ASC';
+$order_by = 'sub.name ASC';
 if ($sort === 'price_asc') {
-    $order_by = 'price_bdt ASC';
+    $order_by = 'sub.price_bdt ASC';
 } elseif ($sort === 'price_desc') {
-    $order_by = 'price_bdt DESC';
+    $order_by = 'sub.price_bdt DESC';
 } elseif ($sort === 'score_desc') {
-    $order_by = 'c.benchmark_score DESC';
+    $order_by = 'sub.benchmark_score DESC';
 }
 
-$components = db_query("{$base}{$where_sql} ORDER BY {$order_by} LIMIT {$show_limit} OFFSET {$pag['offset']}", $params);
+$components = db_query("SELECT sub.* FROM ({$base}) sub {$where_sql} ORDER BY {$order_by} LIMIT {$show_limit} OFFSET {$pag['offset']}", $params);
 foreach ($components as &$c) {
     $c['stock_status'] = normalize_stock($c['stock_status_raw'] ?? '');
 }
@@ -105,30 +104,34 @@ include __DIR__ . '/templates/header.php';
 <style>
 .store-breadcrumb {
   font-size: 0.8rem;
-  color: #64748b;
+  color: var(--text-secondary);
   margin-bottom: 1.25rem;
 }
 
 .store-breadcrumb a {
   text-decoration: none;
-  color: #3b82f6;
+  color: var(--accent);
 }
 
 .store-breadcrumb span {
   margin: 0 0.4rem;
-  color: #cbd5e1;
+  color: var(--text-muted);
 }
 
 .store-category-header h2 {
   font-family: var(--font-head);
   font-size: 1.6rem;
   font-weight: 800;
+<<<<<<< Updated upstream
+=======
+  color: var(--text-primary);
+>>>>>>> Stashed changes
   margin-bottom: 0.5rem;
 }
 
 .store-category-header p {
   font-size: 0.82rem;
-  color: #64748b;
+  color: var(--text-secondary);
   line-height: 1.6;
   margin-bottom: 1.5rem;
 }
@@ -146,15 +149,16 @@ include __DIR__ . '/templates/header.php';
   border-radius: 20px;
   padding: 0.35rem 0.9rem;
   font-size: 0.78rem;
-  color: #334155;
+  color: var(--text-secondary);
   text-decoration: none;
   font-weight: 600;
   transition: all 0.2s ease;
 }
 
 .quick-pill-badge:hover, .quick-pill-badge.active {
-  border-color: #3fb950;
-  color: #3fb950;
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
 }
 
 .filter-sidebar-card {
@@ -167,10 +171,18 @@ include __DIR__ . '/templates/header.php';
 
 .filter-sidebar-header {
   padding: 0.85rem 1.25rem;
+<<<<<<< Updated upstream
   background: var(--bg-input);
   border-bottom: 1px solid var(--border);
   font-weight: 700;
   font-size: 0.88rem;
+=======
+  background: rgba(0,0,0,0.1);
+  border-bottom: 1px solid var(--border);
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+>>>>>>> Stashed changes
 }
 
 .filter-sidebar-body {
@@ -182,7 +194,7 @@ include __DIR__ . '/templates/header.php';
   align-items: center;
   gap: 0.5rem;
   font-size: 0.82rem;
-  color: #475569;
+  color: var(--text-primary);
   cursor: pointer;
   margin-bottom: 0.6rem;
   user-select: none;
@@ -266,7 +278,11 @@ include __DIR__ . '/templates/header.php';
     </div>
 
     <div class="col-lg-9">
+<<<<<<< Updated upstream
       <div class="card p-2 border-0 shadow-sm mb-4" style="border-radius:12px;">
+=======
+      <div class="card p-2 border-0 shadow-sm mb-4" style="background:var(--bg-card); border-radius:12px;">
+>>>>>>> Stashed changes
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 px-2">
           <div class="fw-bold fs-6 text-primary"><?= $cat ? sanitise($cat) : 'All Components' ?></div>
           
@@ -294,7 +310,7 @@ include __DIR__ . '/templates/header.php';
       </div>
 
       <?php if (empty($components)): ?>
-        <div class="text-center py-5 bg-white border rounded-3" style="border-radius:12px;">
+        <div class="text-center py-5 border rounded-3" style="background:var(--bg-card); border-color:var(--border) !important; border-radius:12px;">
           <i class="bi bi-inbox display-4 text-muted mb-3 d-block"></i>
           <h5 class="fw-700">No components found</h5>
           <p class="text-muted small">No catalog entries matched your search criteria or price parameters.</p>
