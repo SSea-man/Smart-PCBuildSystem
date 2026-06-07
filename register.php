@@ -27,7 +27,7 @@ if (is_post()) {
             $errors[] = 'An account with this email already exists.';
         } else {
             $hash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
-            db_exec('INSERT INTO `user` (user_name, email, user_password) VALUES (?,?,?)', [$name, $email, $hash]);
+            db_exec('INSERT INTO `user` (user_name, email, user_password, role) VALUES (?,?,?,?)', [$name, $email, $hash, 'user']);
             flash_message('success', 'Account created! Please log in.');
             redirect('login.php');
         }

@@ -373,21 +373,21 @@ $emi_price = ceil($regular_price / 12);
     ];
     ?>
 
-    <div class="card p-4 border-0 shadow-sm bg-white" style="border-radius:12px; overflow:hidden;">
-      <h5 class="fw-bold text-dark mb-3" style="font-size: 1.1rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.50rem;">Specification</h5>
+    <div class="card p-4 border-0 shadow-sm" style="background: var(--bg-card); border-radius:12px; overflow:hidden;">
+      <h5 class="fw-bold mb-3" style="font-size: 1.1rem; border-bottom: 2px solid var(--border); padding-bottom: 0.50rem; color: var(--text-primary);">Specification</h5>
       
       <?php foreach ($spec_groups as $group_title => $attributes): ?>
         <?php if (!empty($attributes)): ?>
-          <div style="background: #f1f5f9; padding: 0.55rem 1rem; font-weight: 700; font-size: 0.85rem; color: #1e3a8a; border-radius: 6px; margin-top: 1.25rem; margin-bottom: 0.25rem;">
+          <div style="background: var(--bg-input); padding: 0.55rem 1rem; font-weight: 700; font-size: 0.85rem; color: var(--text-primary); border-radius: 6px; margin-top: 1.25rem; margin-bottom: 0.25rem;">
             <?= htmlspecialchars($group_title) ?>
           </div>
           
           <table class="table mb-1" style="font-size: 0.82rem; border-collapse: collapse; width: 100%;">
             <tbody>
               <?php foreach ($attributes as $key => $val): ?>
-                <tr style="border-bottom: 1px solid #f1f5f9;">
-                  <td style="font-weight: 600; color: #475569; width: 35%; padding: 0.6rem 1rem; border: none; background: transparent;"><?= htmlspecialchars($key) ?></td>
-                  <td style="color: #1e293b; padding: 0.6rem 1rem; border: none; background: transparent;"><?= htmlspecialchars($val) ?></td>
+                <tr style="border-bottom: 1px solid var(--border);">
+                  <td style="font-weight: 600; color: var(--text-secondary); width: 35%; padding: 0.6rem 1rem; border: none; background: transparent;"><?= htmlspecialchars($key) ?></td>
+                  <td style="color: var(--text-primary); padding: 0.6rem 1rem; border: none; background: transparent;"><?= htmlspecialchars($val) ?></td>
                 </tr>
               <?php endforeach; ?>
             </tbody>

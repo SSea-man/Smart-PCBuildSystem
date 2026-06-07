@@ -27,10 +27,115 @@ for ($i = count($messages) - 1; $i >= 0; $i--) {
     }
 }
 
+if (strlen($original_message) > 500) {
+    json_response([
+        'content' => "Whoa, that's a lot of text! My circuits can only process up to 500 characters at a time. Please ask a shorter, more specific question.", 
+        'model' => 'database-bot'
+    ]);
+}
+
 $reply = "I didn't understand that. You can ask me things like:\n- How many users are registered?\n- How many products do we have?\n- What is the price of Ryzen?\n- Update on RTX 4090";
 $action = null;
 
-if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $original_message, $matches)) {
+
+if (isset($_SESSION['chat_build_state'])) {
+    $state = $_SESSION['chat_build_state'];
+    
+    if ($last_message === 'cancel' || $last_message === 'stop' || $last_message === 'quit' || $last_message === 'exit') {
+        unset($_SESSION['chat_build_state'], $_SESSION['chat_build_data']);
+        $reply = "Build wizard cancelled. What else can I help you with?";
+    } elseif ($state === 'ASK_BUDGET') {
+        if (preg_match('/(\d+)/', str_replace(',', '', $last_message), $m)) {
+            $budget = (int)$m[1];
+            if ($budget < 20000) {
+                $reply = "৳{$budget} is a bit too low for a full custom PC. Please enter a budget of at least 20,000 BDT.";
+            } else {
+                $_SESSION['chat_build_data'] = ['budget' => $budget];
+                $_SESSION['chat_build_state'] = 'ASK_CPU';
+                $reply = "Great! Your budget is **৳" . number_format($budget) . "**.\n\nDo you prefer an **Intel** or **AMD** processor? (Or type 'Any')";
+            }
+        } else {
+            $reply = "I couldn't understand that number. Please enter your total budget in BDT (e.g., 60000). Type 'cancel' to stop.";
+        }
+    } elseif ($state === 'ASK_CPU') {
+        $brand = 'any';
+        if (str_contains($last_message, 'intel')) $brand = 'intel';
+        if (str_contains($last_message, 'amd')) $brand = 'amd';
+        $_SESSION['chat_build_data']['cpu'] = $brand;
+        $_SESSION['chat_build_state'] = 'ASK_GPU';
+        $reply = "Got it! " . ucfirst($brand) . " for the CPU.\n\nWhat about the Graphics Card? Do you prefer **NVIDIA**, **AMD**, or 'Any'?";
+    } elseif ($state === 'ASK_GPU') {
+        $brand = 'any';
+        if (str_contains($last_message, 'nvidia') || str_contains($last_message, 'rtx') || str_contains($last_message, 'gtx')) $brand = 'nvidia';
+        if (str_contains($last_message, 'amd') || str_contains($last_message, 'radeon') || str_contains($last_message, 'rx')) $brand = 'amd';
+        
+        $budget = $_SESSION['chat_build_data']['budget'];
+        $cpu_pref = $_SESSION['chat_build_data']['cpu'];
+        $gpu_pref = $brand;
+        
+        unset($_SESSION['chat_build_state'], $_SESSION['chat_build_data']);
+        
+
+        $build = [];
+        $total_cost = 0;
+        
+        $get_comp = function($type, $max_price, $brand_pref = 'any') {
+            $sql = "SELECT * FROM (" . component_base_sql() . ") c WHERE c.category = ? AND c.price_bdt > 0 AND c.price_bdt <= ?";
+            $params = [$type, $max_price];
+            if ($brand_pref !== 'any') {
+                $sql .= " AND c.brand LIKE ?";
+                $params[] = "%{$brand_pref}%";
+            }
+            $sql .= " ORDER BY c.price_bdt DESC LIMIT 1";
+            $res = db_query($sql, $params);
+            if (!$res && $brand_pref !== 'any') {
+                $sql2 = "SELECT * FROM (" . component_base_sql() . ") c WHERE c.category = ? AND c.price_bdt > 0 AND c.price_bdt <= ? ORDER BY c.price_bdt DESC LIMIT 1";
+                $res = db_query($sql2, [$type, $max_price]);
+            }
+            return $res ? $res[0] : null;
+        };
+
+        $gpu = $get_comp('GPU', $budget * 0.40, $gpu_pref);
+        if ($gpu) { $build['GPU'] = $gpu; $total_cost += $gpu['price_bdt']; }
+
+        $cpu = $get_comp('CPU', $budget * 0.25, $cpu_pref);
+        if ($cpu) { $build['CPU'] = $cpu; $total_cost += $cpu['price_bdt']; }
+
+        $mobo = $get_comp('Motherboard', $budget * 0.15); 
+        if ($mobo) { $build['Motherboard'] = $mobo; $total_cost += $mobo['price_bdt']; }
+
+        $ram = $get_comp('RAM', $budget * 0.08);
+        if ($ram) { $build['RAM'] = $ram; $total_cost += $ram['price_bdt']; }
+
+        $storage = $get_comp('Storage', $budget * 0.08);
+        if ($storage) { $build['Storage'] = $storage; $total_cost += $storage['price_bdt']; }
+
+        $psu = $get_comp('PSU', $budget * 0.07);
+        if ($psu) { $build['PSU'] = $psu; $total_cost += $psu['price_bdt']; }
+        
+        if (empty($build)) {
+            $reply = "I'm sorry, I couldn't find enough components in the database to fit a budget of ৳" . number_format($budget) . ". Try a higher budget.";
+        } else {
+            $reply = "**Here is your custom PC build for ৳" . number_format($budget) . "!**\n\n";
+            $json_arr = [];
+            foreach ($build as $cat => $comp) {
+                $price_str = number_format($comp['price_bdt']);
+                $reply .= "• **{$cat}**: " . sanitise($comp['name']) . " - **৳{$price_str}**\n";
+                $json_arr[] = [
+                    'category' => $cat,
+                    'name' => $comp['name'],
+                    'price' => (float)$comp['price_bdt']
+                ];
+            }
+            $reply .= "\n**Total Cost: ৳" . number_format($total_cost) . "**\n\n";
+            $encoded = rawurlencode(json_encode($json_arr));
+            $reply .= "<button class=\"btn btn-sm btn-accent mt-2\" onclick=\"downloadPdf('{$encoded}')\"><i class=\"bi bi-file-pdf\"></i> Download PDF</button>";
+        }
+    }
+} elseif (preg_match('/build\s+(?:a\s+|me\s+a\s+|my\s+)?pc/i', $last_message) || preg_match('/suggest\s+(?:a\s+)?pc\s+build/i', $last_message)) {
+    $_SESSION['chat_build_state'] = 'ASK_BUDGET';
+    $reply = "Awesome! Let's build your custom PC step-by-step.\n\nFirst, what is your **total budget** in BDT? (e.g., 80000)\n\n*(Type 'cancel' at any time to stop)*";
+} elseif (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $original_message, $matches)) {
     if (!is_admin()) {
         $reply = " Access denied. Only administrators can execute raw SQL queries.";
     } else {
@@ -91,7 +196,7 @@ if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $ori
         $score1 = $p1['benchmark_score'] > 0 ? number_format($p1['benchmark_score'], 0) : "N/A";
         $score2 = $p2['benchmark_score'] > 0 ? number_format($p2['benchmark_score'], 0) : "N/A";
         
-        $reply = "📊 **Side-by-Side Comparison:**\n\n";
+        $reply = "**Side-by-Side Comparison:**\n\n";
         $reply .= "| Specification | " . sanitise($p1['name']) . " | " . sanitise($p2['name']) . " |\n";
         $reply .= "| --- | --- | --- |\n";
         $reply .= "| **Category** | " . sanitise($p1['category']) . " | " . sanitise($p2['category']) . " |\n";
@@ -249,7 +354,7 @@ if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $ori
                 $friendly_name = "stock availability status";
                 break;
         }
-        $reply = "🔍 The {$friendly_name} for **" . sanitise($r['name']) . "** is {$val}.";
+        $reply = "The {$friendly_name} for **" . sanitise($r['name']) . "** is {$val}.";
     } else {
         $reply = "I couldn't find any component matching '" . sanitise($keyword) . "' in the database.";
     }
@@ -304,7 +409,7 @@ if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $ori
         $r = $rows[0];
         $price = format_bdt((float)$r['price_bdt']);
         $label = $order === 'ASC' ? "cheapest" : "most expensive";
-        $reply = "💎 The {$label} " . ($cat ? $type_keyword : "component") . " in our database is **" . sanitise($r['name']) . "** priced at **{$price}**.";
+        $reply = "The {$label} " . ($cat ? $type_keyword : "component") . " in our database is **" . sanitise($r['name']) . "** priced at **{$price}**.";
     } else {
         $reply = "I couldn't query that from the database.";
     }
@@ -348,14 +453,14 @@ if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $ori
     $reply = " **PC Builder BD Store Information:**\n\n- **Office Address:** Multiplan Centre, Elephant Road, Dhaka, Bangladesh\n- **Email:** support@pcbuild.com\n- **Phone:** +880 1711-XXXXXX\n- **Hours:** 10:00 AM - 8:00 PM (Closed on Tuesdays)";
 } elseif (preg_match('/(?:price of|update on|news on|how much is|tell me about|details on|specs of|specification of|info on|show me)\s+(.+)/i', $last_message, $m)) {
     $keyword = trim($m[1], " ?.");
-    $rows = db_query(component_base_sql() . " WHERE c.component_name LIKE ? LIMIT 5", ["%{$keyword}%"]);
+    $rows = db_query(component_base_sql() . " WHERE c.component_name LIKE ? LIMIT 15", ["%{$keyword}%"]);
     if ($rows) {
         if (count($rows) === 1) {
             $r = $rows[0];
             $price = $r['price_bdt'] > 0 ? format_bdt((float)$r['price_bdt']) : "Price Unlisted";
-            $stock = normalize_stock($r['stock_status_raw'] ?? '') === 'in_stock' ? "✅ In Stock" : "❌ Out of Stock";
+            $stock = normalize_stock($r['stock_status_raw'] ?? '') === 'in_stock' ? "In Stock" : "Out of Stock";
             
-            $reply = "🛠️ **Detailed Specifications for " . sanitise($r['name']) . "**:\n\n";
+            $reply = "**Detailed Specifications for " . sanitise($r['name']) . "**:\n\n";
             $reply .= "- **Category**: " . sanitise($r['category']) . "\n";
             $reply .= "- **Brand**: " . sanitise($r['brand'] ?: 'Generic/Generic Brand') . "\n";
             $reply .= "- **Price**: **{$price}**\n";
@@ -394,10 +499,10 @@ if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $ori
                 $reply .= "- **Storage Interface**: `{$r['storage_interface']}`\n";
             }
         } else {
-            $reply = "Here are the components matching '" . sanitise($keyword) . "':\n\n";
+            $reply = "Here are the top components matching '" . sanitise($keyword) . "':\n\n";
             foreach ($rows as $r) {
                 $price = $r['price_bdt'] > 0 ? format_bdt((float)$r['price_bdt']) : "Price Unlisted";
-                $stock = normalize_stock($r['stock_status_raw'] ?? '') === 'in_stock' ? "✅ In Stock" : "❌ Out of Stock";
+                $stock = normalize_stock($r['stock_status_raw'] ?? '') === 'in_stock' ? "In Stock" : "Out of Stock";
                 $reply .= "- **{$r['name']}**\n  Price: {$price} | Status: {$stock} | Category: {$r['category']}\n\n";
             }
             $reply .= "Tip: Ask for details on a specific component (e.g. 'details on " . sanitise($rows[0]['name']) . "') for a full specifications breakdown!";
@@ -434,7 +539,7 @@ if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $ori
 } elseif (preg_match('/(what can you do|help)/i', $last_message)) {
     $reply = "I can do quite a few things!\n\n- Answer common PC building questions (bottlenecks, PSUs, DDR4 vs DDR5)\n- Check live prices and stock (e.g., 'price of RTX 4070')\n- Change the website theme (e.g., 'turn on night mode')\n- Give catalog stats ('how many products')\n\nHow can I help you right now?";
 } elseif (preg_match('/(tell me a joke|make me laugh)/i', $last_message)) {
-    $reply = "Why did the PC go to the doctor?\nBecause it had a terminal illness! 🩺";
+    $reply = "Why did the PC go to the doctor?\nBecause it had a terminal illness!";
 } elseif (preg_match('/check compatibility/i', $last_message)) {
     $reply = "To check compatibility between two components, just ask me directly!\n\n**Example:** *'Is Intel Core i5 14600K compatible with ASUS ROG B650?'*";
 } elseif (preg_match('/(recommend a|suggest a)\s+(cpu|gpu|motherboard|ram|storage|psu)/i', $last_message, $m)) {
@@ -457,13 +562,13 @@ if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $ori
     
     if (!empty($clean_words)) {
         $term = '%' . implode('%', $clean_words) . '%';
-        $rows = db_query(component_base_sql() . " WHERE c.component_name LIKE ? OR c.brand LIKE ? OR c.type LIKE ? LIMIT 5", [$term, $term, $term]);
+        $rows = db_query(component_base_sql() . " WHERE c.component_name LIKE ? OR c.brand LIKE ? OR c.type LIKE ? LIMIT 15", [$term, $term, $term]);
         
         if ($rows) {
-            $reply = " **Database Search Results for '" . sanitise($search) . "':**\n\n";
+            $reply = "**Top Database Search Results for '" . sanitise($search) . "':**\n\n";
             foreach ($rows as $r) {
                 $price = $r['price_bdt'] > 0 ? format_bdt((float)$r['price_bdt']) : "Price Unlisted";
-                $stock = normalize_stock($r['stock_status_raw'] ?? '') === 'in_stock' ? "✅ In Stock" : "❌ Out of Stock";
+                $stock = normalize_stock($r['stock_status_raw'] ?? '') === 'in_stock' ? "In Stock" : "Out of Stock";
                 
                 $spec_details = "";
                 if (!empty($r['socket'])) {

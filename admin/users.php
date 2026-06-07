@@ -530,12 +530,10 @@ include __DIR__ . '/../templates/header.php';
           No users match the active filter criteria.
         </div>
       <?php else: ?>
-        <?php foreach ($users as $idx => $u): 
-          $isSelected = ($idx === 3 && !$search && !$filter_role);
-        ?>
-          <div class="admin-row-card <?= $isSelected ? 'selected' : '' ?>">
+        <?php foreach ($users as $idx => $u): ?>
+          <div class="admin-row-card">
             <div class="col-cb">
-              <input class="form-check-input" type="checkbox" style="cursor:pointer;" <?= $isSelected ? 'checked' : '' ?>>
+              <input class="form-check-input" type="checkbox" style="cursor:pointer;">
             </div>
             
             <div class="col-id">USR-<?= str_pad($u['user_id'], 5, '0', STR_PAD_LEFT) ?></div>

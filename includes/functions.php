@@ -109,19 +109,11 @@ function component_base_sql(): string {
             WHEN c.type = 'Storage' OR c.type LIKE 'Storage (%' THEN 'Storage'
             WHEN c.type = 'GPU (graphics)' OR c.type = 'Graphics Card' THEN 'GPU'
             WHEN c.type = 'PSU (power)' OR c.type = 'Power Supply' THEN 'PSU'
-<<<<<<< Updated upstream
-            WHEN c.type = 'Case' OR c.type = 'Casing' THEN 'Case'
-            WHEN c.type = 'Cooling' OR c.type = 'CPU Cooler' OR c.type = 'Casing Cooler' THEN 'Cooling'
-            WHEN c.type = 'Keyboard' THEN 'Keyboard'
-            WHEN c.type = 'Mouse' THEN 'Mouse'
-            WHEN c.type = 'Monitor' THEN 'Monitor'
-=======
             WHEN c.type = 'Casing' OR c.type = 'Case (body)' THEN 'Case'
             WHEN c.type IN ('CPU Cooler', 'Casing Cooler') OR (c.type = 'Output devices' AND (c.component_name LIKE '%Cooler%' OR c.component_name LIKE '%Fan%' OR c.component_name LIKE '%Liquid%' OR c.component_name LIKE '%Noctua%' OR c.component_name LIKE '%Kraken%')) THEN 'Cooling'
             WHEN c.type = 'Input devices' AND (c.component_name LIKE '%Keyboard%' OR c.component_name LIKE '%Kumara%' OR c.component_name LIKE '%Azoth%') THEN 'Keyboard'
             WHEN c.type = 'Input devices' AND (c.component_name LIKE '%Mouse%' OR c.component_name LIKE '%Superlight%' OR c.component_name LIKE '%DeathAdder%' OR c.component_name LIKE '%Viper%' OR c.component_name LIKE '%Aerox%' OR c.component_name LIKE '%Zowie%' OR c.component_name LIKE '%Lamzu%' OR c.component_name LIKE '%Glorious%' OR c.component_name LIKE '%G304%') THEN 'Mouse'
             WHEN c.type = 'Output devices' AND (c.component_name LIKE '%Monitor%' OR c.component_name LIKE '%\"%' OR c.component_name LIKE '%Hz%') THEN 'Monitor'
->>>>>>> Stashed changes
             ELSE c.type
         END                                             AS category,
         c.brand, c.benchmark_score, c.tdp_watts, c.socket,
@@ -149,29 +141,8 @@ function get_component(int $id): ?array {
 }
 
 function get_components_by_category(string $category, float $max_price = 0): array {
-<<<<<<< Updated upstream
-    $types = match($category) {
-        'CPU'         => ['CPU', 'CPU (processing)'],
-        'Motherboard' => ['Motherboard', 'Motherboard (connection)'],
-        'RAM'         => ['RAM', 'RAM (temporary memory)'],
-        'Storage'     => ['Storage', 'Storage (HDD/SSD)'],
-        'GPU'         => ['GPU (graphics)', 'Graphics Card'],
-        'PSU'         => ['PSU (power)', 'Power Supply'],
-        'Case'        => ['Case', 'Casing'],
-        'Cooling'     => ['Cooling', 'CPU Cooler', 'Casing Cooler'],
-        'Keyboard'    => ['Keyboard'],
-        'Mouse'       => ['Mouse'],
-        'Monitor'     => ['Monitor'],
-        default       => [$category],
-    };
-    
-    $placeholders = implode(',', array_fill(0, count($types), '?'));
-    $sql    = component_base_sql() . " WHERE c.type IN ($placeholders) AND sa.component_id IS NOT NULL AND COALESCE(sa.price, 0) > 0";
-    $params = $types;
-=======
     $sql = "SELECT * FROM (" . component_base_sql() . ") sub WHERE category = ? AND store_id IS NOT NULL AND price_bdt > 0";
     $params = [$category];
->>>>>>> Stashed changes
     
     if ($max_price > 0) {
         $sql .= " AND price_bdt <= ?";

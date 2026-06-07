@@ -5,6 +5,8 @@ require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/functions.php';
 require_once __DIR__ . '/includes/wattage.php';
 
+require_auth();
+
 $categories = ['CPU','Motherboard','RAM','GPU','Storage','PSU','Case','Cooling','Keyboard','Mouse','Monitor'];
 $purpose    = $_SESSION['purpose'] ?? 'general';
 

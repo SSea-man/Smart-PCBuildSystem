@@ -455,15 +455,15 @@ body {
                 </div>
                 <?php else: ?>
                 <div class="d-flex align-items-center gap-2 mt-3 p-3 rounded-4"
-                    style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15); max-width: 500px;">
+                    style="background: var(--accent-soft); border: 1px solid rgba(16, 185, 129, 0.15); max-width: 500px;">
                     <i class="bi bi-shield-lock-fill text-accent fs-5"></i>
                     <div class="small">
-                        <span class="text-white-50">Please</span>
+                        <span style="color: var(--text-secondary);">Please</span>
                         <a href="<?= BASE_URL ?>/login.php" class="text-accent fw-bold text-decoration-none">Login</a>
-                        <span class="text-white-50">or</span>
+                        <span style="color: var(--text-secondary);">or</span>
                         <a href="<?= BASE_URL ?>/register.php"
                             class="text-accent fw-bold text-decoration-none">Register</a>
-                        <span class="text-white-50">to unlock the Smart Build Wizard, Chatbot, and Forum.</span>
+                        <span style="color: var(--text-secondary);">to unlock the Smart Build Wizard, Chatbot, and Forum.</span>
                     </div>
                 </div>
                 <?php endif; ?>

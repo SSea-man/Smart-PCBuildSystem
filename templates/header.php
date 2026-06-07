@@ -42,6 +42,7 @@
           $nav_links[] = ['href' => 'about.php', 'icon' => 'bi-info-circle', 'label' => 'About Us'];
         }
         if (is_logged_in()) {
+          $nav_links[] = ['href' => 'custom_builder.php', 'icon' => 'bi-sliders', 'label' => 'Custom Build'];
           $nav_links[] = ['href' => 'purpose.php',  'icon' => 'bi-magic',            'label' => 'Build Wizard'];
           $nav_links[] = ['href' => 'forum.php',    'icon' => 'bi-chat-square-text', 'label' => 'Forum'];
           $nav_links[] = ['href' => 'chatbot.php',  'icon' => 'bi-robot',            'label' => 'Chatbot'];

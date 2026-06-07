@@ -122,10 +122,7 @@ include __DIR__ . '/templates/header.php';
   font-family: var(--font-head);
   font-size: 1.6rem;
   font-weight: 800;
-<<<<<<< Updated upstream
-=======
   color: var(--text-primary);
->>>>>>> Stashed changes
   margin-bottom: 0.5rem;
 }
 
@@ -171,18 +168,11 @@ include __DIR__ . '/templates/header.php';
 
 .filter-sidebar-header {
   padding: 0.85rem 1.25rem;
-<<<<<<< Updated upstream
-  background: var(--bg-input);
-  border-bottom: 1px solid var(--border);
-  font-weight: 700;
-  font-size: 0.88rem;
-=======
   background: rgba(0,0,0,0.1);
   border-bottom: 1px solid var(--border);
   font-weight: 700;
   font-size: 0.88rem;
   color: var(--text-primary);
->>>>>>> Stashed changes
 }
 
 .filter-sidebar-body {
@@ -278,11 +268,7 @@ include __DIR__ . '/templates/header.php';
     </div>
 
     <div class="col-lg-9">
-<<<<<<< Updated upstream
-      <div class="card p-2 border-0 shadow-sm mb-4" style="border-radius:12px;">
-=======
       <div class="card p-2 border-0 shadow-sm mb-4" style="background:var(--bg-card); border-radius:12px;">
->>>>>>> Stashed changes
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 px-2">
           <div class="fw-bold fs-6 text-primary"><?= $cat ? sanitise($cat) : 'All Components' ?></div>
           

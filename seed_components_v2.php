@@ -207,12 +207,14 @@ $typeMap = [
 ];
 
 $pdo = get_db();
+
+// Force the type column to accept any string so we don't need the ENUM generic map
+$pdo->exec("ALTER TABLE component MODIFY type VARCHAR(100) NOT NULL;");
+$pdo->exec("ALTER TABLE component MODIFY component_name VARCHAR(255) NOT NULL;");
+
 $pdo->beginTransaction();
 
 try {
-    // Force the type column to accept any string so we don't need the ENUM generic map
-    $pdo->exec("ALTER TABLE component MODIFY type VARCHAR(100) NOT NULL;");
-
     $stmt = $pdo->prepare("INSERT INTO component (component_name, type, brand, benchmark_score, tdp_watts, socket, ram_gen, psu_wattage) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     $store_stmt = $pdo->prepare("INSERT INTO storeavailability (component_id, store_id, price, stock_status) VALUES (?, 1, ?, 'in_stock')");
 
@@ -240,6 +242,8 @@ try {
     $pdo->commit();
     echo "Successfully seeded $count new components spanning all core and peripheral categories!\n";
 } catch (Exception $e) {
-    $pdo->rollBack();
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     echo "Failed: " . $e->getMessage() . "\n";
 }
