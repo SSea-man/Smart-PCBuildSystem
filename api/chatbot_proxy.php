@@ -310,7 +310,7 @@ if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $ori
     }
 } elseif (preg_match('/(?:show me|list|get)\s+(?:all\s+)?([a-zA-Z0-9\s]+)\s+(?:products|components)/i', $last_message, $m) || preg_match('/(?:products|components)\s+(?:made by|from|by)\s+([a-zA-Z0-9\s]+)/i', $last_message, $m)) {
     $brand = trim($m[1], " ?.");
-    $rows = db_query(component_base_sql() . " WHERE c.brand LIKE ? LIMIT 5", ["%{$brand}%"]);
+    $rows = db_query(component_base_sql() . " WHERE c.brand LIKE ? LIMIT 10", ["%{$brand}%"]);
     if ($rows) {
         $reply = " **Products from " . sanitise(ucfirst($brand)) . ":**\n\n";
         foreach ($rows as $r) {
