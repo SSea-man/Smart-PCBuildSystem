@@ -474,20 +474,20 @@ include __DIR__ . '/../templates/header.php';
                 <div class="modal-body">
                     <div class="row g-3">
 
-                        <!-- NAME -->
+
                         <div class="col-md-8">
                             <label class="form-label small fw-600">Name</label>
                             <input type="text" name="name" class="form-control form-control-sm"
                                 value="<?= sanitise($edit['component_name']??'') ?>" required>
                         </div>
 
-                        <!-- IMAGE -->
+
                         <div class="col-md-12">
                             <label class="form-label small fw-600">Image</label>
                             <input type="file" name="image" class="form-control form-control-sm">
                         </div>
 
-                        <!-- URL -->
+
                         <div class="col-md-6">
                             <label class="form-label small fw-600">StarTech URL</label>
                             <input type="url" name="startech_url" class="form-control form-control-sm"
@@ -500,9 +500,10 @@ include __DIR__ . '/../templates/header.php';
                                 value="<?= sanitise($edit['ryans_url']??'') ?>">
                         </div>
 
+
                         <!-- TYPE -->
                         <?php
-                      $categories = ['CPU','Motherboard','RAM','Storage','GPU','PSU','Case','Cooling','Monitor'];
+                      $categories = ['CPU','Motherboard','RAM','Storage','GPU','PSU','Case','Cooling','Monitor','Keyboard'];
                         ?>
                         <div class="col-md-4">
                             <label class="form-label small fw-600">Type</label>
