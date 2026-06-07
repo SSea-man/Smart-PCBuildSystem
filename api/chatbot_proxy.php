@@ -32,7 +32,7 @@ $action = null;
 
 if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $original_message, $matches)) {
     if (!is_admin()) {
-        $reply = "❌ Access denied. Only administrators can execute raw SQL queries.";
+        $reply = " Access denied. Only administrators can execute raw SQL queries.";
     } else {
         $sql = trim($matches[1]);
         try {
@@ -55,7 +55,7 @@ if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $ori
                 $reply = " Query executed successfully. {$affected} rows affected.";
             }
         } catch (PDOException $e) {
-            $reply = "❌ **SQL Error:**\n" . $e->getMessage();
+            $reply = " **SQL Error:**\n" . $e->getMessage();
         }
     }
 } elseif (str_contains($last_message, 'user') || str_contains($last_message, 'who')) {
@@ -110,11 +110,11 @@ if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $ori
         if ($p1['benchmark_score'] > 0 && $p2['benchmark_score'] > 0) {
             $diff = abs($p1['benchmark_score'] - $p2['benchmark_score']);
             if ($p1['benchmark_score'] > $p2['benchmark_score']) {
-                $reply .= "\n💡 **Verdict:** **" . sanitise($p1['name']) . "** is faster than **" . sanitise($p2['name']) . "** by **" . number_format($diff, 0) . " points**.";
+                $reply .= "\n **Verdict:** **" . sanitise($p1['name']) . "** is faster than **" . sanitise($p2['name']) . "** by **" . number_format($diff, 0) . " points**.";
             } elseif ($p2['benchmark_score'] > $p1['benchmark_score']) {
-                $reply .= "\n💡 **Verdict:** **" . sanitise($p2['name']) . "** is faster than **" . sanitise($p1['name']) . "** by **" . number_format($diff, 0) . " points**.";
+                $reply .= "\n **Verdict:** **" . sanitise($p2['name']) . "** is faster than **" . sanitise($p1['name']) . "** by **" . number_format($diff, 0) . " points**.";
             } else {
-                $reply .= "\n💡 **Verdict:** Both components have identical performance scores.";
+                $reply .= "\n **Verdict:** Both components have identical performance scores.";
             }
         }
     } else {
@@ -180,9 +180,9 @@ if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $ori
         }
         
         if ($compatible) {
-            $reply = "✅ **Compatible!**\n\n**" . sanitise($p1['name']) . "** and **" . sanitise($p2['name']) . "** are compatible. Reason: " . $reason;
+            $reply = " **Compatible!**\n\n**" . sanitise($p1['name']) . "** and **" . sanitise($p2['name']) . "** are compatible. Reason: " . $reason;
         } else {
-            $reply = "❌ **Incompatible!**\n\n**" . sanitise($p1['name']) . "** and **" . sanitise($p2['name']) . "** are **not** compatible. Reason: " . $reason;
+            $reply = " **Incompatible!**\n\n**" . sanitise($p1['name']) . "** and **" . sanitise($p2['name']) . "** are **not** compatible. Reason: " . $reason;
         }
     } else {
         $reply = "I couldn't perform the compatibility check. Please verify both components exist in our database. (Found: " . ($rows1 ? "Yes" : "No") . " for '{$item1}', " . ($rows2 ? "Yes" : "No") . " for '{$item2}')";
@@ -272,7 +272,7 @@ if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $ori
     $sql .= " ORDER BY c.price_bdt DESC LIMIT 5";
     $rows = db_query($sql, $params);
     if ($rows) {
-        $reply = "💰 **Top components under " . format_bdt($budget) . ":**\n\n";
+        $reply = " **Top components under " . format_bdt($budget) . ":**\n\n";
         foreach ($rows as $r) {
             $reply .= "- **" . sanitise($r['name']) . "**\n  Price: **" . format_bdt((float)$r['price_bdt']) . "** | Category: " . sanitise($r['category']) . "\n\n";
         }
@@ -312,7 +312,7 @@ if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $ori
     $brand = trim($m[1], " ?.");
     $rows = db_query(component_base_sql() . " WHERE c.brand LIKE ? LIMIT 5", ["%{$brand}%"]);
     if ($rows) {
-        $reply = "🏷️ **Products from " . sanitise(ucfirst($brand)) . ":**\n\n";
+        $reply = " **Products from " . sanitise(ucfirst($brand)) . ":**\n\n";
         foreach ($rows as $r) {
             $price = $r['price_bdt'] > 0 ? format_bdt((float)$r['price_bdt']) : "Price Unlisted";
             $reply .= "- **" . sanitise($r['name']) . "** (" . sanitise($r['category']) . ")\n  Price: **{$price}**\n\n";
@@ -333,7 +333,7 @@ if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $ori
     if ($cat) {
         $rows = db_query(component_base_sql() . " WHERE c.type = ? LIMIT 5", [$cat]);
         if ($rows) {
-            $reply = "🛠️ **List of " . sanitise($type_keyword) . ":**\n\n";
+            $reply = " **List of " . sanitise($type_keyword) . ":**\n\n";
             foreach ($rows as $r) {
                 $price = $r['price_bdt'] > 0 ? format_bdt((float)$r['price_bdt']) : "Price Unlisted";
                 $reply .= "- **" . sanitise($r['name']) . "**\n  Price: **{$price}**\n\n";
@@ -345,7 +345,7 @@ if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $ori
         $reply = "I couldn't identify that category.";
     }
 } elseif (preg_match('/(contact|phone|address|location|email|office|store location|branch)/i', $last_message)) {
-    $reply = "📍 **PC Builder BD Store Information:**\n\n- **Office Address:** Multiplan Centre, Elephant Road, Dhaka, Bangladesh\n- **Email:** support@pcbuild.com\n- **Phone:** +880 1711-XXXXXX\n- **Hours:** 10:00 AM - 8:00 PM (Closed on Tuesdays)";
+    $reply = " **PC Builder BD Store Information:**\n\n- **Office Address:** Multiplan Centre, Elephant Road, Dhaka, Bangladesh\n- **Email:** support@pcbuild.com\n- **Phone:** +880 1711-XXXXXX\n- **Hours:** 10:00 AM - 8:00 PM (Closed on Tuesdays)";
 } elseif (preg_match('/(?:price of|update on|news on|how much is|tell me about|details on|specs of|specification of|info on|show me)\s+(.+)/i', $last_message, $m)) {
     $keyword = trim($m[1], " ?.");
     $rows = db_query(component_base_sql() . " WHERE c.component_name LIKE ? LIMIT 5", ["%{$keyword}%"]);
@@ -460,7 +460,7 @@ if (preg_match('/^(?:run sql|sql|query|execute sql|execute|db):\s*(.+)$/i', $ori
         $rows = db_query(component_base_sql() . " WHERE c.component_name LIKE ? OR c.brand LIKE ? OR c.type LIKE ? LIMIT 5", [$term, $term, $term]);
         
         if ($rows) {
-            $reply = "🔍 **Database Search Results for '" . sanitise($search) . "':**\n\n";
+            $reply = " **Database Search Results for '" . sanitise($search) . "':**\n\n";
             foreach ($rows as $r) {
                 $price = $r['price_bdt'] > 0 ? format_bdt((float)$r['price_bdt']) : "Price Unlisted";
                 $stock = normalize_stock($r['stock_status_raw'] ?? '') === 'in_stock' ? "✅ In Stock" : "❌ Out of Stock";
