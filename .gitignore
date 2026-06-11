@@ -1,2 +1,32 @@
+# Python virtual environment
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+
+# User uploads (binary, per-instance)
+uploads/components/*
+uploads/forum/*
+!uploads/components/.gitkeep
+!uploads/forum/.gitkeep
+
+# Session / temp files
+session_id.txt
+*.session
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# TestSprite test output
 testsprite_tests/
-testsprite_tests/
+
+# Logs
+*.log
+error_log
