@@ -431,8 +431,8 @@ include __DIR__ . '/../templates/header.php';
                                         style="border-radius:8px; padding:0.2rem 0.5rem;" title="Edit">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    <form method="POST" class="d-inline"
-                                        onsubmit="return confirm('Delete this component?')">
+                                    <form method="POST" action="<?= BASE_URL ?>/admin/components.php" class="d-inline"
+                                        onsubmit="return confirm('Delete this component? This cannot be undone.')">
                                         <?php csrf_field(); ?>
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<?= (int)$c['component_id'] ?>">
@@ -665,10 +665,7 @@ foreach ($items as [$fn,$lbl,$tp]): ?>
             window.addEventListener('load', updateFields);
             </script>
 
-            </diconst imageInput=document.getElementById('imageInput'); const
-                previewImg=document.getElementById('previewImg'); imageInput.addEventListener('change', function () {
-                const file=this.files[0]; if (file) { const reader=new FileReader(); reader.onload=function (e) {
-                previewImg.src=e.target.result; previewImg.style.display='block' ; } reader.readAsDataURL(file); } });v>
+            </div>
         </div>
     </div>
 
