@@ -6,7 +6,9 @@ define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');
 
 define('APP_ENV',   'local');         
-define('BASE_URL',  'http://localhost:5173/myproject');
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost:5173';
+define('BASE_URL',  $protocol . $host . '/myproject');
 define('APP_NAME',  'PC Builder BD');
 
 define('JWT_SECRET',        'CHANGE_ME_TO_A_256BIT_RANDOM_STRING_BEFORE_DEPLOY');
