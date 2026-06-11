@@ -108,29 +108,17 @@ Expected output:
 Seeding complete: 165 inserted, 0 skipped (already exist).
 ```
 
-### Step 6 — Configure the App URL
+### Step 6 — Configuration
 
-Open `C:\xampp\htdocs\myproject\config.php` in Notepad and update `BASE_URL`:
-
-**If Apache is on port 80 (default):**
-```php
-define('BASE_URL', 'http://localhost/myproject');
-```
-
-**If Apache is on port 8080:**
-```php
-define('BASE_URL', 'http://localhost:8080/myproject');
-```
+You're done! The `BASE_URL` in `config.php` is completely dynamic. It will automatically detect if you are running on port `80`, port `8080`, or sharing your project over a local IP address. You do not need to edit `config.php`.
 
 ### Step 7 — Set Upload Folder Permissions
 
 In **File Explorer**, navigate to `C:\xampp\htdocs\myproject\uploads\`
 
-Right-click `components` folder → **Properties → Security** → ensure **Full control** is checked for your user.
+Right-click the `uploads` folder itself → **Properties → Security** → Edit and ensure **Full control** is checked for **Everyone** (or your current user).
 
-Do the same for the `forum` folder.
-
-> On Windows with XAMPP, permissions are usually not an issue — skip if uploads work fine.
+> Note: On Windows with XAMPP, folder permissions are usually granted by default. You can skip this step unless you see an error like "Failed to save image" when posting in the forum.
 
 ### Step 8 — Open the App
 
@@ -205,30 +193,16 @@ Expected output:
 Seeding complete: 165 inserted, 0 skipped (already exist).
 ```
 
-### Step 6 — Configure the App URL
+### Step 6 — Configuration
 
-Edit `config.php`:
-
-```bash
-nano /opt/lampp/htdocs/myproject/config.php
-```
-
-Update `BASE_URL` to match your Apache port:
-
-```php
-# Default port 80:
-define('BASE_URL', 'http://localhost/myproject');
-
-# If using port 5173:
-define('BASE_URL', 'http://localhost:5173/myproject');
-```
+You're done! The `BASE_URL` in `config.php` is now completely dynamic and will automatically detect if you are running on port `80`, port `5173`, or using a local IP address to share over your network. You do not need to edit `config.php`.
 
 ### Step 7 — Set Upload Permissions
 
+To ensure image uploads (like forum posts) work perfectly regardless of which user Apache runs under, grant full write access to the uploads directory:
+
 ```bash
-sudo chmod -R 775 /opt/lampp/htdocs/myproject/uploads/
-sudo chown -R daemon:daemon /opt/lampp/htdocs/myproject/uploads/ 2>/dev/null || \
-sudo chown -R www-data:www-data /opt/lampp/htdocs/myproject/uploads/
+sudo chmod -R 777 /opt/lampp/htdocs/myproject/uploads/
 ```
 
 ### Step 8 — Open the App
