@@ -696,81 +696,97 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function forumDeletePost(postId, btn) {
-    if (!window.IS_LOGGED_IN) { alert('You must be logged in.'); return; }
-    if (!window.confirm('Are you sure you want to delete this post? This cannot be undone.')) return;
+    if (!window.IS_LOGGED_IN) { showToast('You must be logged in to delete posts.', 'warning'); return; }
 
-    const origHTML = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Deleting...';
+    showConfirm({
+        title: 'Delete this post?',
+        message: 'This action is permanent and cannot be undone. All comments and votes on this post will also be removed.',
+        icon: '<i class="bi bi-trash3-fill"></i>',
+        iconBg: 'linear-gradient(135deg,#ef4444,#b91c1c)',
+        confirmText: 'Yes, Delete',
+        onConfirm: async () => {
+            const origHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Deleting...';
 
-    try {
-        const fd = new FormData();
-        fd.append('type', 'post');
-        fd.append('id', postId);
-        fd.append('csrf_token', window.CSRF_TOKEN);
+            try {
+                const fd = new FormData();
+                fd.append('type', 'post');
+                fd.append('id', postId);
+                fd.append('csrf_token', window.CSRF_TOKEN);
 
-        const res  = await fetch(window.BASE_URL + '/api/delete_forum_item.php', { method: 'POST', body: fd });
-        const text = await res.text();
-        console.log('[DELETE POST] id=' + postId + ' status=' + res.status + ' body=' + text);
+                const res  = await fetch(window.BASE_URL + '/api/delete_forum_item.php', { method: 'POST', body: fd });
+                const text = await res.text();
 
-        let data;
-        try { data = JSON.parse(text); } catch(e) {
-            alert('Server error: ' + text.substring(0, 200));
-            btn.disabled = false; btn.innerHTML = origHTML; return;
+                let data;
+                try { data = JSON.parse(text); } catch(e) {
+                    showToast('Server returned an invalid response.', 'error');
+                    btn.disabled = false; btn.innerHTML = origHTML; return;
+                }
+
+                if (data.success) {
+                    showToast('Post deleted successfully! Redirecting...', 'success');
+                    setTimeout(() => { window.location.href = window.BASE_URL + '/forum.php'; }, 1200);
+                } else {
+                    showToast(data.error || 'Failed to delete the post.', 'error');
+                    btn.disabled = false; btn.innerHTML = origHTML;
+                }
+            } catch (err) {
+                showToast('Network error. Please try again.', 'error');
+                btn.disabled = false; btn.innerHTML = origHTML;
+            }
         }
-
-        if (data.success) {
-            window.location.href = window.BASE_URL + '/forum.php';
-        } else {
-            alert('Delete failed: ' + (data.error || 'Unknown error'));
-            btn.disabled = false; btn.innerHTML = origHTML;
-        }
-    } catch (err) {
-        alert('Network error: ' + err.message);
-        btn.disabled = false; btn.innerHTML = origHTML;
-    }
+    });
 }
 
 async function forumDeleteComment(commentId, btn) {
-    if (!window.IS_LOGGED_IN) { alert('You must be logged in.'); return; }
-    if (!window.confirm('Delete this comment?')) return;
+    if (!window.IS_LOGGED_IN) { showToast('You must be logged in to delete comments.', 'warning'); return; }
 
-    const origHTML = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+    showConfirm({
+        title: 'Delete this comment?',
+        message: 'This comment will be permanently removed from the discussion.',
+        icon: '<i class="bi bi-chat-x-fill"></i>',
+        iconBg: 'linear-gradient(135deg,#f59e0b,#d97706)',
+        confirmText: 'Delete Comment',
+        onConfirm: async () => {
+            const origHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="bi bi-hourglass-split"></i>';
 
-    try {
-        const fd = new FormData();
-        fd.append('type', 'comment');
-        fd.append('id', commentId);
-        fd.append('csrf_token', window.CSRF_TOKEN);
+            try {
+                const fd = new FormData();
+                fd.append('type', 'comment');
+                fd.append('id', commentId);
+                fd.append('csrf_token', window.CSRF_TOKEN);
 
-        const res  = await fetch(window.BASE_URL + '/api/delete_forum_item.php', { method: 'POST', body: fd });
-        const text = await res.text();
-        console.log('[DELETE COMMENT] id=' + commentId + ' status=' + res.status + ' body=' + text);
+                const res  = await fetch(window.BASE_URL + '/api/delete_forum_item.php', { method: 'POST', body: fd });
+                const text = await res.text();
 
-        let data;
-        try { data = JSON.parse(text); } catch(e) {
-            alert('Server error: ' + text.substring(0, 200));
-            btn.disabled = false; btn.innerHTML = origHTML; return;
-        }
+                let data;
+                try { data = JSON.parse(text); } catch(e) {
+                    showToast('Server returned an invalid response.', 'error');
+                    btn.disabled = false; btn.innerHTML = origHTML; return;
+                }
 
-        if (data.success) {
-            const card = btn.closest('.reddit-comment-card');
-            if (card) {
-                card.style.transition = 'opacity 0.3s ease, transform 0.3s';
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(-10px)';
-                setTimeout(() => card.remove(), 350);
+                if (data.success) {
+                    showToast('Comment deleted successfully!', 'success');
+                    const card = btn.closest('.reddit-comment-card');
+                    if (card) {
+                        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.95) translateY(-10px)';
+                        setTimeout(() => card.remove(), 400);
+                    }
+                } else {
+                    showToast(data.error || 'Failed to delete the comment.', 'error');
+                    btn.disabled = false; btn.innerHTML = origHTML;
+                }
+            } catch (err) {
+                showToast('Network error. Please try again.', 'error');
+                btn.disabled = false; btn.innerHTML = origHTML;
             }
-        } else {
-            alert('Delete failed: ' + (data.error || 'Unknown error'));
-            btn.disabled = false; btn.innerHTML = origHTML;
         }
-    } catch (err) {
-        alert('Network error: ' + err.message);
-        btn.disabled = false; btn.innerHTML = origHTML;
-    }
+    });
 }
 </script>
 <?php include __DIR__ . '/templates/footer.php'; ?>
