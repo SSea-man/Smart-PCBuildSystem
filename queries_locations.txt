@@ -1,0 +1,54 @@
+SMART PC BUILD SYSTEM - SQL QUERY REFERENCE & EXPLANATIONS
+==========================================================
+Use this document as your script/reference during the "SQL Query Demonstration" part of your video presentation.
+
+---
+
+### 1. The Component Catalog Matrix (Advanced JOINs & Dynamic Categorization)
+* **Location:** `includes/functions.php` (Lines 101 to 133)
+* **Variable:** `component_base_sql()`
+* **What it does:** This is the backbone of the entire store and builder. It pulls every hardware component and cross-references it with live pricing from multiple retailers.
+* **Why it's advanced:**
+  - **Dynamic Categorization (CASE WHEN):** We use a massive `CASE` statement with `LIKE` operators to intelligently map raw category strings (e.g., "GPU (graphics)") into clean, unified system categories (e.g., "GPU").
+  - **Aggregation Subqueries:** It uses a subquery `(SELECT component_id, MIN(price) ... GROUP BY component_id)` to group multiple store prices together and dynamically fetch the absolute lowest available price for the user.
+  - **LEFT JOINS & COALESCE:** It uses `LEFT JOIN` so components without prices still appear, and `COALESCE` to default null prices to 0.
+
+---
+
+### 2. The Forum Feed Generator (Nested Subqueries & String Aggregation)
+* **Location:** `forum.php` (Lines 59 to 74)
+* **Variable:** `$posts`
+* **What it does:** Generates the social feed for the community forum, loading posts along with dynamic metadata.
+* **Why it's advanced:**
+  - **Inline Subqueries:** Instead of running 50 different queries to get the comment counts and upvote counts for each post, we use highly optimized inline subqueries directly in the `SELECT` statement: `(SELECT COUNT(*) FROM comment WHERE post_id = p.post_id)`.
+  - **GROUP_CONCAT:** This is a very advanced aggregation function. `(SELECT GROUP_CONCAT(t.name) FROM posttag ...)` takes multiple rows of tags related to a post and merges them into a single comma-separated string (e.g., "gaming,gpu,help") inside the SQL engine itself, saving immense PHP processing time.
+
+---
+
+### 3. The Live Watchlist Fetcher (Multi-Table Relational JOINs)
+* **Location:** `dashboard.php` (Lines 15 to 25)
+* **Variable:** `$watchlist`
+* **What it does:** Retrieves the user's saved wishlist items and attaches the current live price and retailer name.
+* **Why it's advanced:**
+  - **4-Table Relational JOIN:** It cleanly joins `watchlist`, `component`, `storeavailability`, and `store` in a single query.
+  - **Relational Integrity:** By using the bridge tables, the user can see real-time price drops on items they saved weeks ago without the database storing redundant price data.
+
+---
+
+### 4. Price History Trend Analysis (Date Math & Time-Series Aggregation)
+* **Location:** `dashboard.php` (Lines 30 to 34)
+* **Variable:** `$history`
+* **What it does:** Fetches the raw data used to draw the dynamic 30-day price trend charts for individual components.
+* **Why it's advanced:**
+  - **Date Casting & Math:** It uses `DATE(changed_at)` to cast timestamps down to the day, ensuring we can plot them accurately on a graph.
+  - **Interval Filtering:** It uses `WHERE changed_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)` to let the database handle the time-series boundary filtering automatically, rather than loading the entire price history into PHP and filtering it manually.
+
+---
+
+### 5. Community Discovery Engine (Correlated Subqueries)
+* **Location:** `forum.php` (Lines 76 to 81)
+* **Variable:** `$sidebar_communities`
+* **What it does:** Ranks the top 5 most popular forum communities to show in the sidebar, and instantly determines if the currently logged-in user is already a member.
+* **Why it's advanced:**
+  - **Correlated Subqueries:** It counts the members dynamically and orders the results by the generated alias `ORDER BY member_count DESC`.
+  - **Contextual Awareness:** The query accepts the `user_id` as a parameter to simultaneously check if the user belongs to the community `(SELECT COUNT(*) ... AND cm.user_id = ?)`, allowing the UI to instantly show a "Join" or "Leave" button.
