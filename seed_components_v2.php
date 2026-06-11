@@ -186,61 +186,47 @@ $components = [
     ['Walton WUPS 1200VA', 'UPS', 'Walton', 75, 0, '', '', 0, 5200]
 ];
 
-$typeMap = [
-    'CPU'                      => 'CPU (processing)',
-    'CPU Cooler'               => 'Output devices',
-    'Motherboard'              => 'Motherboard (connection)',
-    'RAM'                      => 'RAM (temporary memory)',
-    'Storage'                  => 'Storage (HDD/SSD)',
-    'Graphics Card'            => 'GPU (graphics)',
-    'Power Supply'             => 'PSU (power)',
-    'Casing'                   => 'Case (body)',
-    'Casing Cooler'            => 'Output devices',
-    'Monitor'                  => 'Output devices',
-    'Speaker & Home Theater'   => 'Output devices',
-    'Headphone'                => 'Output devices',
-    'Keyboard'                 => 'Input devices',
-    'Mouse'                    => 'Input devices',
-    'Wifi Adapter / LAN Card'  => 'Input devices',
-    'Anti Virus'               => 'Input devices',
-    'UPS'                      => 'Output devices',
-];
-
 $pdo = get_db();
 
-// Force the type column to accept any string so we don't need the ENUM generic map
+// Ensure column types are correct
 $pdo->exec("ALTER TABLE component MODIFY type VARCHAR(100) NOT NULL;");
 $pdo->exec("ALTER TABLE component MODIFY component_name VARCHAR(255) NOT NULL;");
+
+// Add unique constraint if not exists (prevents duplicates on re-run)
+$pdo->exec("ALTER TABLE component ADD UNIQUE INDEX IF NOT EXISTS uq_component_name_type (component_name, type);");
 
 $pdo->beginTransaction();
 
 try {
-    $stmt = $pdo->prepare("INSERT INTO component (component_name, type, brand, benchmark_score, tdp_watts, socket, ram_gen, psu_wattage) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $store_stmt = $pdo->prepare("INSERT INTO storeavailability (component_id, store_id, price, stock_status) VALUES (?, 1, ?, 'in_stock')");
+    // INSERT IGNORE skips silently if (component_name, type) already exists
+    $stmt = $pdo->prepare("
+        INSERT IGNORE INTO component
+            (component_name, type, brand, benchmark_score, tdp_watts, socket, ram_gen, psu_wattage)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+    $store_stmt = $pdo->prepare("
+        INSERT IGNORE INTO storeavailability
+            (component_id, store_id, price, stock_status)
+        VALUES (?, 1, ?, 'in_stock')
+    ");
 
-    $count = 0;
+    $inserted = 0;
+    $skipped  = 0;
+
     foreach ($components as $c) {
-        $rawType = $c[1]; // Use the exact type (e.g., 'CPU Cooler', 'Case')
-        $stmt->execute([
-            $c[0],
-            $rawType,
-            $c[2],
-            $c[3],
-            $c[4],
-            $c[5],
-            $c[6],
-            $c[7]
-        ]);
-        
+        $stmt->execute([$c[0], $c[1], $c[2], $c[3], $c[4], $c[5], $c[6], $c[7]]);
         $comp_id = $pdo->lastInsertId();
-        $price = $c[8];
-        
-        $store_stmt->execute([$comp_id, $price]);
-        $count++;
+
+        if ($comp_id) {
+            $store_stmt->execute([$comp_id, $c[8]]);
+            $inserted++;
+        } else {
+            $skipped++;
+        }
     }
-    
+
     $pdo->commit();
-    echo "Successfully seeded $count new components spanning all core and peripheral categories!\n";
+    echo "Seeding complete: $inserted inserted, $skipped skipped (already exist).\n";
 } catch (Exception $e) {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();

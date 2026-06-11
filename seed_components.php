@@ -207,39 +207,49 @@ $typeMap = [
 ];
 
 $pdo = get_db();
+
+// Ensure column types are correct
+$pdo->exec("ALTER TABLE component MODIFY type VARCHAR(100) NOT NULL;");
+$pdo->exec("ALTER TABLE component MODIFY component_name VARCHAR(255) NOT NULL;");
+
+// Add unique constraint if not exists (prevents duplicates on re-run)
+$pdo->exec("ALTER TABLE component ADD UNIQUE INDEX IF NOT EXISTS uq_component_name_type (component_name, type);");
+
 $pdo->beginTransaction();
 
 try {
-    // Force the type column to accept any string so we don't need the ENUM generic map
-    $pdo->exec("ALTER TABLE component MODIFY type VARCHAR(100) NOT NULL;");
+    // INSERT IGNORE skips silently if (component_name, type) already exists
+    $stmt = $pdo->prepare("
+        INSERT IGNORE INTO component
+            (component_name, type, brand, benchmark_score, tdp_watts, socket, ram_gen, psu_wattage)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+    $store_stmt = $pdo->prepare("
+        INSERT IGNORE INTO storeavailability
+            (component_id, store_id, price, stock_status)
+        VALUES (?, 1, ?, 'in_stock')
+    ");
 
-    $stmt = $pdo->prepare("INSERT INTO component (component_name, type, brand, benchmark_score, tdp_watts, socket, ram_gen, psu_wattage) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $store_stmt = $pdo->prepare("INSERT INTO storeavailability (component_id, store_id, price, stock_status) VALUES (?, 1, ?, 'in_stock')");
+    $inserted = 0;
+    $skipped  = 0;
 
-    $count = 0;
     foreach ($components as $c) {
-        $rawType = $c[1]; // Use the exact type (e.g., 'CPU Cooler', 'Case')
-        $stmt->execute([
-            $c[0],
-            $rawType,
-            $c[2],
-            $c[3],
-            $c[4],
-            $c[5],
-            $c[6],
-            $c[7]
-        ]);
-        
+        $stmt->execute([$c[0], $c[1], $c[2], $c[3], $c[4], $c[5], $c[6], $c[7]]);
         $comp_id = $pdo->lastInsertId();
-        $price = $c[8];
-        
-        $store_stmt->execute([$comp_id, $price]);
-        $count++;
+
+        if ($comp_id) {
+            $store_stmt->execute([$comp_id, $c[8]]);
+            $inserted++;
+        } else {
+            $skipped++;
+        }
     }
-    
+
     $pdo->commit();
-    echo "Successfully seeded $count new components spanning all core and peripheral categories!\n";
+    echo "Seeding complete: $inserted inserted, $skipped skipped (already exist).\n";
 } catch (Exception $e) {
-    $pdo->rollBack();
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     echo "Failed: " . $e->getMessage() . "\n";
 }
