@@ -50,39 +50,52 @@ A full-stack web platform for the Bangladeshi market that helps users configure,
 
 ## Quick Start — Windows (XAMPP)
 
-### Step 1 — Install XAMPP
+### Prerequisites
 
-1. Download **XAMPP for Windows** from [https://www.apachefriends.org/](https://www.apachefriends.org/)
-   - Choose version **8.0.x** or higher
-2. Run the installer → install to `C:\xampp` (default)
-3. Open **XAMPP Control Panel** (run as Administrator)
+Before you begin, make sure you have the following installed on your Windows PC:
 
-### Step 2 — Start Apache & MySQL
+| Software | Download Link | Purpose |
+|----------|--------------|---------|
+| **XAMPP 8.0+** | [apachefriends.org](https://www.apachefriends.org/) | Provides Apache, MySQL & PHP |
+| **Git** | [git-scm.com](https://git-scm.com/download/win) | To clone the repository |
 
-In the XAMPP Control Panel, click **Start** next to:
-- ✅ **Apache**
-- ✅ **MySQL**
+---
 
-Both status lights should turn green.
+### Step 1 — Install & Start XAMPP
 
-> **Port conflict?** If Apache fails to start, another app (Skype, IIS) may be using port 80.
-> Click **Config → httpd.conf** and change `Listen 80` to `Listen 8080`, then restart.
+1. Download and install **XAMPP** to `C:\xampp` (default path).
+2. Open **XAMPP Control Panel** (right-click → Run as Administrator).
+3. Click **Start** next to both **Apache** and **MySQL**.
+4. Both status indicators should turn **green**.
 
-### Step 3 — Clone the Repository
+> **⚠️ Port 80 conflict?** If Apache fails to start (port 80 is used by Skype, IIS, etc.):
+> 1. In XAMPP Control Panel, click **Config** next to Apache → open **httpd.conf**
+> 2. Find `Listen 80` and change it to `Listen 8080`
+> 3. Find `ServerName localhost:80` and change it to `ServerName localhost:8080`
+> 4. Save the file and click **Start** again.
 
-Open **Command Prompt** (Win + R → type `cmd` → Enter):
+---
+
+### Step 2 — Clone the Repository
+
+Open **Command Prompt** (`Win + R` → type `cmd` → press Enter) and run:
 
 ```cmd
 cd C:\xampp\htdocs
 git clone https://github.com/SSea-man/Smart-PCBuildSystem.git myproject
-cd myproject
 ```
 
-> **Git not installed?** Download from [https://git-scm.com/download/win](https://git-scm.com/download/win) and install with default options.
+After cloning, verify the folder exists:
+```cmd
+dir C:\xampp\htdocs\myproject
+```
+You should see files like `index.php`, `config.php`, `project_alpha.sql`, etc.
 
-### Step 4 — Import the Database
+---
 
-Open **Command Prompt**:
+### Step 3 — Create & Import the Database
+
+**Option A — Using Command Prompt (Recommended):**
 
 ```cmd
 C:\xampp\mysql\bin\mysql.exe -u root -e "CREATE DATABASE smart_pc_build CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
@@ -90,44 +103,59 @@ C:\xampp\mysql\bin\mysql.exe -u root -e "CREATE DATABASE smart_pc_build CHARACTE
 C:\xampp\mysql\bin\mysql.exe -u root smart_pc_build < C:\xampp\htdocs\myproject\project_alpha.sql
 ```
 
-**Or use phpMyAdmin (easier for Windows):**
-1. Open browser → go to `http://localhost/phpmyadmin`
-2. Click **New** in the left sidebar
-3. Database name: `smart_pc_build` → Encoding: `utf8mb4_unicode_ci` → **Create**
-4. Click the new `smart_pc_build` database → **Import** tab
-5. Choose file: `C:\xampp\htdocs\myproject\project_alpha.sql` → **Go**
+> If the second command shows no output, it means it worked successfully.
 
-### Step 5 — Seed Component Data
+**Option B — Using phpMyAdmin (GUI method):**
+
+1. Open your browser → go to `http://localhost/phpmyadmin` (or `http://localhost:8080/phpmyadmin` if you changed the port).
+2. Click **New** in the left sidebar.
+3. Type `smart_pc_build` as the database name → select `utf8mb4_unicode_ci` → click **Create**.
+4. Click the new `smart_pc_build` database in the left sidebar → click the **Import** tab at the top.
+5. Click **Choose File** → navigate to `C:\xampp\htdocs\myproject\project_alpha.sql` → click **Open**.
+6. Scroll down and click **Import** (or **Go**).
+7. You should see a green success message.
+
+---
+
+### Step 4 — Seed Hardware Components
+
+Open **Command Prompt** and run:
 
 ```cmd
 C:\xampp\php\php.exe C:\xampp\htdocs\myproject\seed_components_v2.php
 ```
 
-Expected output:
+You should see:
 ```
 Seeding complete: 165 inserted, 0 skipped (already exist).
 ```
 
-### Step 6 — Configuration
+> **⚠️ Warning about `SERVER_PORT`?** This is a harmless warning that appears when running PHP from the command line. It does not affect functionality. You can safely ignore it.
 
-You're done! The `BASE_URL` in `config.php` is completely dynamic. It will automatically detect if you are running on port `80`, port `8080`, or sharing your project over a local IP address. You do not need to edit `config.php`.
+---
 
-### Step 7 — Set Upload Folder Permissions
+### Step 5 — Set Upload Folder Permissions
 
-In **File Explorer**, navigate to `C:\xampp\htdocs\myproject\uploads\`
+This step ensures forum image uploads work correctly.
 
-Right-click the `uploads` folder itself → **Properties → Security** → Edit and ensure **Full control** is checked for **Everyone** (or your current user).
+1. Open **File Explorer** and navigate to `C:\xampp\htdocs\myproject\uploads\`
+2. Right-click the `uploads` folder → **Properties** → **Security** tab
+3. Click **Edit** → Select **Everyone** (or your username) → Check **Full control** → Click **OK**
 
-> Note: On Windows with XAMPP, folder permissions are usually granted by default. You can skip this step unless you see an error like "Failed to save image" when posting in the forum.
+> **Note:** On most Windows + XAMPP setups, permissions work by default. Only do this step if you see an error like *"Failed to save image"* when creating a forum post.
 
-### Step 8 — Open the App
+---
 
-Open your browser and go to:
+### Step 6 — Open the App 🎉
+
+Open your browser and visit:
 
 | Apache Port | URL |
 |-------------|-----|
-| 80 (default) | `http://localhost/myproject` |
-| 8080 | `http://localhost:8080/myproject` |
+| **80** (default) | `http://localhost/myproject` |
+| **8080** (if changed) | `http://localhost:8080/myproject` |
+
+> **✅ No configuration file editing needed!** The `BASE_URL` in `config.php` is fully dynamic and will auto-detect your port automatically.
 
 ---
 
