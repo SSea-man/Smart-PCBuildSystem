@@ -933,7 +933,7 @@ ORDER BY b.created_at DESC LIMIT 5;
 ```
 
 #### K4. Admin component listing — LEFT JOIN + Derived Table
-**File:** `admin/components.php` · **Lines:** 81–84
+**File:** `admin/components.php` · **Lines:** 98–101
 
 ```sql
 SELECT c.*, COALESCE(sa.price,0) as price_bdt, COALESCE(sa.stock_status,'—') as stock_raw
@@ -960,14 +960,21 @@ UPDATE `user` SET role=? WHERE user_id=?;
 ```
 
 #### K7. Admin — User listing with pagination
-**File:** `admin/users.php` · **Lines:** 41–43
+**File:** `admin/users.php` · **Lines:** 55–57
 
 ```sql
 SELECT COUNT(*) c FROM `user` WHERE ...;
 SELECT * FROM `user` WHERE ... ORDER BY created_at DESC LIMIT 15 OFFSET ?;
 ```
 
-#### K8. Admin — Price update with tracking
+#### K8. Admin — Reset user password
+**File:** `admin/users.php` · **Line:** 30
+
+```sql
+UPDATE `user` SET user_password=? WHERE user_id=?;
+```
+
+#### K9. Admin — Price update with tracking
 **File:** `admin/prices.php` · **Lines:** 20–30
 
 ```sql
@@ -978,7 +985,7 @@ INSERT INTO storeavailability (store_id, component_id, stock_status, price) VALU
 INSERT INTO pricetracking (component_id, old_price, new_price) VALUES (?,?,?);
 ```
 
-#### K9. Admin — Sponsor ad CRUD
+#### K10. Admin — Sponsor ad CRUD
 **File:** `admin/sponsor.php` · **Lines:** 26–47
 
 ```sql
