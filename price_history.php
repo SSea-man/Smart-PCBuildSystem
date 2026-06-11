@@ -40,7 +40,7 @@ include __DIR__ . '/templates/header.php';
           <option value="">— Select a component —</option>
           <?php foreach ($all_components as $c): ?>
           <option value="<?=(int)$c['id']?>" <?=$component_id===$c['id']?'selected':''?>>
-            [<?=sanitise(type_to_category($c['type']))?>] <?=sanitise($c['name'])?>
+            [<?=sanitise(type_to_category($c['type'], $c['name']))?>] <?=sanitise($c['name'])?>
           </option>
           <?php endforeach; ?>
         </select>

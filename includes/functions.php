@@ -73,16 +73,22 @@ function json_response(mixed $data, int $code = 200): never {
     exit;
 }
 
-function type_to_category(string $type): string {
+function type_to_category(string $type, string $name = ''): string {
+    $type = trim($type);
+    $name = trim($name);
     return match(true) {
         $type === 'CPU' || str_starts_with($type, 'CPU (')                 => 'CPU',
         $type === 'Motherboard' || str_starts_with($type, 'Motherboard (') => 'Motherboard',
         $type === 'RAM' || str_starts_with($type, 'RAM (')                 => 'RAM',
         $type === 'Storage' || str_starts_with($type, 'Storage (')         => 'Storage',
-        $type === 'GPU (graphics)' || $type === 'Graphics Card'            => 'GPU',
-        $type === 'PSU (power)' || $type === 'Power Supply'                => 'PSU',
-        $type === 'Casing'                                                 => 'Case',
-        $type === 'CPU Cooler' || $type === 'Casing Cooler'                => 'Cooling',
+        $type === 'GPU (graphics)' || $type === 'Graphics Card' || $type === 'GPU' => 'GPU',
+        $type === 'PSU (power)' || $type === 'Power Supply' || $type === 'PSU' => 'PSU',
+        $type === 'Casing' || $type === 'Case (body)' || $type === 'Case'  => 'Case',
+        $type === 'CPU Cooler' || $type === 'Casing Cooler' || $type === 'Cooling' => 'Cooling',
+        $type === 'Output devices' && (stripos($name, 'Cooler') !== false || stripos($name, 'Fan') !== false || stripos($name, 'Liquid') !== false || stripos($name, 'Noctua') !== false || stripos($name, 'Kraken') !== false) => 'Cooling',
+        $type === 'Input devices' && (stripos($name, 'Keyboard') !== false || stripos($name, 'Kumara') !== false || stripos($name, 'Azoth') !== false) => 'Keyboard',
+        $type === 'Input devices' && (stripos($name, 'Mouse') !== false || stripos($name, 'Superlight') !== false || stripos($name, 'DeathAdder') !== false || stripos($name, 'Viper') !== false || stripos($name, 'Aerox') !== false || stripos($name, 'Zowie') !== false || stripos($name, 'Lamzu') !== false || stripos($name, 'Glorious') !== false || stripos($name, 'G304') !== false) => 'Mouse',
+        $type === 'Output devices' && (stripos($name, 'Monitor') !== false || strpos($name, '"') !== false || stripos($name, 'Hz') !== false) => 'Monitor',
         default                                                            => $type,
     };
 }

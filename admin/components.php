@@ -73,15 +73,46 @@ if (input('action')==='edit' && ($eid=(int)input('id'))) {
 
 $search = trim(input('search',''));
 $cat    = input('cat','');
+
+$category_expr = "CASE
+    WHEN type = 'CPU' OR type LIKE 'CPU (%' THEN 'CPU'
+    WHEN type = 'Motherboard' OR type LIKE 'Motherboard (%' THEN 'Motherboard'
+    WHEN type = 'RAM' OR type LIKE 'RAM (%' THEN 'RAM'
+    WHEN type = 'Storage' OR type LIKE 'Storage (%' THEN 'Storage'
+    WHEN type = 'GPU (graphics)' OR type = 'Graphics Card' THEN 'GPU'
+    WHEN type = 'PSU (power)' OR type = 'Power Supply' THEN 'PSU'
+    WHEN type = 'Casing' OR type = 'Case (body)' THEN 'Case'
+    WHEN type IN ('CPU Cooler', 'Casing Cooler') OR (type = 'Output devices' AND (component_name LIKE '%Cooler%' OR component_name LIKE '%Fan%' OR component_name LIKE '%Liquid%' OR component_name LIKE '%Noctua%' OR component_name LIKE '%Kraken%')) THEN 'Cooling'
+    WHEN type = 'Input devices' AND (component_name LIKE '%Keyboard%' OR component_name LIKE '%Kumara%' OR component_name LIKE '%Azoth%') THEN 'Keyboard'
+    WHEN type = 'Input devices' AND (component_name LIKE '%Mouse%' OR component_name LIKE '%Superlight%' OR component_name LIKE '%DeathAdder%' OR component_name LIKE '%Viper%' OR component_name LIKE '%Aerox%' OR component_name LIKE '%Zowie%' OR component_name LIKE '%Lamzu%' OR component_name LIKE '%Glorious%' OR component_name LIKE '%G304%') THEN 'Mouse'
+    WHEN type = 'Output devices' AND (component_name LIKE '%Monitor%' OR component_name LIKE '%\"%' OR component_name LIKE '%Hz%') THEN 'Monitor'
+    ELSE type
+END";
+
 $where  = '1=1'; $params=[];
 if ($search) { $where.=' AND component_name LIKE ?'; $params[]="%{$search}%"; }
-if ($cat)    { $where.=' AND type LIKE ?'; $params[]="{$cat}%"; }
+if ($cat)    { $where.=" AND ($category_expr) = ?"; $params[]=$cat; }
+
 $total = (int)db_row("SELECT COUNT(*) c FROM component WHERE $where",$params)['c'];
 $pag   = paginate($total,(int)input('page',1),15);
 $list  = db_query("SELECT c.*, COALESCE(sa.price,0) as price_bdt, COALESCE(sa.stock_status,'—') as stock_raw
     FROM component c
     LEFT JOIN (SELECT component_id, MIN(price) as price, stock_status FROM storeavailability GROUP BY component_id) sa ON sa.component_id=c.component_id
     WHERE $where ORDER BY c.type, c.component_name LIMIT 15 OFFSET {$pag['offset']}", $params);
+
+$all_cats_query = db_query("SELECT DISTINCT ($category_expr) as cat_val FROM component WHERE type IS NOT NULL AND type != '' ORDER BY cat_val ASC");
+$categories_list = [];
+foreach ($all_cats_query as $row) {
+    if ($row['cat_val']) {
+        $categories_list[] = $row['cat_val'];
+    }
+}
+
+$db_types_query = db_query("SELECT DISTINCT type FROM component WHERE type IS NOT NULL AND type != '' ORDER BY type ASC");
+$all_db_types = [];
+foreach ($db_types_query as $row) {
+    $all_db_types[] = $row['type'];
+}
 
 $page_title = 'Manage Components';
 include __DIR__ . '/../templates/header.php';
@@ -364,9 +395,9 @@ include __DIR__ . '/../templates/header.php';
             <div class="d-flex gap-2">
                 <form method="GET" class="d-flex gap-2">
                     <select name="cat" class="form-select form-select-sm" onchange="this.form.submit()"
-                        style="border-radius:10px; width:150px;">
+                        style="border-radius:10px; width:170px;">
                         <option value="">All Categories</option>
-                        <?php foreach (['CPU','Motherboard','RAM','Storage','GPU','PSU','Case','Cooling'] as $c): ?>
+                        <?php foreach ($categories_list as $c): ?>
                         <option value="<?= $c ?>" <?= $cat===$c?'selected':'' ?>><?= $c ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -410,7 +441,7 @@ include __DIR__ . '/../templates/header.php';
                             </td>
                             <td class="py-2">
                                 <span class="badge bg-accent-soft text-accent"
-                                    style="font-size:0.7rem; font-weight:600;"><?= sanitise(type_to_category($c['type'])) ?></span>
+                                    style="font-size:0.7rem; font-weight:600;"><?= sanitise(type_to_category($c['type'], $c['component_name'])) ?></span>
                             </td>
                             <td class="py-2" style="font-size:0.85rem;"><?= sanitise($c['brand']??'') ?></td>
                             <td class="text-accent fw-600 py-2" style="font-size:0.85rem;">
@@ -503,12 +534,29 @@ include __DIR__ . '/../templates/header.php';
 
                         <!-- TYPE -->
                         <?php
-                      $categories = ['CPU','Motherboard','RAM','Storage','GPU','PSU','Case','Cooling','Monitor','Keyboard'];
+                        $standard_types = [
+                            'CPU (processing)',
+                            'Motherboard (connection)',
+                            'RAM (temporary memory)',
+                            'Storage (HDD/SSD)',
+                            'GPU (graphics)',
+                            'PSU (power)',
+                            'Case (body)',
+                            'CPU Cooler',
+                            'Casing Cooler',
+                            'Monitor',
+                            'Keyboard',
+                            'Mouse',
+                            'Input devices',
+                            'Output devices'
+                        ];
+                        $merged_types = array_unique(array_merge($standard_types, $all_db_types));
+                        sort($merged_types);
                         ?>
                         <div class="col-md-4">
                             <label class="form-label small fw-600">Type</label>
                             <select name="type" id="typeSelect" class="form-select form-select-sm" required>
-                                <?php foreach ($categories as $ct): ?>
+                                <?php foreach ($merged_types as $ct): ?>
                                 <option value="<?= $ct ?>" <?= ($edit['type']??'')===$ct?'selected':'' ?>>
                                     <?= $ct ?>
                                 </option>
@@ -647,12 +695,22 @@ foreach ($items as [$fn,$lbl,$tp]): ?>
 
             function updateFields() {
                 const type = typeSelect.value.toLowerCase();
+                let category = 'other';
+                if (type.includes('cpu') && !type.includes('cooler')) category = 'cpu';
+                else if (type.includes('motherboard')) category = 'motherboard';
+                else if (type.includes('ram')) category = 'ram';
+                else if (type.includes('storage')) category = 'storage';
+                else if (type.includes('gpu') || type.includes('graphics')) category = 'gpu';
+                else if (type.includes('psu') || type.includes('power')) category = 'psu';
+                else if (type.includes('casing') || type.includes('case')) category = 'case';
+                else if (type.includes('cooler') || type.includes('cooling')) category = 'cooling';
+                else if (type.includes('monitor')) category = 'monitor';
 
                 document.querySelectorAll('[class*="field-"]').forEach(el => {
                     el.style.display = 'none';
                 });
 
-                show('field-' + type);
+                show('field-' + category);
             }
 
             function show(cls) {
