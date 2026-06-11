@@ -67,10 +67,6 @@ try {
             exit;
         }
 
-        if (empty($_SERVER['HTTP_X_REQUESTED_WITH']) || strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) !== 'xmlhttprequest') {
-            header('Location: ' . BASE_URL . '/forum.php');
-            exit;
-        }
         echo json_encode(['success' => true, 'message' => 'Post deleted successfully.']);
         exit;
 
