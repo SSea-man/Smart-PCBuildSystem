@@ -30,6 +30,10 @@ $spec_rows = [
     ['label'=>'M.2 Slots',      'field'=>'m2_slots',        'metric'=>'higher'],
     ['label'=>'RAM Slots',      'field'=>'ram_slots',       'metric'=>'higher'],
     ['label'=>'PSU Wattage (W)','field'=>'psu_wattage',     'metric'=>'higher'],
+    ['label'=>'Screen Size',     'field'=>'screen_size',     'metric'=>'higher'],
+    ['label'=>'Resolution',      'field'=>'resolution',      'metric'=>'text'],
+    ['label'=>'Refresh Rate (Hz)','field'=>'refresh_rate',    'metric'=>'higher'],
+    ['label'=>'Panel Type',      'field'=>'panel_type',      'metric'=>'text'],
     ['label'=>'Stock',          'field'=>'stock_status',    'metric'=>'text'],
     ['label'=>'Retailer',       'field'=>'retailer',        'metric'=>'text'],
 ];

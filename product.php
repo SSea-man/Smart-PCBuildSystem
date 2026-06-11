@@ -298,6 +298,18 @@ $emi_price = ceil($regular_price / 12);
           <?php if (!empty($comp['psu_wattage'])): ?>
             <li>Required System PSU: <?= (int)$comp['psu_wattage'] ?>W</li>
           <?php endif; ?>
+          <?php if (!empty($comp['screen_size'])): ?>
+            <li>Screen Size: <?= $comp['screen_size'] ?>"</li>
+          <?php endif; ?>
+          <?php if (!empty($comp['resolution'])): ?>
+            <li>Resolution: <?= sanitise($comp['resolution']) ?></li>
+          <?php endif; ?>
+          <?php if (!empty($comp['refresh_rate'])): ?>
+            <li>Refresh Rate: <?= (int)$comp['refresh_rate'] ?> Hz</li>
+          <?php endif; ?>
+          <?php if (!empty($comp['panel_type'])): ?>
+            <li>Panel Type: <?= sanitise($comp['panel_type']) ?></li>
+          <?php endif; ?>
           <li>Retail Stock Availability checked instantly.</li>
         </ul>
       </div>
@@ -330,6 +342,15 @@ $emi_price = ceil($regular_price / 12);
         $spec_groups['Performance Metrics'] = [
             'Performance Benchmark Score' => (int)$comp['benchmark_score'] . ' Points'
         ];
+    }
+
+    if (!empty($comp['screen_size']) || !empty($comp['resolution']) || !empty($comp['refresh_rate']) || !empty($comp['panel_type'])) {
+        $mon_spec = [];
+        if (!empty($comp['screen_size'])) { $mon_spec['Screen Size'] = $comp['screen_size'] . '"'; }
+        if (!empty($comp['resolution'])) { $mon_spec['Resolution'] = sanitise($comp['resolution']); }
+        if (!empty($comp['refresh_rate'])) { $mon_spec['Refresh Rate'] = (int)$comp['refresh_rate'] . ' Hz'; }
+        if (!empty($comp['panel_type'])) { $mon_spec['Panel Type'] = sanitise($comp['panel_type']); }
+        $spec_groups['Display Specifications'] = $mon_spec;
     }
 
     if (!empty($comp['socket'])) {

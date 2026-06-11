@@ -201,8 +201,8 @@ try {
     // INSERT IGNORE skips silently if (component_name, type) already exists
     $stmt = $pdo->prepare("
         INSERT IGNORE INTO component
-            (component_name, type, brand, benchmark_score, tdp_watts, socket, ram_gen, psu_wattage)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            (component_name, type, brand, benchmark_score)
+        VALUES (?, ?, ?, ?)
     ");
     $store_stmt = $pdo->prepare("
         INSERT IGNORE INTO storeavailability
@@ -214,11 +214,88 @@ try {
     $skipped  = 0;
 
     foreach ($components as $c) {
-        $stmt->execute([$c[0], $c[1], $c[2], $c[3], $c[4], $c[5], $c[6], $c[7]]);
+        $stmt->execute([$c[0], $c[1], $c[2], $c[3]]);
         $comp_id = $pdo->lastInsertId();
 
         if ($comp_id) {
             $store_stmt->execute([$comp_id, $c[8]]);
+            
+            // Subclass detail insertion
+            $type_lower = strtolower($c[1]);
+            $tdp = (int)$c[4];
+            $socket = $c[5];
+            $ram_gen = $c[6];
+            $psu_wattage = (int)$c[7];
+            
+            if (strpos($type_lower, 'cpu') !== false && strpos($type_lower, 'cooler') === false) {
+                $pdo->prepare("INSERT INTO cpu_details (component_id, tdp_watts, socket) VALUES (?, ?, ?)")
+                    ->execute([$comp_id, $tdp, $socket]);
+            } elseif (strpos($type_lower, 'motherboard') !== false) {
+                $pdo->prepare("INSERT INTO motherboard_details (component_id, socket, ram_gen) VALUES (?, ?, ?)")
+                    ->execute([$comp_id, $socket, $ram_gen]);
+            } elseif (strpos($type_lower, 'ram') !== false) {
+                $pdo->prepare("INSERT INTO ram_details (component_id, ram_gen) VALUES (?, ?)")
+                    ->execute([$comp_id, $ram_gen]);
+            } elseif (strpos($type_lower, 'graphics card') !== false || strpos($type_lower, 'gpu') !== false) {
+                $pdo->prepare("INSERT INTO gpu_details (component_id, tdp_watts) VALUES (?, ?)")
+                    ->execute([$comp_id, $tdp]);
+            } elseif (strpos($type_lower, 'power supply') !== false || strpos($type_lower, 'psu') !== false) {
+                $pdo->prepare("INSERT INTO psu_details (component_id, psu_wattage) VALUES (?, ?)")
+                    ->execute([$comp_id, $psu_wattage]);
+            } elseif (strpos($type_lower, 'storage') !== false) {
+                $siface = '';
+                if (stripos($c[0], 'NVMe') !== false) {
+                    $siface = 'NVMe';
+                } elseif (stripos($c[0], 'SATA') !== false || stripos($c[0], 'HDD') !== false) {
+                    $siface = 'SATA';
+                }
+                $pdo->prepare("INSERT INTO storage_details (component_id, storage_interface) VALUES (?, ?)")
+                    ->execute([$comp_id, $siface]);
+            } elseif (strpos($type_lower, 'casing') !== false || strpos($type_lower, 'case') !== false) {
+                $pdo->prepare("INSERT INTO case_details (component_id, form_factor, length_mm, height_mm) VALUES (?, '', 0, 0)")
+                    ->execute([$comp_id]);
+            } elseif (strpos($type_lower, 'cooler') !== false || strpos($type_lower, 'cooling') !== false) {
+                $pdo->prepare("INSERT INTO cooling_details (component_id, height_mm) VALUES (?, 0)")
+                    ->execute([$comp_id]);
+            } elseif (strpos($type_lower, 'monitor') !== false) {
+                $monitors_map = [
+                    'LG 27GP850-B 27" 165Hz 1440p' => [27.0, '2560x1440', 165, 'Nano IPS'],
+                    'Samsung Odyssey G7 27" 240Hz' => [27.0, '2560x1440', 240, 'QLED VA'],
+                    'Gigabyte M27Q 27" 170Hz 1440p' => [27.0, '2560x1440', 170, 'Super Speed IPS'],
+                    'ASUS TUF Gaming VG27AQ 27"' => [27.0, '2560x1440', 165, 'IPS'],
+                    'AOC 24G2SP 24" 165Hz 1080p' => [24.0, '1920x1080', 165, 'IPS'],
+                    'MSI Optix G241 24" 144Hz' => [24.0, '1920x1080', 144, 'IPS'],
+                    'BenQ Zowie XL2546K 24.5" 240Hz' => [24.5, '1920x1080', 240, 'TN'],
+                    'Dell S2721DGF 27" 165Hz' => [27.0, '2560x1440', 165, 'Fast IPS'],
+                    'Acer Nitro VG271U 27" 144Hz' => [27.0, '2560x1440', 144, 'IPS'],
+                    'ViewSonic VX2758-2KP-MHD 27"' => [27.0, '2560x1440', 144, 'IPS']
+                ];
+                
+                $name = $c[0];
+                if (isset($monitors_map[$name])) {
+                    $specs = $monitors_map[$name];
+                    $pdo->prepare("INSERT INTO monitor_details (component_id, screen_size, resolution, refresh_rate, panel_type) VALUES (?, ?, ?, ?, ?)")
+                        ->execute([$comp_id, $specs[0], $specs[1], $specs[2], $specs[3]]);
+                } else {
+                    $size = null;
+                    $refresh = null;
+                    $res = '1920x1080';
+                    $panel = 'IPS';
+                    
+                    if (preg_match('/(\d+(?:\.\d+)?)"/', $name, $matches)) {
+                        $size = (float)$matches[1];
+                    }
+                    if (preg_match('/(\d+)Hz/i', $name, $matches)) {
+                        $refresh = (int)$matches[1];
+                    }
+                    if (strpos($name, '1440p') !== false) {
+                        $res = '2560x1440';
+                    }
+                    $pdo->prepare("INSERT INTO monitor_details (component_id, screen_size, resolution, refresh_rate, panel_type) VALUES (?, ?, ?, ?, ?)")
+                        ->execute([$comp_id, $size, $res, $refresh, $panel]);
+                }
+            }
+            
             $inserted++;
         } else {
             $skipped++;

@@ -37,6 +37,12 @@ if ($brand === '__new') {
     $m2   = (int)input('m2_slots'); $sata=(int)input('sata_ports'); $rslots=(int)input('ram_slots');
     $psuW = (int)input('psu_wattage'); $siface=input('storage_interface');
     
+    // Monitor fields
+    $ssize = input('screen_size') !== '' ? (float)input('screen_size') : null;
+    $res   = input('resolution') !== '' ? input('resolution') : null;
+    $refr  = input('refresh_rate') !== '' ? (int)input('refresh_rate') : null;
+    $panel = input('panel_type') !== '' ? input('panel_type') : null;
+    
     $image_url = null;
     if ($id) {
         $image_url = db_row('SELECT image_url FROM component WHERE component_id=?', [$id])['image_url'] ?? null;
@@ -55,20 +61,58 @@ if ($brand === '__new') {
     $startech_url = input('startech_url');
     $ryans_url = input('ryans_url');
     if ($id) {
-        db_exec('UPDATE component SET component_name=?,type=?,brand=?,benchmark_score=?,tdp_watts=?,socket=?,ram_gen=?,form_factor=?,length_mm=?,height_mm=?,m2_slots=?,sata_ports=?,ram_slots=?,psu_wattage=?,storage_interface=?,image_url=?,startech_url=?,ryans_url=? WHERE component_id=?',
-            [$name,$type,$brand,$bench,$tdp,$sock,$rgen,$ff,$lmm,$hmm,$m2,$sata,$rslots,$psuW,$siface,$image_url,$startech_url,$ryans_url,$id]);
+        db_exec('UPDATE component SET component_name=?,type=?,brand=?,benchmark_score=?,image_url=?,startech_url=?,ryans_url=? WHERE component_id=?',
+            [$name,$type,$brand,$bench,$image_url,$startech_url,$ryans_url,$id]);
+        
+        // Clean existing subclass entries
+        db_exec('DELETE FROM cpu_details WHERE component_id=?', [$id]);
+        db_exec('DELETE FROM motherboard_details WHERE component_id=?', [$id]);
+        db_exec('DELETE FROM ram_details WHERE component_id=?', [$id]);
+        db_exec('DELETE FROM gpu_details WHERE component_id=?', [$id]);
+        db_exec('DELETE FROM storage_details WHERE component_id=?', [$id]);
+        db_exec('DELETE FROM psu_details WHERE component_id=?', [$id]);
+        db_exec('DELETE FROM case_details WHERE component_id=?', [$id]);
+        db_exec('DELETE FROM cooling_details WHERE component_id=?', [$id]);
+        db_exec('DELETE FROM monitor_details WHERE component_id=?', [$id]);
+        
         flash_message('success','Component updated.');
     } else {
-        db_exec('INSERT INTO component (component_name,type,brand,benchmark_score,tdp_watts,socket,ram_gen,form_factor,length_mm,height_mm,m2_slots,sata_ports,ram_slots,psu_wattage,storage_interface,image_url,startech_url,ryans_url) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-            [$name,$type,$brand,$bench,$tdp,$sock,$rgen,$ff,$lmm,$hmm,$m2,$sata,$rslots,$psuW,$siface,$image_url,$startech_url,$ryans_url]);
+        $id = (int)db_exec('INSERT INTO component (component_name,type,brand,benchmark_score,image_url,startech_url,ryans_url) VALUES (?,?,?,?,?,?,?)',
+            [$name,$type,$brand,$bench,$image_url,$startech_url,$ryans_url]);
         flash_message('success','Component added.');
     }
+
+    // Insert new subclass details
+    $type_lower = strtolower($type);
+    if (strpos($type_lower, 'cpu') !== false && strpos($type_lower, 'cooler') === false) {
+        db_exec('INSERT INTO cpu_details (component_id, tdp_watts, socket) VALUES (?, ?, ?)', [$id, $tdp, $sock]);
+    } elseif (strpos($type_lower, 'motherboard') !== false) {
+        db_exec('INSERT INTO motherboard_details (component_id, socket, ram_gen, form_factor, m2_slots, sata_ports, ram_slots) VALUES (?, ?, ?, ?, ?, ?, ?)', [$id, $sock, $rgen, $ff, $m2, $sata, $rslots]);
+    } elseif (strpos($type_lower, 'ram') !== false) {
+        db_exec('INSERT INTO ram_details (component_id, ram_gen) VALUES (?, ?)', [$id, $rgen]);
+    } elseif (strpos($type_lower, 'gpu') !== false || strpos($type_lower, 'graphics') !== false) {
+        db_exec('INSERT INTO gpu_details (component_id, tdp_watts, length_mm) VALUES (?, ?, ?)', [$id, $tdp, $lmm]);
+    } elseif (strpos($type_lower, 'storage') !== false) {
+        db_exec('INSERT INTO storage_details (component_id, storage_interface) VALUES (?, ?)', [$id, $siface]);
+    } elseif (strpos($type_lower, 'psu') !== false || strpos($type_lower, 'power') !== false) {
+        db_exec('INSERT INTO psu_details (component_id, psu_wattage) VALUES (?, ?)', [$id, $psuW]);
+    } elseif (strpos($type_lower, 'casing') !== false || strpos($type_lower, 'case') !== false) {
+        db_exec('INSERT INTO case_details (component_id, form_factor, length_mm, height_mm) VALUES (?, ?, ?, ?)', [$id, $ff, $lmm, $hmm]);
+    } elseif (strpos($type_lower, 'cooler') !== false || strpos($type_lower, 'cooling') !== false) {
+        db_exec('INSERT INTO cooling_details (component_id, height_mm) VALUES (?, ?)', [$id, $hmm]);
+    } elseif (strpos($type_lower, 'monitor') !== false) {
+        db_exec('INSERT INTO monitor_details (component_id, screen_size, resolution, refresh_rate, panel_type) VALUES (?, ?, ?, ?, ?)', [$id, $ssize, $res, $refr, $panel]);
+    }
+
     redirect('admin/components.php');
 }
 
 $edit = null;
 if (input('action')==='edit' && ($eid=(int)input('id'))) {
-    $edit = db_row('SELECT * FROM component WHERE component_id=?',[$eid]);
+    $edit = get_component($eid);
+    if ($edit) {
+        $edit['component_id'] = $edit['id'];
+    }
 }
 
 $search = trim(input('search',''));
@@ -624,6 +668,9 @@ $fields = [
  ['tdp_watts','TDP Watts','number'],
 ],
 'motherboard' => [
+ ['socket','Socket','text'],
+ ['ram_gen','RAM Gen','text'],
+ ['form_factor','Form Factor','text'],
  ['m2_slots','M.2 Slots','number'],
  ['sata_ports','SATA Ports','number'],
  ['ram_slots','RAM Slots','number'],
@@ -632,7 +679,8 @@ $fields = [
  ['ram_gen','RAM Gen','text'],
 ],
 'gpu' => [
- ['length_mm','Length mm','number'],
+ ['tdp_watts','TDP Watts','number'],
+ ['length_mm','Length (mm)','number'],
 ],
 'storage' => [
  ['storage_interface','Storage Interface','text'],
@@ -642,14 +690,16 @@ $fields = [
 ],
 'case' => [
  ['form_factor','Form Factor','text'],
+ ['length_mm','GPU Length Clearance (mm)','number'],
+ ['height_mm','CPU Cooler Height Clearance (mm)','number'],
 ],
 'cooling' => [
- ['height_mm','Height mm','number'],
+ ['height_mm','Cooler Height (mm)','number'],
 ],
 'monitor' => [
- ['screen_size','Screen Size','number'],
+ ['screen_size','Screen Size (inches)','number" step="0.1'],
  ['resolution','Resolution','text'],
- ['refresh_rate','Refresh Rate','number'],
+ ['refresh_rate','Refresh Rate (Hz)','number'],
  ['panel_type','Panel Type','text'],
 ]
 ];

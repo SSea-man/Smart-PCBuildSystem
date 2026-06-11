@@ -1,6 +1,6 @@
 -- MariaDB dump 10.19  Distrib 10.4.32-MariaDB, for Linux (x86_64)
 --
--- Host: localhost    Database: smart_pc_build
+-- Host: 127.0.0.1    Database: smart_pc_build
 -- ------------------------------------------------------
 -- Server version	10.4.32-MariaDB
 
@@ -64,7 +64,7 @@ CREATE TABLE `build` (
   PRIMARY KEY (`build_id`),
   KEY `fk_user_id_build` (`user_id`),
   CONSTRAINT `fk_user_id_build` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -73,7 +73,7 @@ CREATE TABLE `build` (
 
 LOCK TABLES `build` WRITE;
 /*!40000 ALTER TABLE `build` DISABLE KEYS */;
-INSERT INTO `build` VALUES (2,2,65000.00,90,550,'My Build','general',0.00,'2026-05-19 10:21:58'),(3,3,220000.00,240,850,'My Build','general',0.00,'2026-05-19 10:21:58'),(4,4,95000.00,120,650,'My Build','general',0.00,'2026-05-19 10:21:58'),(5,5,250000.00,300,1000,'My Build','general',0.00,'2026-05-19 10:21:58'),(6,6,120000.00,144,700,'My Build','general',0.00,'2026-05-19 10:21:58'),(7,7,175000.00,165,750,'My Build','general',0.00,'2026-05-19 10:21:58'),(8,8,280000.00,320,1050,'My Build','general',0.00,'2026-05-19 10:21:58'),(9,9,145000.00,140,650,'My Build','general',0.00,'2026-05-19 10:21:58'),(10,10,70000.00,75,500,'My Build','general',0.00,'2026-05-19 10:21:58'),(11,11,160000.00,170,750,'My Build','general',0.00,'2026-05-19 10:21:58'),(12,12,210000.00,240,850,'My Build','general',0.00,'2026-05-19 10:21:58'),(13,13,130000.00,130,650,'My Build','general',0.00,'2026-05-19 10:21:58'),(14,14,280000.00,320,1000,'My Build','general',0.00,'2026-05-19 10:21:58'),(15,15,90000.00,95,550,'My Build','general',0.00,'2026-05-19 10:21:58'),(16,16,175000.00,180,750,'My Build','general',0.00,'2026-05-19 10:21:58'),(17,17,220000.00,260,900,'My Build','general',0.00,'2026-05-19 10:21:58'),(18,18,145000.00,140,650,'My Build','general',0.00,'2026-05-19 10:21:58'),(19,19,190000.00,200,800,'My Build','general',0.00,'2026-05-19 10:21:58'),(20,20,110000.00,120,600,'My Build','general',0.00,'2026-05-19 10:21:58'),(33,34,16000.00,0,0,'My Build','video_editing',38.97,'2026-05-19 22:13:11'),(34,32,16000.00,0,0,'My Build','gaming',68.97,'2026-05-19 23:50:54'),(35,32,7000.00,0,0,'My Build','gaming',1.67,'2026-05-19 23:51:05'),(36,32,16000.00,0,0,'My Build','video_editing',38.97,'2026-05-19 23:56:52'),(37,1,324500.00,0,297,'Custom Build (6/11/2026)','custom',0.00,'2026-06-11 05:46:14');
+INSERT INTO `build` VALUES (2,2,65000.00,90,550,'My Build','general',0.00,'2026-05-19 10:21:58'),(3,3,220000.00,240,850,'My Build','general',0.00,'2026-05-19 10:21:58'),(4,4,95000.00,120,650,'My Build','general',0.00,'2026-05-19 10:21:58'),(5,5,250000.00,300,1000,'My Build','general',0.00,'2026-05-19 10:21:58'),(6,6,120000.00,144,700,'My Build','general',0.00,'2026-05-19 10:21:58'),(7,7,175000.00,165,750,'My Build','general',0.00,'2026-05-19 10:21:58'),(8,8,280000.00,320,1050,'My Build','general',0.00,'2026-05-19 10:21:58'),(9,9,145000.00,140,650,'My Build','general',0.00,'2026-05-19 10:21:58'),(10,10,70000.00,75,500,'My Build','general',0.00,'2026-05-19 10:21:58'),(11,11,160000.00,170,750,'My Build','general',0.00,'2026-05-19 10:21:58'),(12,12,210000.00,240,850,'My Build','general',0.00,'2026-05-19 10:21:58'),(13,13,130000.00,130,650,'My Build','general',0.00,'2026-05-19 10:21:58'),(14,14,280000.00,320,1000,'My Build','general',0.00,'2026-05-19 10:21:58'),(15,15,90000.00,95,550,'My Build','general',0.00,'2026-05-19 10:21:58'),(16,16,175000.00,180,750,'My Build','general',0.00,'2026-05-19 10:21:58'),(17,17,220000.00,260,900,'My Build','general',0.00,'2026-05-19 10:21:58'),(18,18,145000.00,140,650,'My Build','general',0.00,'2026-05-19 10:21:58'),(19,19,190000.00,200,800,'My Build','general',0.00,'2026-05-19 10:21:58'),(20,20,110000.00,120,600,'My Build','general',0.00,'2026-05-19 10:21:58'),(33,34,16000.00,0,0,'My Build','video_editing',38.97,'2026-05-19 22:13:11'),(34,32,16000.00,0,0,'My Build','gaming',68.97,'2026-05-19 23:50:54'),(35,32,7000.00,0,0,'My Build','gaming',1.67,'2026-05-19 23:51:05'),(36,32,16000.00,0,0,'My Build','video_editing',38.97,'2026-05-19 23:56:52'),(37,1,324500.00,0,297,'Custom Build (6/11/2026)','custom',0.00,'2026-06-11 05:46:14'),(38,1,399500.00,0,388,'Custom Build (6/11/2026)','custom',0.00,'2026-06-11 13:07:47');
 /*!40000 ALTER TABLE `build` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -100,8 +100,35 @@ CREATE TABLE `buildcomponent` (
 
 LOCK TABLES `buildcomponent` WRITE;
 /*!40000 ALTER TABLE `buildcomponent` DISABLE KEYS */;
-INSERT INTO `buildcomponent` VALUES (2,2),(2,6),(2,8),(2,10),(33,6),(33,8),(33,12),(33,14),(33,16),(33,20),(34,6),(34,8),(34,12),(34,14),(34,16),(34,20),(35,8),(35,11),(35,13),(35,15),(35,18),(35,20),(36,6),(36,8),(36,12),(36,13),(36,15),(36,20),(37,5),(37,30),(37,48),(37,54),(37,82),(37,92),(37,102),(37,112),(37,116),(37,142);
+INSERT INTO `buildcomponent` VALUES (2,2),(2,6),(2,8),(2,10),(33,6),(33,8),(33,12),(33,14),(33,16),(33,20),(34,6),(34,8),(34,12),(34,14),(34,16),(34,20),(35,8),(35,11),(35,13),(35,15),(35,18),(35,20),(36,6),(36,8),(36,12),(36,13),(36,15),(36,20),(37,5),(37,30),(37,48),(37,54),(37,82),(37,92),(37,102),(37,112),(37,116),(37,142),(38,30),(38,55),(38,69),(38,82),(38,91),(38,96),(38,112),(38,116),(38,128),(38,137),(38,144);
 /*!40000 ALTER TABLE `buildcomponent` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `case_details`
+--
+
+DROP TABLE IF EXISTS `case_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `case_details` (
+  `component_id` int(11) NOT NULL,
+  `form_factor` varchar(10) NOT NULL DEFAULT '',
+  `length_mm` smallint(5) unsigned NOT NULL DEFAULT 0,
+  `height_mm` smallint(5) unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`component_id`),
+  CONSTRAINT `fk_case_component` FOREIGN KEY (`component_id`) REFERENCES `component` (`component_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `case_details`
+--
+
+LOCK TABLES `case_details` WRITE;
+/*!40000 ALTER TABLE `case_details` DISABLE KEYS */;
+INSERT INTO `case_details` VALUES (103,'',0,0),(104,'',0,0),(105,'',0,0),(106,'',0,0),(107,'',0,0),(108,'',0,0),(109,'',0,0),(110,'',0,0),(111,'',0,0),(112,'',0,0),(123,'',0,0),(124,'',0,0),(125,'',0,0),(126,'',0,0),(127,'',0,0),(128,'',0,0),(129,'',0,0),(130,'',0,0),(131,'',0,0),(132,'',0,0);
+/*!40000 ALTER TABLE `case_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -295,23 +322,12 @@ CREATE TABLE `component` (
   `type` varchar(100) NOT NULL,
   `brand` varchar(100) NOT NULL DEFAULT '',
   `benchmark_score` decimal(8,2) NOT NULL DEFAULT 0.00,
-  `tdp_watts` smallint(5) unsigned NOT NULL DEFAULT 0,
-  `socket` varchar(30) NOT NULL DEFAULT '',
-  `ram_gen` varchar(10) NOT NULL DEFAULT '',
-  `form_factor` varchar(10) NOT NULL DEFAULT '',
-  `length_mm` smallint(5) unsigned NOT NULL DEFAULT 0,
-  `height_mm` smallint(5) unsigned NOT NULL DEFAULT 0,
-  `m2_slots` tinyint(3) unsigned NOT NULL DEFAULT 0,
-  `sata_ports` tinyint(3) unsigned NOT NULL DEFAULT 0,
-  `ram_slots` tinyint(3) unsigned NOT NULL DEFAULT 0,
-  `psu_wattage` smallint(5) unsigned NOT NULL DEFAULT 0,
-  `storage_interface` varchar(10) NOT NULL DEFAULT '',
   `image_url` varchar(255) DEFAULT NULL,
   `startech_url` varchar(255) DEFAULT NULL,
   `ryans_url` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`component_id`),
   UNIQUE KEY `uq_component_name_type` (`component_name`,`type`)
-) ENGINE=InnoDB AUTO_INCREMENT=188 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=353 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -320,8 +336,59 @@ CREATE TABLE `component` (
 
 LOCK TABLES `component` WRITE;
 /*!40000 ALTER TABLE `component` DISABLE KEYS */;
-INSERT INTO `component` VALUES (1,'Intel Core i5 14600K','CPU (processing)','Intel',72.00,125,'LGA1700','','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(2,'AMD Ryzen 7 7800X3D','CPU (processing)','AMD',96.00,120,'AM5','','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(3,'ASUS ROG B650','Motherboard (connection)','',0.00,0,'','DDR5','ATX',0,0,2,4,4,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(5,'Corsair 32GB DDR5','RAM (temporary memory)','Corsair',0.00,7,'','DDR5','',0,0,0,0,0,0,'','uploads/components/real_ram.jpg',NULL,NULL),(6,'Kingston Fury 16GB','RAM (temporary memory)','Kingston',0.00,5,'','DDR4','',0,0,0,0,0,0,'','uploads/components/real_ram.jpg',NULL,NULL),(8,'WD Blue 2TB HDD','Storage (HDD/SSD)','WD',0.00,8,'','','',0,0,0,0,0,0,'SATA','uploads/components/real_storage.jpg',NULL,NULL),(9,'RTX 4070 Super','GPU (graphics)','NVIDIA',94.00,200,'','','',336,0,0,0,0,0,'','uploads/components/real_gpu.jpg',NULL,NULL),(10,'RX 7900 XT','GPU (graphics)','AMD',96.00,315,'','','',336,0,0,0,0,0,'','uploads/components/real_gpu.jpg',NULL,NULL),(11,'RTX 5080','GPU (graphics)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_gpu.jpg',NULL,NULL),(12,'RTX 5090','GPU (graphics)','NVIDIA',99.00,575,'','','',336,0,0,0,0,0,'','uploads/components/real_gpu.jpg',NULL,NULL),(13,'Ryzen 9 9950X','CPU (processing)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(14,'Intel Core Ultra 9','CPU (processing)','Intel',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(15,'Gigabyte X870','Motherboard (connection)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(16,'ASRock B760','Motherboard (connection)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(17,'G.Skill Trident Z 64GB','RAM (temporary memory)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_ram.jpg',NULL,NULL),(18,'Crucial DDR5 32GB','RAM (temporary memory)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_ram.jpg',NULL,NULL),(20,'Corsair RM1000x','PSU (power)','Corsair',99.00,0,'','','',0,0,0,0,0,1000,'','uploads/components/real_psu.jpg',NULL,NULL),(22,'Test','CPU (processing)','',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(23,'Intel Core i9 14900K','CPU','Intel',100.00,125,'LGA1700','DDR5','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(24,'Intel Core i7 14700K','CPU','Intel',95.00,125,'LGA1700','DDR5','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(25,'Intel Core i5 14600K','CPU','Intel',88.00,125,'LGA1700','DDR5','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(26,'Intel Core i5 13400F','CPU','Intel',75.00,65,'LGA1700','DDR4','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(27,'Intel Core i3 13100F','CPU','Intel',60.00,58,'LGA1700','DDR4','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(28,'Intel Core i9 13900K','CPU','Intel',98.00,125,'LGA1700','DDR5','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(29,'Intel Core i7 13700K','CPU','Intel',92.00,125,'LGA1700','DDR5','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(30,'Intel Core Ultra 9 285K','CPU','Intel',100.00,125,'LGA1851','DDR5','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(31,'Intel Core Ultra 7 265K','CPU','Intel',96.00,125,'LGA1851','DDR5','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(32,'AMD Ryzen 9 9950X','CPU','AMD',100.00,170,'AM5','DDR5','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(33,'AMD Ryzen 9 7950X3D','CPU','AMD',98.00,120,'AM5','DDR5','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(34,'AMD Ryzen 7 7800X3D','CPU','AMD',95.00,120,'AM5','DDR5','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(35,'AMD Ryzen 5 7600X','CPU','AMD',85.00,105,'AM5','DDR5','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(36,'AMD Ryzen 5 5600X','CPU','AMD',70.00,65,'AM4','DDR4','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(37,'AMD Ryzen 7 5700X','CPU','AMD',75.00,65,'AM4','DDR4','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(38,'AMD Ryzen 9 5900X','CPU','AMD',85.00,105,'AM4','DDR4','',0,0,0,0,0,0,'','uploads/components/real_cpu.jpg',NULL,NULL),(39,'Noctua NH-D15','CPU Cooler','Noctua',95.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(40,'Cooler Master Hyper 212','CPU Cooler','Cooler Master',70.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(41,'Corsair iCUE H150i Elite','CPU Cooler','Corsair',90.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(42,'NZXT Kraken Elite 360','CPU Cooler','NZXT',92.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(43,'DeepCool AK620','CPU Cooler','DeepCool',85.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(44,'Lian Li Galahad II Trinity','CPU Cooler','Lian Li',88.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(45,'Arctic Liquid Freezer II 360','CPU Cooler','Arctic',94.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(46,'be quiet! Dark Rock Pro 4','CPU Cooler','be quiet!',90.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(47,'Thermalright Peerless Assassin','CPU Cooler','Thermalright',88.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(48,'MSI MAG CORELIQUID 240R V2','CPU Cooler','MSI',80.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(49,'ASUS ROG Maximus Z790 Hero','Motherboard','ASUS',95.00,0,'LGA1700','DDR5','',0,0,0,0,0,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(50,'MSI MAG Z790 TOMAHAWK WIFI','Motherboard','MSI',88.00,0,'LGA1700','DDR5','',0,0,0,0,0,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(51,'Gigabyte B760M DS3H','Motherboard','Gigabyte',75.00,0,'LGA1700','DDR4','',0,0,0,0,0,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(52,'ASUS TUF GAMING B760-PLUS','Motherboard','ASUS',80.00,0,'LGA1700','DDR5','',0,0,0,0,0,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(53,'ASRock Z690 Phantom Gaming','Motherboard','ASRock',82.00,0,'LGA1700','DDR4','',0,0,0,0,0,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(54,'Gigabyte Z890 AORUS MASTER','Motherboard','Gigabyte',98.00,0,'LGA1851','DDR5','',0,0,0,0,0,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(55,'ASUS ROG CROSSHAIR X670E','Motherboard','ASUS',98.00,0,'AM5','DDR5','',0,0,0,0,0,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(56,'MSI B650M MORTAR WIFI','Motherboard','MSI',85.00,0,'AM5','DDR5','',0,0,0,0,0,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(57,'Gigabyte B650 AORUS ELITE AX','Motherboard','Gigabyte',88.00,0,'AM5','DDR5','',0,0,0,0,0,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(58,'ASUS PRIME B650-PLUS','Motherboard','ASUS',80.00,0,'AM5','DDR5','',0,0,0,0,0,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(59,'MSI B550 TOMAHAWK','Motherboard','MSI',75.00,0,'AM4','DDR4','',0,0,0,0,0,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(60,'Gigabyte B550M DS3H','Motherboard','Gigabyte',65.00,0,'AM4','DDR4','',0,0,0,0,0,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(61,'ASUS ROG STRIX B550-F','Motherboard','ASUS',80.00,0,'AM4','DDR4','',0,0,0,0,0,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(62,'ASRock X570 Steel Legend','Motherboard','ASRock',82.00,0,'AM4','DDR4','',0,0,0,0,0,0,'','uploads/components/real_motherboard.jpg',NULL,NULL),(63,'Corsair Vengeance 32GB (2x16GB) DDR5 6000MHz','RAM','Corsair',90.00,0,'','DDR5','',0,0,0,0,0,0,'','uploads/components/real_ram.jpg',NULL,NULL),(64,'G.Skill Trident Z5 RGB 32GB DDR5 6400MHz','RAM','G.Skill',95.00,0,'','DDR5','',0,0,0,0,0,0,'','uploads/components/real_ram.jpg',NULL,NULL),(65,'Kingston FURY Beast 16GB DDR5 5200MHz','RAM','Kingston',80.00,0,'','DDR5','',0,0,0,0,0,0,'','uploads/components/real_ram.jpg',NULL,NULL),(66,'Corsair Vengeance LPX 16GB DDR4 3200MHz','RAM','Corsair',70.00,0,'','DDR4','',0,0,0,0,0,0,'','uploads/components/real_ram.jpg',NULL,NULL),(67,'G.Skill Ripjaws V 32GB DDR4 3600MHz','RAM','G.Skill',80.00,0,'','DDR4','',0,0,0,0,0,0,'','uploads/components/real_ram.jpg',NULL,NULL),(68,'TeamGroup T-Force Delta RGB 32GB DDR5 6000','RAM','TeamGroup',88.00,0,'','DDR5','',0,0,0,0,0,0,'','uploads/components/real_ram.jpg',NULL,NULL),(69,'Crucial Pro 64GB (2x32GB) DDR5 5600MHz','RAM','Crucial',90.00,0,'','DDR5','',0,0,0,0,0,0,'','uploads/components/real_ram.jpg',NULL,NULL),(70,'Patriot Viper Venom 32GB DDR5 6200MHz','RAM','Patriot',92.00,0,'','DDR5','',0,0,0,0,0,0,'','uploads/components/real_ram.jpg',NULL,NULL),(71,'AORUS Memory 32GB DDR5 6000MHz','RAM','Gigabyte',88.00,0,'','DDR5','',0,0,0,0,0,0,'','uploads/components/real_ram.jpg',NULL,NULL),(72,'Lexar Ares RGB 32GB DDR5 6400MHz','RAM','Lexar',90.00,0,'','DDR5','',0,0,0,0,0,0,'','uploads/components/real_ram.jpg',NULL,NULL),(73,'Samsung 990 PRO 2TB PCIe 4.0 NVMe','Storage','Samsung',98.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_storage.jpg',NULL,NULL),(74,'WD Black SN850X 1TB PCIe 4.0 NVMe','Storage','Western Digital',95.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_storage.jpg',NULL,NULL),(75,'Crucial P3 Plus 1TB PCIe 4.0 NVMe','Storage','Crucial',80.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_storage.jpg',NULL,NULL),(76,'Kingston NV2 500GB PCIe 4.0 NVMe','Storage','Kingston',70.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_storage.jpg',NULL,NULL),(77,'Seagate Barracuda 2TB 7200RPM HDD','Storage','Seagate',40.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_storage.jpg',NULL,NULL),(78,'Samsung 980 1TB NVMe','Storage','Samsung',85.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_storage.jpg',NULL,NULL),(79,'Corsair MP600 PRO 2TB PCIe 4.0','Storage','Corsair',96.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_storage.jpg',NULL,NULL),(80,'AORUS Gen4 7000s 1TB','Storage','Gigabyte',90.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_storage.jpg',NULL,NULL),(81,'Lexar NM790 2TB PCIe 4.0 NVMe','Storage','Lexar',92.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_storage.jpg',NULL,NULL),(82,'WD Blue 1TB SATA SSD','Storage','Western Digital',60.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_storage.jpg',NULL,NULL),(83,'NVIDIA RTX 5090 32GB','Graphics Card','NVIDIA',100.00,500,'','','',0,0,0,0,0,0,'','uploads/components/real_gpu.jpg',NULL,NULL),(84,'NVIDIA RTX 4090 24GB','Graphics Card','NVIDIA',98.00,450,'','','',0,0,0,0,0,0,'','uploads/components/real_gpu.jpg',NULL,NULL),(85,'NVIDIA RTX 4080 Super 16GB','Graphics Card','NVIDIA',95.00,320,'','','',0,0,0,0,0,0,'','uploads/components/real_gpu.jpg',NULL,NULL),(86,'NVIDIA RTX 4070 Super 12GB','Graphics Card','NVIDIA',88.00,220,'','','',0,0,0,0,0,0,'','uploads/components/real_gpu.jpg',NULL,NULL),(87,'NVIDIA RTX 4060 Ti 8GB','Graphics Card','NVIDIA',80.00,160,'','','',0,0,0,0,0,0,'','uploads/components/real_gpu.jpg',NULL,NULL),(88,'NVIDIA RTX 4060 8GB','Graphics Card','NVIDIA',75.00,115,'','','',0,0,0,0,0,0,'','uploads/components/real_gpu.jpg',NULL,NULL),(89,'AMD Radeon RX 7900 XTX 24GB','Graphics Card','AMD',96.00,355,'','','',0,0,0,0,0,0,'','uploads/components/real_gpu.jpg',NULL,NULL),(90,'AMD Radeon RX 7900 XT 20GB','Graphics Card','AMD',92.00,315,'','','',0,0,0,0,0,0,'','uploads/components/real_gpu.jpg',NULL,NULL),(91,'AMD Radeon RX 7800 XT 16GB','Graphics Card','AMD',86.00,263,'','','',0,0,0,0,0,0,'','uploads/components/real_gpu.jpg',NULL,NULL),(92,'AMD Radeon RX 7600 8GB','Graphics Card','AMD',70.00,165,'','','',0,0,0,0,0,0,'','uploads/components/real_gpu.jpg',NULL,NULL),(93,'Corsair RM1000x 1000W 80+ Gold','Power Supply','Corsair',95.00,0,'','','',0,0,0,0,0,1000,'','uploads/components/real_psu.jpg',NULL,NULL),(94,'SeaSonic FOCUS GX-850 850W 80+ Gold','Power Supply','SeaSonic',92.00,0,'','','',0,0,0,0,0,850,'','uploads/components/real_psu.jpg',NULL,NULL),(95,'Cooler Master MWE Gold 750 V2','Power Supply','Cooler Master',85.00,0,'','','',0,0,0,0,0,750,'','uploads/components/real_cooler.jpg',NULL,NULL),(96,'EVGA SuperNOVA 650 GT 650W','Power Supply','EVGA',80.00,0,'','','',0,0,0,0,0,650,'','uploads/components/real_psu.jpg',NULL,NULL),(97,'Corsair CV550 550W 80+ Bronze','Power Supply','Corsair',65.00,0,'','','',0,0,0,0,0,550,'','uploads/components/real_psu.jpg',NULL,NULL),(98,'MSI MPG A1000G PCIE5 1000W','Power Supply','MSI',96.00,0,'','','',0,0,0,0,0,1000,'','uploads/components/real_psu.jpg',NULL,NULL),(99,'Be Quiet! Straight Power 12 850W','Power Supply','Be Quiet!',94.00,0,'','','',0,0,0,0,0,850,'','uploads/components/real_psu.jpg',NULL,NULL),(100,'Thermaltake Toughpower GF3 1200W','Power Supply','Thermaltake',98.00,0,'','','',0,0,0,0,0,1200,'','uploads/components/real_psu.jpg',NULL,NULL),(101,'DeepCool PQ850M 850W 80+ Gold','Power Supply','DeepCool',88.00,0,'','','',0,0,0,0,0,850,'','uploads/components/real_psu.jpg',NULL,NULL),(102,'Gigabyte P650B 650W 80+ Bronze','Power Supply','Gigabyte',70.00,0,'','','',0,0,0,0,0,650,'','uploads/components/real_psu.jpg',NULL,NULL),(103,'Lian Li PC-O11 Dynamic','Casing','Lian Li',95.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_case.jpg',NULL,NULL),(104,'NZXT H9 Flow','Casing','NZXT',94.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_case.jpg',NULL,NULL),(105,'Corsair 4000D Airflow','Casing','Corsair',90.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_case.jpg',NULL,NULL),(106,'Phanteks Eclipse G360A','Casing','Phanteks',85.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_case.jpg',NULL,NULL),(107,'Cooler Master MasterBox TD500','Casing','Cooler Master',80.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(108,'Montech AIR 903 MAX','Casing','Montech',82.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_case.jpg',NULL,NULL),(109,'Fractal Design North','Casing','Fractal Design',96.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_case.jpg',NULL,NULL),(110,'Antec NX410','Casing','Antec',75.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_case.jpg',NULL,NULL),(111,'DeepCool CH560 Digital','Casing','DeepCool',88.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_case.jpg',NULL,NULL),(112,'MSI MAG FORGE 112R','Casing','MSI',78.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_case.jpg',NULL,NULL),(113,'LG 27GP850-B 27\" 165Hz 1440p','Monitor','LG',95.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_monitor.jpg',NULL,NULL),(114,'Samsung Odyssey G7 27\" 240Hz','Monitor','Samsung',96.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_monitor.jpg',NULL,NULL),(115,'Gigabyte M27Q 27\" 170Hz 1440p','Monitor','Gigabyte',90.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_monitor.jpg',NULL,NULL),(116,'ASUS TUF Gaming VG27AQ 27\"','Monitor','ASUS',88.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_monitor.jpg',NULL,NULL),(117,'AOC 24G2SP 24\" 165Hz 1080p','Monitor','AOC',80.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_monitor.jpg',NULL,NULL),(118,'MSI Optix G241 24\" 144Hz','Monitor','MSI',78.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_monitor.jpg',NULL,NULL),(119,'BenQ Zowie XL2546K 24.5\" 240Hz','Monitor','BenQ',92.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_monitor.jpg',NULL,NULL),(120,'Dell S2721DGF 27\" 165Hz','Monitor','Dell',90.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_monitor.jpg',NULL,NULL),(121,'Acer Nitro VG271U 27\" 144Hz','Monitor','Acer',0.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_monitor.jpg','',''),(122,'ViewSonic VX2758-2KP-MHD 27\"','Monitor','ViewSonic',80.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_monitor.jpg',NULL,NULL),(123,'Lian Li UNI FAN SL-INF 120 (3-Pack)','Casing Cooler','Lian Li',95.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(124,'Corsair LL120 RGB (3-Pack)','Casing Cooler','Corsair',90.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(125,'Noctua NF-A12x25 PWM','Casing Cooler','Noctua',98.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(126,'Arctic P12 PWM PST (5-Pack)','Casing Cooler','Arctic',92.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(127,'Cooler Master MasterFan MF120 Halo','Casing Cooler','Cooler Master',85.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(128,'NZXT F120 RGB (3-Pack)','Casing Cooler','NZXT',88.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(129,'DeepCool FC120 (3-Pack)','Casing Cooler','DeepCool',82.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(130,'Be Quiet! Silent Wings 4 120mm','Casing Cooler','Be Quiet!',94.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(131,'Thermalright TL-C12C (3-Pack)','Casing Cooler','Thermalright',80.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(132,'MSI MAG MAX F12A-3H','Casing Cooler','MSI',80.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(133,'Keychron Q1 Pro Wireless Mechanical','Keyboard','Keychron',96.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_keyboard.jpg',NULL,NULL),(134,'Corsair K70 RGB PRO Mechanical','Keyboard','Corsair',92.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_keyboard.jpg',NULL,NULL),(135,'Logitech G Pro X TKL','Keyboard','Logitech',94.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_keyboard.jpg',NULL,NULL),(136,'Razer Huntsman V3 Pro TKL','Keyboard','Razer',95.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_keyboard.jpg',NULL,NULL),(137,'SteelSeries Apex Pro TKL','Keyboard','SteelSeries',96.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_keyboard.jpg',NULL,NULL),(138,'Royal Kludge RK61 Wireless','Keyboard','Royal Kludge',80.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_keyboard.jpg',NULL,NULL),(139,'Redragon K552 Kumara','Keyboard','Redragon',75.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_keyboard.jpg',NULL,NULL),(140,'HyperX Alloy Origins Core','Keyboard','HyperX',88.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_gpu.jpg',NULL,NULL),(141,'Asus ROG Azoth Wireless','Keyboard','ASUS',98.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_keyboard.jpg',NULL,NULL),(142,'Akko 3098B Plus Wireless','Keyboard','Akko',85.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_keyboard.jpg',NULL,NULL),(143,'Logitech G Pro X Superlight 2','Mouse','Logitech',98.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_mouse.jpg',NULL,NULL),(144,'Razer DeathAdder V3 Pro','Mouse','Razer',96.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_mouse.jpg',NULL,NULL),(145,'Zowie EC2-CW Wireless','Mouse','Zowie',95.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_mouse.jpg',NULL,NULL),(146,'Endgame Gear XM2we','Mouse','Endgame Gear',92.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_mouse.jpg',NULL,NULL),(147,'Lamzu Atlantis Mini','Mouse','Lamzu',94.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_mouse.jpg',NULL,NULL),(148,'Glorious Model O Wireless','Mouse','Glorious',88.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_mouse.jpg',NULL,NULL),(149,'SteelSeries Aerox 3 Wireless','Mouse','SteelSeries',85.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_mouse.jpg',NULL,NULL),(150,'Corsair Harpoon RGB Wireless','Mouse','Corsair',80.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_mouse.jpg',NULL,NULL),(151,'Razer Viper Mini','Mouse','Razer',85.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_mouse.jpg',NULL,NULL),(152,'Logitech G304 Lightspeed','Mouse','Logitech',88.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_mouse.jpg',NULL,NULL),(153,'Logitech Z906 5.1 Surround','Speaker & Home Theater','Logitech',95.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(154,'Edifier R1280DB Powered Bookshelf','Speaker & Home Theater','Edifier',92.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(155,'Creative Pebble V3','Speaker & Home Theater','Creative',80.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(156,'Razer Leviathan V2 Soundbar','Speaker & Home Theater','Razer',88.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(157,'Microlab X2 2.1 Speaker','Speaker & Home Theater','Microlab',75.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(158,'Fantech GS203 Beat','Speaker & Home Theater','Fantech',65.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(159,'Logitech Z623 2.1 THX','Speaker & Home Theater','Logitech',90.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(160,'Edifier S3000Pro','Speaker & Home Theater','Edifier',98.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(161,'HyperX Cloud III Wireless','Headphone','HyperX',92.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_gpu.jpg',NULL,NULL),(162,'Logitech G Pro X 2 Lightspeed','Headphone','Logitech',95.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(163,'Razer BlackShark V2 Pro','Headphone','Razer',94.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(164,'SteelSeries Arctis Nova 7','Headphone','SteelSeries',90.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(165,'Corsair HS80 RGB Wireless','Headphone','Corsair',88.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(166,'Audio-Technica ATH-M50x','Headphone','Audio-Technica',95.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(167,'Sennheiser HD 560S','Headphone','Sennheiser',96.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(168,'Fantech HG11 Captain 7.1','Headphone','Fantech',70.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_cooler.jpg',NULL,NULL),(169,'Havit H2002d Gaming Headset','Headphone','Havit',75.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(170,'TP-Link Archer TX3000E WiFi 6 PCIe','Wifi Adapter / LAN Card','TP-Link',95.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(171,'Asus PCE-AX58BT WiFi 6 PCIe','Wifi Adapter / LAN Card','ASUS',94.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(172,'TP-Link TL-WN823N Mini USB','Wifi Adapter / LAN Card','TP-Link',75.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(173,'D-Link DWA-182 AC1200 USB','Wifi Adapter / LAN Card','D-Link',80.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(174,'Netgear Nighthawk A7000 USB','Wifi Adapter / LAN Card','Netgear',90.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(175,'Mercusys MU6H AC650 USB','Wifi Adapter / LAN Card','Mercusys',70.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(176,'Kaspersky Total Security 1 User 1 Year','Anti Virus','Kaspersky',98.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(177,'Bitdefender Internet Security 1 User','Anti Virus','Bitdefender',96.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(178,'ESET NOD32 Antivirus 1 User','Anti Virus','ESET',95.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(179,'Norton 360 Deluxe 3 Devices','Anti Virus','Norton',94.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(180,'McAfee Total Protection 1 User','Anti Virus','McAfee',85.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(181,'Apollo 1200VA Offline UPS','UPS','Apollo',80.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(182,'Digital X 1200VA UPS','UPS','Digital X',78.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(183,'Power Guard 1200VA UPS','UPS','Power Guard',75.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(184,'APC Back-UPS 1200VA','UPS','APC',95.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(185,'MaxGreen 1200VA Offline UPS','UPS','MaxGreen',82.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(186,'Vertiv Liebert ItON 1000VA','UPS','Vertiv',90.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL),(187,'Walton WUPS 1200VA','UPS','Walton',75.00,0,'','','',0,0,0,0,0,0,'','uploads/components/real_peripheral.jpg',NULL,NULL);
+INSERT INTO `component` VALUES (23,'Intel Core i9 14900K','CPU','Intel',100.00,'uploads/components/real_cpu.jpg',NULL,NULL),(24,'Intel Core i7 14700K','CPU','Intel',95.00,'uploads/components/real_cpu.jpg',NULL,NULL),(25,'Intel Core i5 14600K','CPU','Intel',88.00,'uploads/components/real_cpu.jpg',NULL,NULL),(26,'Intel Core i5 13400F','CPU','Intel',75.00,'uploads/components/real_cpu.jpg',NULL,NULL),(27,'Intel Core i3 13100F','CPU','Intel',60.00,'uploads/components/real_cpu.jpg',NULL,NULL),(28,'Intel Core i9 13900K','CPU','Intel',98.00,'uploads/components/real_cpu.jpg',NULL,NULL),(29,'Intel Core i7 13700K','CPU','Intel',92.00,'uploads/components/real_cpu.jpg',NULL,NULL),(30,'Intel Core Ultra 9 285K','CPU','Intel',100.00,'uploads/components/real_cpu.jpg',NULL,NULL),(31,'Intel Core Ultra 7 265K','CPU','Intel',96.00,'uploads/components/real_cpu.jpg',NULL,NULL),(32,'AMD Ryzen 9 9950X','CPU','AMD',100.00,'uploads/components/real_cpu.jpg',NULL,NULL),(33,'AMD Ryzen 9 7950X3D','CPU','AMD',98.00,'uploads/components/real_cpu.jpg',NULL,NULL),(34,'AMD Ryzen 7 7800X3D','CPU','AMD',95.00,'uploads/components/real_cpu.jpg',NULL,NULL),(35,'AMD Ryzen 5 7600X','CPU','AMD',85.00,'uploads/components/real_cpu.jpg',NULL,NULL),(36,'AMD Ryzen 5 5600X','CPU','AMD',70.00,'uploads/components/real_cpu.jpg',NULL,NULL),(37,'AMD Ryzen 7 5700X','CPU','AMD',75.00,'uploads/components/real_cpu.jpg',NULL,NULL),(38,'AMD Ryzen 9 5900X','CPU','AMD',85.00,'uploads/components/real_cpu.jpg',NULL,NULL),(39,'Noctua NH-D15','CPU Cooler','Noctua',95.00,'uploads/components/real_cooler.jpg',NULL,NULL),(40,'Cooler Master Hyper 212','CPU Cooler','Cooler Master',70.00,'uploads/components/real_cooler.jpg',NULL,NULL),(41,'Corsair iCUE H150i Elite','CPU Cooler','Corsair',90.00,'uploads/components/real_cooler.jpg',NULL,NULL),(42,'NZXT Kraken Elite 360','CPU Cooler','NZXT',92.00,'uploads/components/real_cooler.jpg',NULL,NULL),(43,'DeepCool AK620','CPU Cooler','DeepCool',85.00,'uploads/components/real_cooler.jpg',NULL,NULL),(44,'Lian Li Galahad II Trinity','CPU Cooler','Lian Li',88.00,'uploads/components/real_cooler.jpg',NULL,NULL),(45,'Arctic Liquid Freezer II 360','CPU Cooler','Arctic',94.00,'uploads/components/real_cooler.jpg',NULL,NULL),(46,'be quiet! Dark Rock Pro 4','CPU Cooler','be quiet!',90.00,'uploads/components/real_cooler.jpg',NULL,NULL),(47,'Thermalright Peerless Assassin','CPU Cooler','Thermalright',88.00,'uploads/components/real_cooler.jpg',NULL,NULL),(48,'MSI MAG CORELIQUID 240R V2','CPU Cooler','MSI',80.00,'uploads/components/real_cooler.jpg',NULL,NULL),(49,'ASUS ROG Maximus Z790 Hero','Motherboard','ASUS',95.00,'uploads/components/real_motherboard.jpg',NULL,NULL),(50,'MSI MAG Z790 TOMAHAWK WIFI','Motherboard','MSI',88.00,'uploads/components/real_motherboard.jpg',NULL,NULL),(51,'Gigabyte B760M DS3H','Motherboard','Gigabyte',75.00,'uploads/components/real_motherboard.jpg',NULL,NULL),(52,'ASUS TUF GAMING B760-PLUS','Motherboard','ASUS',80.00,'uploads/components/real_motherboard.jpg',NULL,NULL),(53,'ASRock Z690 Phantom Gaming','Motherboard','ASRock',82.00,'uploads/components/real_motherboard.jpg',NULL,NULL),(54,'Gigabyte Z890 AORUS MASTER','Motherboard','Gigabyte',98.00,'uploads/components/real_motherboard.jpg',NULL,NULL),(55,'ASUS ROG CROSSHAIR X670E','Motherboard','ASUS',98.00,'uploads/components/real_motherboard.jpg',NULL,NULL),(56,'MSI B650M MORTAR WIFI','Motherboard','MSI',85.00,'uploads/components/real_motherboard.jpg',NULL,NULL),(57,'Gigabyte B650 AORUS ELITE AX','Motherboard','Gigabyte',88.00,'uploads/components/real_motherboard.jpg',NULL,NULL),(58,'ASUS PRIME B650-PLUS','Motherboard','ASUS',80.00,'uploads/components/real_motherboard.jpg',NULL,NULL),(59,'MSI B550 TOMAHAWK','Motherboard','MSI',75.00,'uploads/components/real_motherboard.jpg',NULL,NULL),(60,'Gigabyte B550M DS3H','Motherboard','Gigabyte',65.00,'uploads/components/real_motherboard.jpg',NULL,NULL),(61,'ASUS ROG STRIX B550-F','Motherboard','ASUS',80.00,'uploads/components/real_motherboard.jpg',NULL,NULL),(62,'ASRock X570 Steel Legend','Motherboard','ASRock',82.00,'uploads/components/real_motherboard.jpg',NULL,NULL),(63,'Corsair Vengeance 32GB (2x16GB) DDR5 6000MHz','RAM','Corsair',90.00,'uploads/components/real_ram.jpg',NULL,NULL),(64,'G.Skill Trident Z5 RGB 32GB DDR5 6400MHz','RAM','G.Skill',95.00,'uploads/components/real_ram.jpg',NULL,NULL),(65,'Kingston FURY Beast 16GB DDR5 5200MHz','RAM','Kingston',80.00,'uploads/components/real_ram.jpg',NULL,NULL),(66,'Corsair Vengeance LPX 16GB DDR4 3200MHz','RAM','Corsair',70.00,'uploads/components/real_ram.jpg',NULL,NULL),(67,'G.Skill Ripjaws V 32GB DDR4 3600MHz','RAM','G.Skill',80.00,'uploads/components/real_ram.jpg',NULL,NULL),(68,'TeamGroup T-Force Delta RGB 32GB DDR5 6000','RAM','TeamGroup',88.00,'uploads/components/real_ram.jpg',NULL,NULL),(69,'Crucial Pro 64GB (2x32GB) DDR5 5600MHz','RAM','Crucial',90.00,'uploads/components/real_ram.jpg',NULL,NULL),(70,'Patriot Viper Venom 32GB DDR5 6200MHz','RAM','Patriot',92.00,'uploads/components/real_ram.jpg',NULL,NULL),(71,'AORUS Memory 32GB DDR5 6000MHz','RAM','Gigabyte',88.00,'uploads/components/real_ram.jpg',NULL,NULL),(72,'Lexar Ares RGB 32GB DDR5 6400MHz','RAM','Lexar',90.00,'uploads/components/real_ram.jpg',NULL,NULL),(73,'Samsung 990 PRO 2TB PCIe 4.0 NVMe','Storage','Samsung',98.00,'uploads/components/real_storage.jpg',NULL,NULL),(74,'WD Black SN850X 1TB PCIe 4.0 NVMe','Storage','Western Digital',95.00,'uploads/components/real_storage.jpg',NULL,NULL),(75,'Crucial P3 Plus 1TB PCIe 4.0 NVMe','Storage','Crucial',80.00,'uploads/components/real_storage.jpg',NULL,NULL),(76,'Kingston NV2 500GB PCIe 4.0 NVMe','Storage','Kingston',70.00,'uploads/components/real_storage.jpg',NULL,NULL),(77,'Seagate Barracuda 2TB 7200RPM HDD','Storage','Seagate',40.00,'uploads/components/real_storage.jpg',NULL,NULL),(78,'Samsung 980 1TB NVMe','Storage','Samsung',85.00,'uploads/components/real_storage.jpg',NULL,NULL),(79,'Corsair MP600 PRO 2TB PCIe 4.0','Storage','Corsair',96.00,'uploads/components/real_storage.jpg',NULL,NULL),(80,'AORUS Gen4 7000s 1TB','Storage','Gigabyte',90.00,'uploads/components/real_storage.jpg',NULL,NULL),(81,'Lexar NM790 2TB PCIe 4.0 NVMe','Storage','Lexar',92.00,'uploads/components/real_storage.jpg',NULL,NULL),(82,'WD Blue 1TB SATA SSD','Storage','Western Digital',60.00,'uploads/components/real_storage.jpg',NULL,NULL),(83,'NVIDIA RTX 5090 32GB','Graphics Card','NVIDIA',100.00,'uploads/components/real_gpu.jpg',NULL,NULL),(84,'NVIDIA RTX 4090 24GB','Graphics Card','NVIDIA',98.00,'uploads/components/real_gpu.jpg',NULL,NULL),(85,'NVIDIA RTX 4080 Super 16GB','Graphics Card','NVIDIA',95.00,'uploads/components/real_gpu.jpg',NULL,NULL),(86,'NVIDIA RTX 4070 Super 12GB','Graphics Card','NVIDIA',88.00,'uploads/components/real_gpu.jpg',NULL,NULL),(87,'NVIDIA RTX 4060 Ti 8GB','Graphics Card','NVIDIA',80.00,'uploads/components/real_gpu.jpg',NULL,NULL),(88,'NVIDIA RTX 4060 8GB','Graphics Card','NVIDIA',75.00,'uploads/components/real_gpu.jpg',NULL,NULL),(89,'AMD Radeon RX 7900 XTX 24GB','Graphics Card','AMD',96.00,'uploads/components/real_gpu.jpg',NULL,NULL),(90,'AMD Radeon RX 7900 XT 20GB','Graphics Card','AMD',92.00,'uploads/components/real_gpu.jpg',NULL,NULL),(91,'AMD Radeon RX 7800 XT 16GB','Graphics Card','AMD',86.00,'uploads/components/real_gpu.jpg',NULL,NULL),(92,'AMD Radeon RX 7600 8GB','Graphics Card','AMD',70.00,'uploads/components/real_gpu.jpg',NULL,NULL),(93,'Corsair RM1000x 1000W 80+ Gold','Power Supply','Corsair',95.00,'uploads/components/real_psu.jpg',NULL,NULL),(94,'SeaSonic FOCUS GX-850 850W 80+ Gold','Power Supply','SeaSonic',92.00,'uploads/components/real_psu.jpg',NULL,NULL),(95,'Cooler Master MWE Gold 750 V2','Power Supply','Cooler Master',85.00,'uploads/components/real_cooler.jpg',NULL,NULL),(96,'EVGA SuperNOVA 650 GT 650W','Power Supply','EVGA',80.00,'uploads/components/real_psu.jpg',NULL,NULL),(97,'Corsair CV550 550W 80+ Bronze','Power Supply','Corsair',65.00,'uploads/components/real_psu.jpg',NULL,NULL),(98,'MSI MPG A1000G PCIE5 1000W','Power Supply','MSI',96.00,'uploads/components/real_psu.jpg',NULL,NULL),(99,'Be Quiet! Straight Power 12 850W','Power Supply','Be Quiet!',94.00,'uploads/components/real_psu.jpg',NULL,NULL),(100,'Thermaltake Toughpower GF3 1200W','Power Supply','Thermaltake',98.00,'uploads/components/real_psu.jpg',NULL,NULL),(101,'DeepCool PQ850M 850W 80+ Gold','Power Supply','DeepCool',88.00,'uploads/components/real_psu.jpg',NULL,NULL),(102,'Gigabyte P650B 650W 80+ Bronze','Power Supply','Gigabyte',70.00,'uploads/components/real_psu.jpg',NULL,NULL),(103,'Lian Li PC-O11 Dynamic','Casing','Lian Li',95.00,'uploads/components/real_case.jpg',NULL,NULL),(104,'NZXT H9 Flow','Casing','NZXT',94.00,'uploads/components/real_case.jpg',NULL,NULL),(105,'Corsair 4000D Airflow','Casing','Corsair',90.00,'uploads/components/real_case.jpg',NULL,NULL),(106,'Phanteks Eclipse G360A','Casing','Phanteks',85.00,'uploads/components/real_case.jpg',NULL,NULL),(107,'Cooler Master MasterBox TD500','Casing','Cooler Master',80.00,'uploads/components/real_cooler.jpg',NULL,NULL),(108,'Montech AIR 903 MAX','Casing','Montech',82.00,'uploads/components/real_case.jpg',NULL,NULL),(109,'Fractal Design North','Casing','Fractal Design',96.00,'uploads/components/real_case.jpg',NULL,NULL),(110,'Antec NX410','Casing','Antec',75.00,'uploads/components/real_case.jpg',NULL,NULL),(111,'DeepCool CH560 Digital','Casing','DeepCool',88.00,'uploads/components/real_case.jpg',NULL,NULL),(112,'MSI MAG FORGE 112R','Casing','MSI',78.00,'uploads/components/real_case.jpg',NULL,NULL),(113,'LG 27GP850-B 27\" 165Hz 1440p','Monitor','LG',95.00,'uploads/components/real_monitor.jpg',NULL,NULL),(114,'Samsung Odyssey G7 27\" 240Hz','Monitor','Samsung',96.00,'uploads/components/real_monitor.jpg',NULL,NULL),(115,'Gigabyte M27Q 27\" 170Hz 1440p','Monitor','Gigabyte',90.00,'uploads/components/real_monitor.jpg',NULL,NULL),(116,'ASUS TUF Gaming VG27AQ 27\"','Monitor','ASUS',88.00,'uploads/components/real_monitor.jpg',NULL,NULL),(117,'AOC 24G2SP 24\" 165Hz 1080p','Monitor','AOC',80.00,'uploads/components/real_monitor.jpg',NULL,NULL),(118,'MSI Optix G241 24\" 144Hz','Monitor','MSI',78.00,'uploads/components/real_monitor.jpg',NULL,NULL),(119,'BenQ Zowie XL2546K 24.5\" 240Hz','Monitor','BenQ',92.00,'uploads/components/real_monitor.jpg',NULL,NULL),(120,'Dell S2721DGF 27\" 165Hz','Monitor','Dell',90.00,'uploads/components/real_monitor.jpg',NULL,NULL),(121,'Acer Nitro VG271U 27\" 144Hz','Monitor','Acer',0.00,'uploads/components/real_monitor.jpg','',''),(122,'ViewSonic VX2758-2KP-MHD 27\"','Monitor','ViewSonic',80.00,'uploads/components/real_monitor.jpg',NULL,NULL),(123,'Lian Li UNI FAN SL-INF 120 (3-Pack)','Casing Cooler','Lian Li',95.00,'uploads/components/real_cooler.jpg',NULL,NULL),(124,'Corsair LL120 RGB (3-Pack)','Casing Cooler','Corsair',90.00,'uploads/components/real_cooler.jpg',NULL,NULL),(125,'Noctua NF-A12x25 PWM','Casing Cooler','Noctua',98.00,'uploads/components/real_cooler.jpg',NULL,NULL),(126,'Arctic P12 PWM PST (5-Pack)','Casing Cooler','Arctic',92.00,'uploads/components/real_cooler.jpg',NULL,NULL),(127,'Cooler Master MasterFan MF120 Halo','Casing Cooler','Cooler Master',85.00,'uploads/components/real_cooler.jpg',NULL,NULL),(128,'NZXT F120 RGB (3-Pack)','Casing Cooler','NZXT',88.00,'uploads/components/real_cooler.jpg',NULL,NULL),(129,'DeepCool FC120 (3-Pack)','Casing Cooler','DeepCool',82.00,'uploads/components/real_cooler.jpg',NULL,NULL),(130,'Be Quiet! Silent Wings 4 120mm','Casing Cooler','Be Quiet!',94.00,'uploads/components/real_cooler.jpg',NULL,NULL),(131,'Thermalright TL-C12C (3-Pack)','Casing Cooler','Thermalright',80.00,'uploads/components/real_cooler.jpg',NULL,NULL),(132,'MSI MAG MAX F12A-3H','Casing Cooler','MSI',80.00,'uploads/components/real_cooler.jpg',NULL,NULL),(133,'Keychron Q1 Pro Wireless Mechanical','Keyboard','Keychron',96.00,'uploads/components/real_keyboard.jpg',NULL,NULL),(134,'Corsair K70 RGB PRO Mechanical','Keyboard','Corsair',92.00,'uploads/components/real_keyboard.jpg',NULL,NULL),(135,'Logitech G Pro X TKL','Keyboard','Logitech',94.00,'uploads/components/real_keyboard.jpg',NULL,NULL),(136,'Razer Huntsman V3 Pro TKL','Keyboard','Razer',95.00,'uploads/components/real_keyboard.jpg',NULL,NULL),(137,'SteelSeries Apex Pro TKL','Keyboard','SteelSeries',96.00,'uploads/components/real_keyboard.jpg',NULL,NULL),(138,'Royal Kludge RK61 Wireless','Keyboard','Royal Kludge',80.00,'uploads/components/real_keyboard.jpg',NULL,NULL),(139,'Redragon K552 Kumara','Keyboard','Redragon',75.00,'uploads/components/real_keyboard.jpg',NULL,NULL),(140,'HyperX Alloy Origins Core','Keyboard','HyperX',88.00,'uploads/components/real_gpu.jpg',NULL,NULL),(141,'Asus ROG Azoth Wireless','Keyboard','ASUS',98.00,'uploads/components/real_keyboard.jpg',NULL,NULL),(142,'Akko 3098B Plus Wireless','Keyboard','Akko',85.00,'uploads/components/real_keyboard.jpg',NULL,NULL),(143,'Logitech G Pro X Superlight 2','Mouse','Logitech',98.00,'uploads/components/real_mouse.jpg',NULL,NULL),(144,'Razer DeathAdder V3 Pro','Mouse','Razer',96.00,'uploads/components/real_mouse.jpg',NULL,NULL),(145,'Zowie EC2-CW Wireless','Mouse','Zowie',95.00,'uploads/components/real_mouse.jpg',NULL,NULL),(146,'Endgame Gear XM2we','Mouse','Endgame Gear',92.00,'uploads/components/real_mouse.jpg',NULL,NULL),(147,'Lamzu Atlantis Mini','Mouse','Lamzu',94.00,'uploads/components/real_mouse.jpg',NULL,NULL),(148,'Glorious Model O Wireless','Mouse','Glorious',88.00,'uploads/components/real_mouse.jpg',NULL,NULL),(149,'SteelSeries Aerox 3 Wireless','Mouse','SteelSeries',85.00,'uploads/components/real_mouse.jpg',NULL,NULL),(150,'Corsair Harpoon RGB Wireless','Mouse','Corsair',80.00,'uploads/components/real_mouse.jpg',NULL,NULL),(151,'Razer Viper Mini','Mouse','Razer',85.00,'uploads/components/real_mouse.jpg',NULL,NULL),(152,'Logitech G304 Lightspeed','Mouse','Logitech',88.00,'uploads/components/real_mouse.jpg',NULL,NULL),(153,'Logitech Z906 5.1 Surround','Speaker & Home Theater','Logitech',95.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(154,'Edifier R1280DB Powered Bookshelf','Speaker & Home Theater','Edifier',92.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(155,'Creative Pebble V3','Speaker & Home Theater','Creative',80.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(156,'Razer Leviathan V2 Soundbar','Speaker & Home Theater','Razer',88.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(157,'Microlab X2 2.1 Speaker','Speaker & Home Theater','Microlab',75.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(158,'Fantech GS203 Beat','Speaker & Home Theater','Fantech',65.00,'uploads/components/real_cooler.jpg',NULL,NULL),(159,'Logitech Z623 2.1 THX','Speaker & Home Theater','Logitech',90.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(160,'Edifier S3000Pro','Speaker & Home Theater','Edifier',98.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(161,'HyperX Cloud III Wireless','Headphone','HyperX',92.00,'uploads/components/real_gpu.jpg',NULL,NULL),(162,'Logitech G Pro X 2 Lightspeed','Headphone','Logitech',95.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(163,'Razer BlackShark V2 Pro','Headphone','Razer',94.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(164,'SteelSeries Arctis Nova 7','Headphone','SteelSeries',90.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(165,'Corsair HS80 RGB Wireless','Headphone','Corsair',88.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(166,'Audio-Technica ATH-M50x','Headphone','Audio-Technica',95.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(167,'Sennheiser HD 560S','Headphone','Sennheiser',96.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(168,'Fantech HG11 Captain 7.1','Headphone','Fantech',70.00,'uploads/components/real_cooler.jpg',NULL,NULL),(169,'Havit H2002d Gaming Headset','Headphone','Havit',75.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(170,'TP-Link Archer TX3000E WiFi 6 PCIe','Wifi Adapter / LAN Card','TP-Link',95.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(171,'Asus PCE-AX58BT WiFi 6 PCIe','Wifi Adapter / LAN Card','ASUS',94.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(172,'TP-Link TL-WN823N Mini USB','Wifi Adapter / LAN Card','TP-Link',75.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(173,'D-Link DWA-182 AC1200 USB','Wifi Adapter / LAN Card','D-Link',80.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(174,'Netgear Nighthawk A7000 USB','Wifi Adapter / LAN Card','Netgear',90.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(175,'Mercusys MU6H AC650 USB','Wifi Adapter / LAN Card','Mercusys',70.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(176,'Kaspersky Total Security 1 User 1 Year','Anti Virus','Kaspersky',98.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(177,'Bitdefender Internet Security 1 User','Anti Virus','Bitdefender',96.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(178,'ESET NOD32 Antivirus 1 User','Anti Virus','ESET',95.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(179,'Norton 360 Deluxe 3 Devices','Anti Virus','Norton',94.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(180,'McAfee Total Protection 1 User','Anti Virus','McAfee',85.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(181,'Apollo 1200VA Offline UPS','UPS','Apollo',80.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(182,'Digital X 1200VA UPS','UPS','Digital X',78.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(183,'Power Guard 1200VA UPS','UPS','Power Guard',75.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(184,'APC Back-UPS 1200VA','UPS','APC',95.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(185,'MaxGreen 1200VA Offline UPS','UPS','MaxGreen',82.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(186,'Vertiv Liebert ItON 1000VA','UPS','Vertiv',90.00,'uploads/components/real_peripheral.jpg',NULL,NULL),(187,'Walton WUPS 1200VA','UPS','Walton',75.00,'uploads/components/real_peripheral.jpg',NULL,NULL);
 /*!40000 ALTER TABLE `component` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cooling_details`
+--
+
+DROP TABLE IF EXISTS `cooling_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cooling_details` (
+  `component_id` int(11) NOT NULL,
+  `height_mm` smallint(5) unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`component_id`),
+  CONSTRAINT `fk_cooling_component` FOREIGN KEY (`component_id`) REFERENCES `component` (`component_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cooling_details`
+--
+
+LOCK TABLES `cooling_details` WRITE;
+/*!40000 ALTER TABLE `cooling_details` DISABLE KEYS */;
+INSERT INTO `cooling_details` VALUES (39,0),(40,0),(41,0),(42,0),(43,0),(44,0),(45,0),(46,0),(47,0),(48,0);
+/*!40000 ALTER TABLE `cooling_details` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cpu_details`
+--
+
+DROP TABLE IF EXISTS `cpu_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cpu_details` (
+  `component_id` int(11) NOT NULL,
+  `tdp_watts` smallint(5) unsigned NOT NULL DEFAULT 0,
+  `socket` varchar(30) NOT NULL DEFAULT '',
+  PRIMARY KEY (`component_id`),
+  CONSTRAINT `fk_cpu_component` FOREIGN KEY (`component_id`) REFERENCES `component` (`component_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cpu_details`
+--
+
+LOCK TABLES `cpu_details` WRITE;
+/*!40000 ALTER TABLE `cpu_details` DISABLE KEYS */;
+INSERT INTO `cpu_details` VALUES (1,125,'LGA1700'),(2,120,'AM5'),(13,0,''),(14,0,''),(22,0,''),(23,125,'LGA1700'),(24,125,'LGA1700'),(25,125,'LGA1700'),(26,65,'LGA1700'),(27,58,'LGA1700'),(28,125,'LGA1700'),(29,125,'LGA1700'),(30,125,'LGA1851'),(31,125,'LGA1851'),(32,170,'AM5'),(33,120,'AM5'),(34,120,'AM5'),(35,105,'AM5'),(36,65,'AM4'),(37,65,'AM4'),(38,105,'AM4');
+/*!40000 ALTER TABLE `cpu_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -351,6 +418,90 @@ LOCK TABLES `fps_profiles` WRITE;
 /*!40000 ALTER TABLE `fps_profiles` DISABLE KEYS */;
 INSERT INTO `fps_profiles` VALUES (1,'valorant','Valorant',0.300,'1080p','High'),(2,'csgo2','Counter-Strike 2',0.400,'1080p','High'),(3,'pubg','PUBG: Battlegrounds',1.200,'1080p','Medium'),(4,'cyberpunk2077','Cyberpunk 2077',2.000,'1080p','High'),(5,'fortnite','Fortnite',0.700,'1080p','High'),(6,'gta5','GTA V',0.800,'1080p','High'),(7,'elden-ring','Elden Ring',1.400,'1080p','High'),(8,'apex-legends','Apex Legends',0.900,'1080p','High'),(9,'davinci-resolve','DaVinci Resolve',1.800,'4K','Ultra');
 /*!40000 ALTER TABLE `fps_profiles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `gpu_details`
+--
+
+DROP TABLE IF EXISTS `gpu_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `gpu_details` (
+  `component_id` int(11) NOT NULL,
+  `tdp_watts` smallint(5) unsigned NOT NULL DEFAULT 0,
+  `length_mm` smallint(5) unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`component_id`),
+  CONSTRAINT `fk_gpu_component` FOREIGN KEY (`component_id`) REFERENCES `component` (`component_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `gpu_details`
+--
+
+LOCK TABLES `gpu_details` WRITE;
+/*!40000 ALTER TABLE `gpu_details` DISABLE KEYS */;
+INSERT INTO `gpu_details` VALUES (9,200,336),(10,315,336),(11,0,0),(12,575,336),(83,500,0),(84,450,0),(85,320,0),(86,220,0),(87,160,0),(88,115,0),(89,355,0),(90,315,0),(91,263,0),(92,165,0);
+/*!40000 ALTER TABLE `gpu_details` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `monitor_details`
+--
+
+DROP TABLE IF EXISTS `monitor_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `monitor_details` (
+  `component_id` int(11) NOT NULL,
+  `screen_size` decimal(4,1) DEFAULT NULL,
+  `resolution` varchar(30) DEFAULT NULL,
+  `refresh_rate` smallint(5) unsigned DEFAULT NULL,
+  `panel_type` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`component_id`),
+  CONSTRAINT `fk_monitor_component` FOREIGN KEY (`component_id`) REFERENCES `component` (`component_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `monitor_details`
+--
+
+LOCK TABLES `monitor_details` WRITE;
+/*!40000 ALTER TABLE `monitor_details` DISABLE KEYS */;
+INSERT INTO `monitor_details` VALUES (113,27.0,'2560x1440',165,'Nano IPS'),(114,27.0,'2560x1440',240,'QLED VA'),(115,27.0,'2560x1440',170,'Super Speed IPS'),(116,27.0,'2560x1440',165,'IPS'),(117,24.0,'1920x1080',165,'IPS'),(118,24.0,'1920x1080',144,'IPS'),(119,24.5,'1920x1080',240,'TN'),(120,27.0,'2560x1440',165,'Fast IPS'),(121,27.0,'2560x1440',144,'IPS'),(122,27.0,'2560x1440',144,'IPS');
+/*!40000 ALTER TABLE `monitor_details` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `motherboard_details`
+--
+
+DROP TABLE IF EXISTS `motherboard_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `motherboard_details` (
+  `component_id` int(11) NOT NULL,
+  `socket` varchar(30) NOT NULL DEFAULT '',
+  `ram_gen` varchar(10) NOT NULL DEFAULT '',
+  `form_factor` varchar(10) NOT NULL DEFAULT '',
+  `m2_slots` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `sata_ports` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  `ram_slots` tinyint(3) unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`component_id`),
+  CONSTRAINT `fk_mb_component` FOREIGN KEY (`component_id`) REFERENCES `component` (`component_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `motherboard_details`
+--
+
+LOCK TABLES `motherboard_details` WRITE;
+/*!40000 ALTER TABLE `motherboard_details` DISABLE KEYS */;
+INSERT INTO `motherboard_details` VALUES (3,'','DDR5','ATX',2,4,4),(15,'','','',0,0,0),(16,'','','',0,0,0),(49,'LGA1700','DDR5','',0,0,0),(50,'LGA1700','DDR5','',0,0,0),(51,'LGA1700','DDR4','',0,0,0),(52,'LGA1700','DDR5','',0,0,0),(53,'LGA1700','DDR4','',0,0,0),(54,'LGA1851','DDR5','',0,0,0),(55,'AM5','DDR5','',0,0,0),(56,'AM5','DDR5','',0,0,0),(57,'AM5','DDR5','',0,0,0),(58,'AM5','DDR5','',0,0,0),(59,'AM4','DDR4','',0,0,0),(60,'AM4','DDR4','',0,0,0),(61,'AM4','DDR4','',0,0,0),(62,'AM4','DDR4','',0,0,0);
+/*!40000 ALTER TABLE `motherboard_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -468,6 +619,81 @@ LOCK TABLES `pricetracking` WRITE;
 /*!40000 ALTER TABLE `pricetracking` DISABLE KEYS */;
 INSERT INTO `pricetracking` VALUES (1,1,37000.00,35000.00,'2026-05-16 05:38:20'),(2,2,50000.00,48000.00,'2026-05-16 05:38:20'),(3,3,27000.00,25000.00,'2026-05-16 05:38:20'),(5,5,17000.00,15000.00,'2026-05-16 05:38:20'),(6,6,10000.00,9000.00,'2026-05-16 05:38:20'),(8,8,8000.00,7000.00,'2026-05-16 05:38:20'),(9,9,90000.00,85000.00,'2026-05-16 05:38:20'),(10,10,100000.00,95000.00,'2026-05-16 05:38:20');
 /*!40000 ALTER TABLE `pricetracking` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `psu_details`
+--
+
+DROP TABLE IF EXISTS `psu_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `psu_details` (
+  `component_id` int(11) NOT NULL,
+  `psu_wattage` smallint(5) unsigned NOT NULL DEFAULT 0,
+  PRIMARY KEY (`component_id`),
+  CONSTRAINT `fk_psu_component` FOREIGN KEY (`component_id`) REFERENCES `component` (`component_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `psu_details`
+--
+
+LOCK TABLES `psu_details` WRITE;
+/*!40000 ALTER TABLE `psu_details` DISABLE KEYS */;
+INSERT INTO `psu_details` VALUES (20,1000),(93,1000),(94,850),(95,750),(96,650),(97,550),(98,1000),(99,850),(100,1200),(101,850),(102,650);
+/*!40000 ALTER TABLE `psu_details` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `ram_details`
+--
+
+DROP TABLE IF EXISTS `ram_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ram_details` (
+  `component_id` int(11) NOT NULL,
+  `ram_gen` varchar(10) NOT NULL DEFAULT '',
+  PRIMARY KEY (`component_id`),
+  CONSTRAINT `fk_ram_component` FOREIGN KEY (`component_id`) REFERENCES `component` (`component_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ram_details`
+--
+
+LOCK TABLES `ram_details` WRITE;
+/*!40000 ALTER TABLE `ram_details` DISABLE KEYS */;
+INSERT INTO `ram_details` VALUES (5,'DDR5'),(6,'DDR4'),(17,''),(18,''),(63,'DDR5'),(64,'DDR5'),(65,'DDR5'),(66,'DDR4'),(67,'DDR4'),(68,'DDR5'),(69,'DDR5'),(70,'DDR5'),(71,'DDR5'),(72,'DDR5');
+/*!40000 ALTER TABLE `ram_details` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `storage_details`
+--
+
+DROP TABLE IF EXISTS `storage_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `storage_details` (
+  `component_id` int(11) NOT NULL,
+  `storage_interface` varchar(10) NOT NULL DEFAULT '',
+  PRIMARY KEY (`component_id`),
+  CONSTRAINT `fk_storage_component` FOREIGN KEY (`component_id`) REFERENCES `component` (`component_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `storage_details`
+--
+
+LOCK TABLES `storage_details` WRITE;
+/*!40000 ALTER TABLE `storage_details` DISABLE KEYS */;
+INSERT INTO `storage_details` VALUES (8,'SATA'),(73,''),(74,''),(75,''),(76,''),(77,''),(78,''),(79,''),(80,''),(81,''),(82,'');
+/*!40000 ALTER TABLE `storage_details` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -744,4 +970,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-06-11 13:24:45
+-- Dump completed on 2026-06-11 19:11:51

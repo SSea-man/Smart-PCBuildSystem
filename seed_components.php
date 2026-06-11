@@ -221,8 +221,8 @@ try {
     // INSERT IGNORE skips silently if (component_name, type) already exists
     $stmt = $pdo->prepare("
         INSERT IGNORE INTO component
-            (component_name, type, brand, benchmark_score, tdp_watts, socket, ram_gen, psu_wattage)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            (component_name, type, brand, benchmark_score)
+        VALUES (?, ?, ?, ?)
     ");
     $store_stmt = $pdo->prepare("
         INSERT IGNORE INTO storeavailability
@@ -234,11 +234,37 @@ try {
     $skipped  = 0;
 
     foreach ($components as $c) {
-        $stmt->execute([$c[0], $c[1], $c[2], $c[3], $c[4], $c[5], $c[6], $c[7]]);
+        $mappedType = $typeMap[$c[1]] ?? $c[1];
+        $stmt->execute([$c[0], $mappedType, $c[2], $c[3]]);
         $comp_id = $pdo->lastInsertId();
 
         if ($comp_id) {
             $store_stmt->execute([$comp_id, $c[8]]);
+            
+            // Subclass detail insertion
+            $type_lower = strtolower($mappedType);
+            $tdp = (int)$c[4];
+            $socket = $c[5];
+            $ram_gen = $c[6];
+            $psu_wattage = (int)$c[7];
+            
+            if (strpos($type_lower, 'cpu') !== false && strpos($type_lower, 'cooler') === false) {
+                $pdo->prepare("INSERT INTO cpu_details (component_id, tdp_watts, socket) VALUES (?, ?, ?)")
+                    ->execute([$comp_id, $tdp, $socket]);
+            } elseif (strpos($type_lower, 'motherboard') !== false) {
+                $pdo->prepare("INSERT INTO motherboard_details (component_id, socket, ram_gen) VALUES (?, ?, ?)")
+                    ->execute([$comp_id, $socket, $ram_gen]);
+            } elseif (strpos($type_lower, 'ram') !== false) {
+                $pdo->prepare("INSERT INTO ram_details (component_id, ram_gen) VALUES (?, ?)")
+                    ->execute([$comp_id, $ram_gen]);
+            } elseif (strpos($type_lower, 'graphics card') !== false || strpos($type_lower, 'gpu') !== false) {
+                $pdo->prepare("INSERT INTO gpu_details (component_id, tdp_watts) VALUES (?, ?)")
+                    ->execute([$comp_id, $tdp]);
+            } elseif (strpos($type_lower, 'power supply') !== false || strpos($type_lower, 'psu') !== false) {
+                $pdo->prepare("INSERT INTO psu_details (component_id, psu_wattage) VALUES (?, ?)")
+                    ->execute([$comp_id, $psu_wattage]);
+            }
+            
             $inserted++;
         } else {
             $skipped++;

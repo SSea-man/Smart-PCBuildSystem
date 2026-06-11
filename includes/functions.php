@@ -122,15 +122,37 @@ function component_base_sql(): string {
             WHEN c.type = 'Output devices' AND (c.component_name LIKE '%Monitor%' OR c.component_name LIKE '%\"%' OR c.component_name LIKE '%Hz%') THEN 'Monitor'
             ELSE c.type
         END                                             AS category,
-        c.brand, c.benchmark_score, c.tdp_watts, c.socket,
-        c.ram_gen, c.form_factor, c.length_mm, c.height_mm,
-        c.m2_slots, c.sata_ports, c.ram_slots, c.psu_wattage,
-        c.storage_interface, c.image_url,
+        c.brand, c.benchmark_score,
+        COALESCE(cpu.tdp_watts, gpu.tdp_watts, 0)       AS tdp_watts,
+        COALESCE(cpu.socket, mb.socket, '')             AS socket,
+        COALESCE(mb.ram_gen, ram.ram_gen, '')           AS ram_gen,
+        COALESCE(mb.form_factor, cd.form_factor, '')   AS form_factor,
+        COALESCE(cd.length_mm, gpu.length_mm, 0)       AS length_mm,
+        cd.height_mm                                    AS height_mm,
+        mb.m2_slots                                     AS m2_slots,
+        mb.sata_ports                                   AS sata_ports,
+        mb.ram_slots                                    AS ram_slots,
+        psu.psu_wattage                                 AS psu_wattage,
+        sd.storage_interface                            AS storage_interface,
+        mon.screen_size                                 AS screen_size,
+        mon.resolution                                  AS resolution,
+        mon.refresh_rate                                AS refresh_rate,
+        mon.panel_type                                  AS panel_type,
+        c.image_url,
         COALESCE(sa.price, 0)                           AS price_bdt,
         COALESCE(sa.stock_status, 'Out of Stock')       AS stock_status_raw,
         COALESCE(s.store_name, '')                      AS retailer,
         COALESCE(s.store_id, 0)                         AS store_id
     FROM component c
+    LEFT JOIN cpu_details cpu ON c.component_id = cpu.component_id
+    LEFT JOIN motherboard_details mb ON c.component_id = mb.component_id
+    LEFT JOIN ram_details ram ON c.component_id = ram.component_id
+    LEFT JOIN gpu_details gpu ON c.component_id = gpu.component_id
+    LEFT JOIN psu_details psu ON c.component_id = psu.component_id
+    LEFT JOIN storage_details sd ON c.component_id = sd.component_id
+    LEFT JOIN case_details cd ON c.component_id = cd.component_id
+    LEFT JOIN cooling_details cool ON c.component_id = cool.component_id
+    LEFT JOIN monitor_details mon ON c.component_id = mon.component_id
     LEFT JOIN (
         SELECT component_id, MIN(price) AS price, stock_status, store_id
         FROM storeavailability

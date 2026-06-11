@@ -79,39 +79,100 @@ if (isset($_SESSION['chat_build_state'])) {
         $build = [];
         $total_cost = 0;
         
-        $get_comp = function($type, $max_price, $brand_pref = 'any') {
-            $sql = "SELECT * FROM (" . component_base_sql() . ") c WHERE c.category = ? AND c.price_bdt > 0 AND c.price_bdt <= ?";
-            $params = [$type, $max_price];
-            if ($brand_pref !== 'any') {
+        // Helper function to query components with fallback to cheapest matching
+        $query_comp = function($category, $max_price, $extra_wheres = '', $params = [], $brand_pref = 'any') {
+            // First pass: try with brand preference and price limit
+            $sql = "SELECT * FROM (" . component_base_sql() . ") c WHERE c.category = ? AND c.price_bdt > 0 AND c.price_bdt <= ? {$extra_wheres}";
+            $all_params = array_merge([$category, $max_price], $params);
+            if ($brand_pref !== 'any' && $brand_pref !== null) {
                 $sql .= " AND c.brand LIKE ?";
-                $params[] = "%{$brand_pref}%";
+                $all_params[] = "%{$brand_pref}%";
             }
             $sql .= " ORDER BY c.price_bdt DESC LIMIT 1";
-            $res = db_query($sql, $params);
-            if (!$res && $brand_pref !== 'any') {
-                $sql2 = "SELECT * FROM (" . component_base_sql() . ") c WHERE c.category = ? AND c.price_bdt > 0 AND c.price_bdt <= ? ORDER BY c.price_bdt DESC LIMIT 1";
-                $res = db_query($sql2, [$type, $max_price]);
+            $res = db_query($sql, $all_params);
+            if ($res) return $res[0];
+            
+            // Second pass: if brand was specified but not found, try without brand preference (retaining price limit)
+            if ($brand_pref !== 'any' && $brand_pref !== null) {
+                $sql_nobrand = "SELECT * FROM (" . component_base_sql() . ") c WHERE c.category = ? AND c.price_bdt > 0 AND c.price_bdt <= ? {$extra_wheres} ORDER BY c.price_bdt DESC LIMIT 1";
+                $res_nobrand = db_query($sql_nobrand, array_merge([$category, $max_price], $params));
+                if ($res_nobrand) return $res_nobrand[0];
             }
-            return $res ? $res[0] : null;
+            
+            // Third pass (Fallback): get the cheapest matching item in this category (ignoring max_price limit)
+            $sql_fallback = "SELECT * FROM (" . component_base_sql() . ") c WHERE c.category = ? AND c.price_bdt > 0 {$extra_wheres}";
+            $fallback_params = array_merge([$category], $params);
+            if ($brand_pref !== 'any' && $brand_pref !== null) {
+                $sql_fallback .= " AND c.brand LIKE ?";
+                $fallback_params[] = "%{$brand_pref}%";
+            }
+            $sql_fallback .= " ORDER BY c.price_bdt ASC LIMIT 1";
+            $res_fallback = db_query($sql_fallback, $fallback_params);
+            if ($res_fallback) return $res_fallback[0];
+            
+            // Fourth pass: try cheapest without brand preference
+            if ($brand_pref !== 'any' && $brand_pref !== null) {
+                $sql_fallback_nobrand = "SELECT * FROM (" . component_base_sql() . ") c WHERE c.category = ? AND c.price_bdt > 0 {$extra_wheres} ORDER BY c.price_bdt ASC LIMIT 1";
+                $res_fallback_nobrand = db_query($sql_fallback_nobrand, array_merge([$category], $params));
+                if ($res_fallback_nobrand) return $res_fallback_nobrand[0];
+            }
+            
+            return null;
         };
 
-        $gpu = $get_comp('GPU', $budget * 0.40, $gpu_pref);
-        if ($gpu) { $build['GPU'] = $gpu; $total_cost += $gpu['price_bdt']; }
+        // 1. Select CPU first to establish socket/ram requirements
+        $cpu = $query_comp('CPU', $budget * 0.25, '', [], $cpu_pref);
+        if ($cpu) { 
+            $build['CPU'] = $cpu; 
+            $total_cost += $cpu['price_bdt']; 
+        }
 
-        $cpu = $get_comp('CPU', $budget * 0.25, $cpu_pref);
-        if ($cpu) { $build['CPU'] = $cpu; $total_cost += $cpu['price_bdt']; }
+        // 2. Select Motherboard compatible with CPU socket
+        $mobo_wheres = '';
+        $mobo_params = [];
+        if ($cpu && !empty($cpu['socket'])) {
+            $mobo_wheres .= " AND c.socket = ?";
+            $mobo_params[] = $cpu['socket'];
+        }
+        $mobo = $query_comp('Motherboard', $budget * 0.15, $mobo_wheres, $mobo_params);
+        if ($mobo) { 
+            $build['Motherboard'] = $mobo; 
+            $total_cost += $mobo['price_bdt']; 
+        }
 
-        $mobo = $get_comp('Motherboard', $budget * 0.15); 
-        if ($mobo) { $build['Motherboard'] = $mobo; $total_cost += $mobo['price_bdt']; }
+        // 3. Select RAM compatible with Motherboard's memory generation (ram_gen)
+        $ram_wheres = '';
+        $ram_params = [];
+        if ($mobo && !empty($mobo['ram_gen'])) {
+            $ram_wheres .= " AND c.ram_gen = ?";
+            $ram_params[] = $mobo['ram_gen'];
+        }
+        $ram = $query_comp('RAM', $budget * 0.08, $ram_wheres, $ram_params);
+        if ($ram) { 
+            $build['RAM'] = $ram; 
+            $total_cost += $ram['price_bdt']; 
+        }
 
-        $ram = $get_comp('RAM', $budget * 0.08);
-        if ($ram) { $build['RAM'] = $ram; $total_cost += $ram['price_bdt']; }
+        // 4. Select GPU
+        $gpu = $query_comp('GPU', $budget * 0.40, '', [], $gpu_pref);
+        if ($gpu) { 
+            $build['GPU'] = $gpu; 
+            $total_cost += $gpu['price_bdt']; 
+        }
 
-        $storage = $get_comp('Storage', $budget * 0.08);
-        if ($storage) { $build['Storage'] = $storage; $total_cost += $storage['price_bdt']; }
+        // 5. Select Storage
+        $storage = $query_comp('Storage', $budget * 0.08);
+        if ($storage) { 
+            $build['Storage'] = $storage; 
+            $total_cost += $storage['price_bdt']; 
+        }
 
-        $psu = $get_comp('PSU', $budget * 0.07);
-        if ($psu) { $build['PSU'] = $psu; $total_cost += $psu['price_bdt']; }
+        // 6. Select PSU
+        $psu = $query_comp('PSU', $budget * 0.07);
+        if ($psu) { 
+            $build['PSU'] = $psu; 
+            $total_cost += $psu['price_bdt']; 
+        }
         
         if (empty($build)) {
             $reply = "I'm sorry, I couldn't find enough components in the database to fit a budget of ৳" . number_format($budget) . ". Try a higher budget.";
@@ -250,30 +311,30 @@ if (isset($_SESSION['chat_build_state'])) {
         $compatible = true;
         $reason = "";
         
-        if (($type1 === 'cpu (processing)' && $type2 === 'motherboard (connection)') || 
-            ($type2 === 'cpu (processing)' && $type1 === 'motherboard (connection)')) {
-            $cpu = $type1 === 'cpu (processing)' ? $p1 : $p2;
-            $mobo = $type1 === 'motherboard (connection)' ? $p1 : $p2;
+        if (($type1 === 'cpu' && $type2 === 'motherboard') || 
+            ($type2 === 'cpu' && $type1 === 'motherboard')) {
+            $cpu = $type1 === 'cpu' ? $p1 : $p2;
+            $mobo = $type1 === 'motherboard' ? $p1 : $p2;
             if (!empty($cpu['socket']) && !empty($mobo['socket']) && strtolower(trim($cpu['socket'])) !== strtolower(trim($mobo['socket']))) {
                 $compatible = false;
                 $reason = "they use different sockets (**{$cpu['socket']}** on CPU vs **{$mobo['socket']}** on Motherboard).";
             } else {
                 $reason = "they both use the **" . ($cpu['socket'] ?: $mobo['socket'] ?: 'matching') . "** socket.";
             }
-        } elseif (($type1 === 'motherboard (connection)' && $type2 === 'ram (temporary memory)') || 
-                ($type2 === 'motherboard (connection)' && $type1 === 'ram (temporary memory)')) {
-            $mobo = $type1 === 'motherboard (connection)' ? $p1 : $p2;
-            $ram = $type1 === 'ram (temporary memory)' ? $p1 : $p2;
+        } elseif (($type1 === 'motherboard' && $type2 === 'ram') || 
+                ($type2 === 'motherboard' && $type1 === 'ram')) {
+            $mobo = $type1 === 'motherboard' ? $p1 : $p2;
+            $ram = $type1 === 'ram' ? $p1 : $p2;
             if (!empty($mobo['ram_gen']) && !empty($ram['ram_gen']) && strtolower(trim($mobo['ram_gen'])) !== strtolower(trim($ram['ram_gen']))) {
                 $compatible = false;
                 $reason = "they use different memory generations (**{$mobo['ram_gen']}** on Motherboard vs **{$ram['ram_gen']}** on RAM).";
             } else {
                 $reason = "they both support the **" . ($mobo['ram_gen'] ?: $ram['ram_gen'] ?: 'matching') . "** standard.";
             }
-        } elseif (($type1 === 'cpu (processing)' && $type2 === 'ram (temporary memory)') || 
-                ($type2 === 'cpu (processing)' && $type1 === 'ram (temporary memory)')) {
-            $cpu = $type1 === 'cpu (processing)' ? $p1 : $p2;
-            $ram = $type1 === 'ram (temporary memory)' ? $p1 : $p2;
+        } elseif (($type1 === 'cpu' && $type2 === 'ram') || 
+                ($type2 === 'cpu' && $type1 === 'ram')) {
+            $cpu = $type1 === 'cpu' ? $p1 : $p2;
+            $ram = $type1 === 'ram' ? $p1 : $p2;
             if (!empty($cpu['ram_gen']) && !empty($ram['ram_gen']) && strtolower(trim($cpu['ram_gen'])) !== strtolower(trim($ram['ram_gen']))) {
                 $compatible = false;
                 $reason = "the CPU supports **{$cpu['ram_gen']}** but the RAM is **{$ram['ram_gen']}**.";
@@ -292,7 +353,7 @@ if (isset($_SESSION['chat_build_state'])) {
     } else {
         $reply = "I couldn't perform the compatibility check. Please verify both components exist in our database. (Found: " . ($rows1 ? "Yes" : "No") . " for '{$item1}', " . ($rows2 ? "Yes" : "No") . " for '{$item2}')";
     }
-} elseif (preg_match('/(?:(?:what is the|tell me the|show the|find the|get the)\s+)?(socket|tdp|length|ram gen|ram generation|ram slots|m2 slots|sata ports|psu wattage|benchmark score|benchmark|score|price|brand|availability|stock)\s+(?:of|for|on|about)\s+(.+?)(?:\?|$)/i', $last_message, $m)) {
+} elseif (preg_match('/(?:(?:what is the|tell me the|show the|find the|get the)\s+)?(socket|tdp|length|ram gen|ram generation|ram slots|m2 slots|sata ports|psu wattage|benchmark score|benchmark|score|price|brand|availability|stock|screen size|resolution|refresh rate|panel type)\s+(?:of|for|on|about)\s+(.+?)(?:\?|$)/i', $last_message, $m)) {
     $attr = strtolower(trim($m[1]));
     $keyword = trim($m[2], " ?.");
     $rows = db_query(component_base_sql() . " WHERE c.component_name LIKE ? LIMIT 1", ["%{$keyword}%"]);
@@ -352,6 +413,22 @@ if (isset($_SESSION['chat_build_state'])) {
             case 'stock':
                 $val = normalize_stock($r['stock_status_raw'] ?? '') === 'in_stock' ? "**In Stock**" : "**Out of Stock**";
                 $friendly_name = "stock availability status";
+                break;
+            case 'screen size':
+                $val = $r['screen_size'] ? "**{$r['screen_size']}\"**" : "not specified or not applicable";
+                $friendly_name = "screen size";
+                break;
+            case 'resolution':
+                $val = $r['resolution'] ? "**{$r['resolution']}**" : "not specified or not applicable";
+                $friendly_name = "resolution";
+                break;
+            case 'refresh rate':
+                $val = $r['refresh_rate'] ? "**{$r['refresh_rate']} Hz**" : "not specified or not applicable";
+                $friendly_name = "refresh rate";
+                break;
+            case 'panel type':
+                $val = $r['panel_type'] ? "**{$r['panel_type']}**" : "not specified or not applicable";
+                $friendly_name = "panel type";
                 break;
         }
         $reply = "The {$friendly_name} for **" . sanitise($r['name']) . "** is {$val}.";
@@ -498,6 +575,18 @@ if (isset($_SESSION['chat_build_state'])) {
             if (!empty($r['storage_interface'])) {
                 $reply .= "- **Storage Interface**: `{$r['storage_interface']}`\n";
             }
+            if (!empty($r['screen_size'])) {
+                $reply .= "- **Screen Size**: `{$r['screen_size']}\"`\n";
+            }
+            if (!empty($r['resolution'])) {
+                $reply .= "- **Resolution**: `{$r['resolution']}`\n";
+            }
+            if (!empty($r['refresh_rate'])) {
+                $reply .= "- **Refresh Rate**: `{$r['refresh_rate']} Hz`\n";
+            }
+            if (!empty($r['panel_type'])) {
+                $reply .= "- **Panel Type**: `{$r['panel_type']}`\n";
+            }
         } else {
             $reply = "Here are the top components matching '" . sanitise($keyword) . "':\n\n";
             foreach ($rows as $r) {
@@ -582,6 +671,12 @@ if (isset($_SESSION['chat_build_state'])) {
                 }
                 if ($r['benchmark_score'] > 0) {
                     $spec_details .= " | Score: `" . number_format($r['benchmark_score'], 0) . "`";
+                }
+                if (!empty($r['screen_size'])) {
+                    $spec_details .= " | Screen: `{$r['screen_size']}\"`";
+                }
+                if (!empty($r['refresh_rate'])) {
+                    $spec_details .= " | Refresh: `{$r['refresh_rate']}Hz`";
                 }
                 
                 $reply .= "- **" . sanitise($r['name']) . "**\n  Price: **{$price}** | {$stock} | Category: " . sanitise($r['category']) . $spec_details . "\n\n";
