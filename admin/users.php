@@ -19,6 +19,20 @@ if (is_post() && input('action') === 'role') {
     redirect('admin/users.php');
 }
 
+if (is_post() && input('action') === 'reset_password') {
+    verify_csrf();
+    $uid  = (int)input('user_id');
+    $pass = input('password');
+    if (strlen($pass) < 8) {
+        flash_message('danger', 'Password must be at least 8 characters.');
+    } else {
+        $hash = password_hash($pass, PASSWORD_BCRYPT, ['cost' => 12]);
+        db_exec('UPDATE `user` SET user_password=? WHERE user_id=?', [$hash, $uid]);
+        flash_message('success', 'User password has been successfully reset.');
+    }
+    redirect('admin/users.php');
+}
+
 $search = trim(input('search',''));
 $filter_role = input('role', '');
 
@@ -600,6 +614,12 @@ include __DIR__ . '/../templates/header.php';
                       </button>
                     </form>
                   </li>
+                  <li><hr class="dropdown-divider" style="border-color: var(--border);"></li>
+                  <li>
+                    <button type="button" class="dropdown-item dropdown-item-custom text-danger" onclick="openResetModal(<?= (int)$u['user_id'] ?>, '<?= sanitise(addslashes($u['user_name'])) ?>')">
+                      Reset Password
+                    </button>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -613,5 +633,44 @@ include __DIR__ . '/../templates/header.php';
     </div>
   </main>
 </div>
+
+<!-- Reset Password Modal -->
+<div class="modal fade" id="resetPwModal" tabindex="-1" aria-labelledby="resetPwModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;">
+      <form method="POST" action="">
+        <?php csrf_field(); ?>
+        <input type="hidden" name="action" value="reset_password">
+        <input type="hidden" name="user_id" id="resetUserId" value="">
+        
+        <div class="modal-header" style="border-bottom: 1px solid var(--border);">
+          <h5 class="modal-title fw-700" id="resetPwModalLabel">Reset User Password</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <div class="modal-body">
+          <p class="text-secondary small mb-3">Resetting password for: <strong class="text-primary" id="resetUserName">User</strong></p>
+          <div class="mb-3">
+            <label class="form-label small fw-600">New Password</label>
+            <input type="password" name="password" class="form-control form-control-sm" required minlength="8" placeholder="Enter at least 8 characters">
+          </div>
+        </div>
+        
+        <div class="modal-footer" style="border-top: 1px solid var(--border);">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal" style="border-radius:8px;">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm" style="background:#7c3aed; border-color:#7c3aed; border-radius:8px;">Reset Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function openResetModal(userId, userName) {
+    document.getElementById('resetUserId').value = userId;
+    document.getElementById('resetUserName').innerText = userName;
+    new bootstrap.Modal(document.getElementById('resetPwModal')).show();
+}
+</script>
 
 <?php include __DIR__ . '/../templates/footer.php'; ?>
