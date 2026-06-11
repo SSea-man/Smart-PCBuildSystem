@@ -573,15 +573,10 @@ include __DIR__ . '/templates/header.php';
                         </a>
 
                         <?php if (is_logged_in() && (is_moderator() || (int)$post['user_id'] === (int)$user_id)): ?>
-                        <form method="POST" action="<?= BASE_URL ?>/api/delete_forum_item.php" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this post? This cannot be undone.');">
-                            <?= csrf_field(); ?>
-                            <input type="hidden" name="type" value="post">
-                            <input type="hidden" name="id" value="<?= (int)$post['post_id'] ?>">
-                            <button type="submit" class="action-pill text-danger" style="background: rgba(220, 53, 69, 0.1); border-color: rgba(220, 53, 69, 0.2); cursor:pointer;">
-                                <i class="bi bi-trash"></i>
-                                <span>Delete</span>
-                            </button>
-                        </form>
+                        <button type="button" onclick="forumDeletePost(<?= $post['post_id'] ?>, this)" class="action-pill text-danger" style="background: rgba(220, 53, 69, 0.1); border-color: rgba(220, 53, 69, 0.2); cursor:pointer;">
+                            <i class="bi bi-trash"></i>
+                            <span>Delete</span>
+                        </button>
                         <?php endif; ?>
                     </div>
                 </div>

@@ -29,34 +29,6 @@ if (!$post) {
 if (is_post() && is_logged_in()) {
     verify_csrf();
 
-    if (($_POST['action'] ?? '') === 'delete_post') {
-        $del_id  = (int)($_POST['id'] ?? 0);
-        $auth    = get_auth_user();
-        $is_priv = in_array($auth['role'] ?? 'user', ['admin', 'moderator']);
-        $the_post = db_row('SELECT post_id, user_id FROM post WHERE post_id = ?', [$del_id]);
-        if ($the_post && ($is_priv || (int)$the_post['user_id'] === (int)$auth['id'])) {
-            db_exec('DELETE FROM post WHERE post_id = ?', [$del_id]);
-            flash_message('success', 'Post deleted successfully.');
-        } else {
-            flash_message('danger', 'You do not have permission to delete this post.');
-        }
-        redirect('forum.php');
-    }
-
-    if (($_POST['action'] ?? '') === 'delete_comment') {
-        $del_id  = (int)($_POST['id'] ?? 0);
-        $auth    = get_auth_user();
-        $is_priv = in_array($auth['role'] ?? 'user', ['admin', 'moderator']);
-        $the_comment = db_row('SELECT comment_id, user_id FROM comment WHERE comment_id = ?', [$del_id]);
-        if ($the_comment && ($is_priv || (int)$the_comment['user_id'] === (int)$auth['id'])) {
-            db_exec('DELETE FROM comment WHERE comment_id = ?', [$del_id]);
-            flash_message('success', 'Comment deleted.');
-        } else {
-            flash_message('danger', 'You do not have permission to delete this comment.');
-        }
-        redirect('forum_post.php?id=' . $post_id);
-    }
-
     $content = trim(input('content', ''));
     if (strlen($content) > 0) {
         db_exec('INSERT INTO comment (user_id, post_id, content, created_at) VALUES (?, ?, ?, NOW())',
@@ -498,14 +470,9 @@ include __DIR__ . '/templates/header.php';
                 </a>
 
                 <?php if (is_logged_in() && (is_moderator() || is_admin() || (int)$post['user_id'] === (int)$user_id)): ?>
-    <form method="POST" action="<?= BASE_URL ?>/forum_post.php?id=<?= (int)$post['post_id'] ?>" class="d-inline" onsubmit="return confirm('Delete this post? This cannot be undone.');">
-        <?php csrf_field(); ?>
-        <input type="hidden" name="action" value="delete_post">
-        <input type="hidden" name="id" value="<?= (int)$post['post_id'] ?>">
-        <button type="submit" class="action-pill text-danger" style="background: rgba(220,53,69,0.1); border-color: rgba(220,53,69,0.2);">
-            <i class="bi bi-trash"></i> Delete Post
-        </button>
-    </form>
+    <button type="button" onclick="forumDeletePost(<?= $post['post_id'] ?>, this)" class="action-pill text-danger" style="background: rgba(220,53,69,0.1); border-color: rgba(220,53,69,0.2);">
+        <i class="bi bi-trash"></i> Delete Post
+    </button>
 <?php endif; ?>
             </div>
         </div>
@@ -558,14 +525,9 @@ include __DIR__ . '/templates/header.php';
                         </button>
                     </div>
                     <?php if (is_logged_in() && (is_moderator() || is_admin() || (int)$comment['user_id'] === (int)$user_id)): ?>
-                    <form method="POST" action="<?= BASE_URL ?>/forum_post.php?id=<?= $post_id ?>" class="d-inline" onsubmit="return confirm('Delete this comment?');">
-                        <?php csrf_field(); ?>
-                        <input type="hidden" name="action" value="delete_comment">
-                        <input type="hidden" name="id" value="<?= (int)$comment['comment_id'] ?>">
-                        <button type="submit" class="btn btn-link text-danger text-decoration-none btn-sm">
-                            <i class="bi bi-trash me-1"></i>Delete
-                        </button>
-                    </form>
+                    <button type="button" onclick="forumDeleteComment(<?= $comment['comment_id'] ?>, this)" class="btn btn-link text-danger text-decoration-none btn-sm">
+                        <i class="bi bi-trash me-1"></i>Delete
+                    </button>
                     <?php endif; ?>
                 </div>
             </div>
