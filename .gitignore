@@ -10,6 +10,7 @@ __pycache__/
 uploads/components/*
 uploads/forum/*
 !uploads/components/.gitkeep
+!uploads/components/real_*.jpg
 !uploads/forum/.gitkeep
 
 # Session / temp files
