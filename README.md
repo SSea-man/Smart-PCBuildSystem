@@ -136,13 +136,15 @@ Seeding complete: 165 inserted, 0 skipped (already exist).
 
 ### Step 5 — Set Upload Folder Permissions
 
-This step ensures forum image uploads work correctly.
+This step ensures forum image uploads work correctly by granting full write permissions to the web server.
 
-1. Open **File Explorer** and navigate to `C:\xampp\htdocs\myproject\uploads\`
-2. Right-click the `uploads` folder → **Properties** → **Security** tab
-3. Click **Edit** → Select **Everyone** (or your username) → Check **Full control** → Click **OK**
+Open **Command Prompt** (as Administrator) and run:
 
-> **Note:** On most Windows + XAMPP setups, permissions work by default. Only do this step if you see an error like *"Failed to save image"* when creating a forum post.
+```cmd
+icacls "C:\xampp\htdocs\myproject\uploads" /grant Everyone:(OI)(CI)F /T
+```
+
+> **Note:** This command uses Windows `icacls` to grant "Everyone" full access (`F`) to the `uploads` folder and propagates it to all subdirectories/files (`(OI)(CI)` and `/T`). Run this if you see errors like *"Failed to save image"* when posting in the forum.
 
 ---
 
