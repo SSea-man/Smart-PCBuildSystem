@@ -597,7 +597,7 @@ CREATE TABLE `user` (
   `user_name` varchar(30) NOT NULL,
   `email` varchar(100) NOT NULL,
   `user_password` varchar(255) NOT NULL,
-  `role` enum('user','admin') NOT NULL DEFAULT 'user',
+  `role` enum('user','admin','moderator') NOT NULL DEFAULT 'user',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
