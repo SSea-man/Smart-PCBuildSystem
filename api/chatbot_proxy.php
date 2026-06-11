@@ -153,11 +153,13 @@ if (isset($_SESSION['chat_build_state'])) {
             $total_cost += $ram['price_bdt']; 
         }
 
-        // 4. Select GPU
-        $gpu = $query_comp('GPU', $budget * 0.40, '', [], $gpu_pref);
-        if ($gpu) { 
-            $build['GPU'] = $gpu; 
-            $total_cost += $gpu['price_bdt']; 
+        // 4. Select GPU (Only if the budget is at least 65,000 BDT since the cheapest GPU in the database is 35,000 BDT)
+        if ($budget >= 65000) {
+            $gpu = $query_comp('GPU', $budget * 0.40, '', [], $gpu_pref);
+            if ($gpu) { 
+                $build['GPU'] = $gpu; 
+                $total_cost += $gpu['price_bdt']; 
+            }
         }
 
         // 5. Select Storage
@@ -189,6 +191,9 @@ if (isset($_SESSION['chat_build_state'])) {
                 ];
             }
             $reply .= "\n**Total Cost: ৳" . number_format($total_cost) . "**\n\n";
+            if (!isset($build['GPU'])) {
+                $reply .= "*(Note: A dedicated GPU is not included to keep the build within your budget, as the cheapest graphics card in our database starts at ৳35,000. You can use integrated graphics or increase your budget to ৳70,000+ to add a dedicated GPU.)*\n\n";
+            }
             $encoded = rawurlencode(json_encode($json_arr));
             $reply .= "<button class=\"btn btn-sm btn-accent mt-2\" onclick=\"downloadPdf('{$encoded}')\"><i class=\"bi bi-file-pdf\"></i> Download PDF</button>";
         }
