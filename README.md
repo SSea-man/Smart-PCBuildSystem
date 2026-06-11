@@ -68,7 +68,7 @@ Before you begin, make sure you have the following installed on your Windows PC:
 3. Click **Start** next to both **Apache** and **MySQL**.
 4. Both status indicators should turn **green**.
 
-> **⚠️ Port 80 conflict?** If Apache fails to start (port 80 is used by Skype, IIS, etc.):
+> **Warning: Port 80 conflict?** If Apache fails to start (port 80 is used by Skype, IIS, etc.):
 > 1. In XAMPP Control Panel, click **Config** next to Apache → open **httpd.conf**
 > 2. Find `Listen 80` and change it to `Listen 8080`
 > 3. Find `ServerName localhost:80` and change it to `ServerName localhost:8080`
@@ -130,7 +130,7 @@ You should see:
 Seeding complete: 165 inserted, 0 skipped (already exist).
 ```
 
-> **⚠️ Warning about `SERVER_PORT`?** This is a harmless warning that appears when running PHP from the command line. It does not affect functionality. You can safely ignore it.
+> **Warning: Warning about `SERVER_PORT`?** This is a harmless warning that appears when running PHP from the command line. It does not affect functionality. You can safely ignore it.
 
 ---
 
@@ -148,7 +148,7 @@ icacls "C:\xampp\htdocs\myproject\uploads" /grant Everyone:(OI)(CI)F /T
 
 ---
 
-### Step 6 — Open the App 🎉
+### Step 6 — Open the App
 
 Open your browser and visit:
 
@@ -157,7 +157,7 @@ Open your browser and visit:
 | **80** (default) | `http://localhost/myproject` |
 | **8080** (if changed) | `http://localhost:8080/myproject` |
 
-> **✅ No configuration file editing needed!** The `BASE_URL` in `config.php` is fully dynamic and will auto-detect your port automatically.
+> **Note: No configuration file editing needed!** The `BASE_URL` in `config.php` is fully dynamic and will auto-detect your port automatically.
 
 ---
 
