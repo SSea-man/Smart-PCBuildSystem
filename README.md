@@ -413,38 +413,28 @@ Score = (Performance × 0.60) + (Value × 0.30) + (Availability × 0.10)
 
 ## SQL Queries & Subqueries
 
-**Total: 121 unique SQL statements across 28 files**
+**Every SQL query used in this project is documented below, organized by file and feature.**
 
-| Type | Count |
-|------|-------|
-| SELECT | 62 |
-| INSERT | 22 |
-| UPDATE | 6 |
-| DELETE | 12 |
-| SELECT COUNT | 12 |
-| Queries with subqueries | **27** |
+---
 
-### Subquery Types Used
-
-| Subquery Type | Count | Example Location |
-|---------------|-------|-----------------|
-| **Derived Table** (FROM clause) | 8 | `component_base_sql()` in functions.php |
-| **Correlated Scalar** (SELECT clause) | 16 | `forum.php`, `forum_post.php` |
-| **EXISTS** (WHERE clause) | 1 | `forum.php` announcement filter |
-| **Wrapper Subquery** | 2 | `store.php` count, chatbot budget query |
-
-### 1. The Component Catalog Matrix (Advanced JOINs & Dynamic Categorization)
-* **Location:** `includes/functions.php` (Lines 101 to 133)
-* **Variable:** `component_base_sql()`
-* **What it does:** This is the backbone of the entire store and builder. It pulls every hardware component and cross-references it with live pricing from multiple retailers.
-* **Why it's advanced:**
-  - **Dynamic Categorization (CASE WHEN):** We use a massive `CASE` statement with `LIKE` operators to intelligently map raw category strings into clean, unified system categories.
-  - **Aggregation Subqueries:** It uses a subquery `(SELECT component_id, MIN(price) ... GROUP BY component_id)` to group multiple store prices together and dynamically fetch the absolute lowest available price for the user.
-  - **LEFT JOINS & COALESCE:** It uses `LEFT JOIN` so components without prices still appear, and `COALESCE` to default null prices to 0.
+### A. Core Reusable Query — `component_base_sql()` 
+**File:** `includes/functions.php` · **Lines:** 101–133  
+**Used by:** `store.php`, `product.php`, `compare.php`, `upgrade.php`, `price_history.php`, `custom_builder.php`, `chatbot_proxy.php`  
+**Features:** CASE WHEN, LEFT JOIN, Derived Table Subquery, GROUP BY, MIN(), COALESCE
 
 ```sql
-SELECT c.*,
-    CASE WHEN c.type LIKE 'CPU (%' THEN 'CPU' ELSE c.type END AS category,
+SELECT c.component_id AS id, c.component_name AS name, c.type,
+    CASE
+        WHEN c.type = 'CPU' OR c.type LIKE 'CPU (%' THEN 'CPU'
+        WHEN c.type = 'Motherboard' OR c.type LIKE 'Motherboard (%' THEN 'Motherboard'
+        WHEN c.type = 'RAM' OR c.type LIKE 'RAM (%' THEN 'RAM'
+        WHEN c.type = 'GPU (graphics)' THEN 'GPU'
+        WHEN c.type = 'PSU (power)' THEN 'PSU'
+        WHEN c.type = 'Casing' THEN 'Case'
+        WHEN c.type IN ('CPU Cooler','Casing Cooler') THEN 'Cooling'
+        ELSE c.type
+    END AS category,
+    c.brand, c.benchmark_score, c.tdp_watts, c.socket,
     COALESCE(sa.price, 0) AS price_bdt,
     COALESCE(sa.stock_status, 'Out of Stock') AS stock_status_raw,
     COALESCE(s.store_name, '') AS retailer
@@ -452,73 +442,540 @@ FROM component c
 LEFT JOIN (
     SELECT component_id, MIN(price) AS price, stock_status, store_id
     FROM storeavailability
-    GROUP BY component_id
+    GROUP BY component_id          -- Derived Table Subquery
 ) sa ON sa.component_id = c.component_id
 LEFT JOIN store s ON s.store_id = sa.store_id;
 ```
 
-### 2. The Forum Feed Generator (Nested Subqueries & String Aggregation)
-* **Location:** `forum.php` (Lines 59 to 74)
-* **Variable:** `$posts`
-* **What it does:** Generates the social feed for the community forum, loading posts along with dynamic metadata.
-* **Why it's advanced:**
-  - **Inline Subqueries:** Instead of running 50 different queries to get the comment counts and upvote counts for each post, we use highly optimized inline subqueries directly in the `SELECT` statement.
-  - **GROUP_CONCAT:** This is a very advanced aggregation function that takes multiple rows of tags related to a post and merges them into a single comma-separated string (e.g., "gaming,gpu,help") inside the SQL engine itself.
+---
+
+### B. Authentication & User Management
+
+#### B1. Login — Check user by email
+**File:** `includes/auth.php` · **Line:** 66
 
 ```sql
-SELECT p.*, u.user_name, c.name AS community_name,
+SELECT * FROM `user` WHERE email = ?;
+```
+
+#### B2. Rehash password on login
+**File:** `includes/auth.php` · **Line:** 78
+
+```sql
+UPDATE `user` SET user_password=? WHERE user_id=?;
+```
+
+#### B3. Registration — Check duplicate email
+**File:** `register.php` · **Line:** 25
+
+```sql
+SELECT user_id FROM `user` WHERE email = ?;
+```
+
+#### B4. Registration — Insert new user
+**File:** `register.php` · **Line:** 30
+
+```sql
+INSERT INTO `user` (user_name, email, user_password, role) VALUES (?,?,?,?);
+```
+
+---
+
+### C. Forum Module
+
+#### C1. Forum Feed — Posts with Nested Correlated Subqueries & GROUP_CONCAT
+**File:** `forum.php` · **Lines:** 59–74  
+**Features:** 4 Correlated Subqueries, JOIN, LEFT JOIN, GROUP_CONCAT, ORDER BY, LIMIT/OFFSET
+
+```sql
+SELECT p.post_id, p.title, p.content, p.created_at, p.image_path,
+    u.user_name, c.name AS community_name,
     (SELECT COUNT(*) FROM comment comm WHERE comm.post_id = p.post_id) AS comment_count,
     (SELECT COUNT(*) FROM vote v WHERE v.post_id = p.post_id AND v.vote_type = 'upvote') AS score,
-    (SELECT GROUP_CONCAT(t.name SEPARATOR ',') FROM posttag pt JOIN tag t ON pt.tag_id = t.tag_id WHERE pt.post_id = p.post_id) AS tags
+    (SELECT GROUP_CONCAT(t.name SEPARATOR ',')
+        FROM posttag pt JOIN tag t ON pt.tag_id = t.tag_id
+        WHERE pt.post_id = p.post_id) AS tags,
+    (SELECT COUNT(*) FROM vote v WHERE v.post_id = p.post_id
+        AND v.user_id = ? AND v.vote_type = 'upvote') AS user_vote
 FROM post p
 JOIN user u ON p.user_id = u.user_id
 LEFT JOIN community c ON p.community_id = c.community_id
-ORDER BY p.created_at DESC LIMIT 20;
+ORDER BY p.created_at DESC
+LIMIT 20 OFFSET 0;
 ```
 
-### 3. The Live Watchlist Fetcher (Multi-Table Relational JOINs)
-* **Location:** `dashboard.php` (Lines 15 to 25)
-* **Variable:** `$watchlist`
-* **What it does:** Retrieves the user's saved wishlist items and attaches the current live price and retailer name.
-* **Why it's advanced:** It cleanly joins `watchlist`, `component`, `storeavailability`, and `store` in a single query. By using the bridge tables, the user can see real-time price drops on items they saved weeks ago without the database storing redundant price data.
+#### C2. Forum Feed — Total post count for pagination
+**File:** `forum.php` · **Lines:** 50–55
+
+```sql
+SELECT COUNT(*) c FROM post p JOIN user u ON p.user_id = u.user_id;
+```
+
+#### C3. Community sidebar — Correlated Subqueries
+**File:** `forum.php` · **Lines:** 76–81  
+**Features:** 2 Correlated Subqueries, ORDER BY derived alias
+
+```sql
+SELECT c.community_id, c.name,
+    (SELECT COUNT(*) FROM community_member cm WHERE cm.community_id = c.community_id) AS member_count,
+    (SELECT COUNT(*) FROM community_member cm WHERE cm.community_id = c.community_id AND cm.user_id = ?) AS is_joined
+FROM community c
+ORDER BY member_count DESC LIMIT 5;
+```
+
+#### C4. Get selected community
+**File:** `forum.php` · **Line:** 22
+
+```sql
+SELECT community_id, name, description FROM community WHERE community_id = ?;
+```
+
+#### C5. Check if user joined a community
+**File:** `forum.php` · **Line:** 30
+
+```sql
+SELECT 1 FROM community_member WHERE community_id = ? AND user_id = ?;
+```
+
+#### C6. Single Post Detail — with vote subqueries
+**File:** `forum_post.php` · **Lines:** 14–22  
+**Features:** JOIN, LEFT JOIN, 2 Correlated Subqueries
+
+```sql
+SELECT p.*, u.user_name, c.name AS community_name,
+    (SELECT COUNT(*) FROM vote v WHERE v.post_id = p.post_id AND v.vote_type = 'upvote') AS score,
+    (SELECT COUNT(*) FROM vote v WHERE v.post_id = p.post_id AND v.user_id = ? AND v.vote_type = 'upvote') AS user_vote
+FROM post p
+JOIN user u ON p.user_id = u.user_id
+LEFT JOIN community c ON p.community_id = c.community_id
+WHERE p.post_id = ?;
+```
+
+#### C7. Comments list — with vote subqueries
+**File:** `forum_post.php` · **Lines:** 41–49  
+**Features:** JOIN, 2 Correlated Subqueries
+
+```sql
+SELECT c.*, u.user_name,
+    (SELECT COUNT(*) FROM vote v WHERE v.comment_id = c.comment_id AND v.vote_type = 'upvote') AS score,
+    (SELECT COUNT(*) FROM vote v WHERE v.comment_id = c.comment_id AND v.user_id = ? AND v.vote_type = 'upvote') AS user_vote
+FROM comment c
+JOIN user u ON c.user_id = u.user_id
+WHERE c.post_id = ?
+ORDER BY c.created_at ASC;
+```
+
+#### C8. Tags for a post — JOIN
+**File:** `forum_post.php` · **Lines:** 51–56
+
+```sql
+SELECT t.name FROM tag t JOIN posttag pt ON t.tag_id = pt.tag_id WHERE pt.post_id = ?;
+```
+
+#### C9. Community details — Correlated Subqueries
+**File:** `forum_post.php` · **Lines:** 60–66
+
+```sql
+SELECT c.community_id, c.name, c.description, c.created_at,
+    (SELECT COUNT(*) FROM community_member cm WHERE cm.community_id = c.community_id) AS member_count,
+    (SELECT COUNT(*) FROM community_member cm WHERE cm.community_id = c.community_id AND cm.user_id = ?) AS is_joined
+FROM community c WHERE c.community_id = ?;
+```
+
+#### C10. Insert new comment
+**File:** `forum_post.php` · **Line:** 34
+
+```sql
+INSERT INTO comment (user_id, post_id, content, created_at) VALUES (?, ?, ?, NOW());
+```
+
+#### C11. Create a new post
+**File:** `forum_create.php` · **Line:** 76
+
+```sql
+INSERT INTO post (user_id, title, content, image_path, community_id, created_at) VALUES (?, ?, ?, ?, ?, NOW());
+```
+
+#### C12. Get last inserted post ID
+**File:** `forum_create.php` · **Line:** 79
+
+```sql
+SELECT LAST_INSERT_ID() AS id;
+```
+
+#### C13. Find or create a tag
+**File:** `forum_create.php` · **Lines:** 85–90
+
+```sql
+SELECT tag_id FROM tag WHERE name = ?;
+INSERT INTO tag (name) VALUES (?);
+```
+
+#### C14. Link tag to post
+**File:** `forum_create.php` · **Line:** 92
+
+```sql
+INSERT INTO posttag (post_id, tag_id, created_at) VALUES (?, ?, NOW());
+```
+
+#### C15. List all communities for dropdown
+**File:** `forum_create.php` · **Line:** 102
+
+```sql
+SELECT community_id, name FROM community ORDER BY name ASC;
+```
+
+---
+
+### D. Forum API Endpoints
+
+#### D1. Delete a post (after auth check)
+**File:** `api/delete_forum_item.php` · **Lines:** 48–61
+
+```sql
+SELECT post_id, user_id FROM post WHERE post_id = ?;
+DELETE FROM post WHERE post_id = ?;
+```
+
+#### D2. Delete a comment (after auth check)
+**File:** `api/delete_forum_item.php` · **Lines:** 74–88
+
+```sql
+SELECT comment_id, user_id FROM comment WHERE comment_id = ?;
+DELETE FROM comment WHERE comment_id = ?;
+```
+
+#### D3. Vote toggle (upvote/remove)
+**File:** `api/vote.php` · **Lines:** 24–34
+
+```sql
+SELECT vote_id FROM vote WHERE user_id = ? AND post_id = ?;
+DELETE FROM vote WHERE vote_id = ?;
+INSERT INTO vote (user_id, post_id, vote_type, created_at) VALUES (?, ?, 'upvote', NOW());
+SELECT COUNT(*) c FROM vote WHERE post_id = ? AND vote_type = 'upvote';
+```
+
+#### D4. Join/Leave community toggle
+**File:** `api/join_community.php` · **Lines:** 22–37
+
+```sql
+SELECT community_id FROM community WHERE community_id = ?;
+SELECT * FROM community_member WHERE community_id = ? AND user_id = ?;
+DELETE FROM community_member WHERE community_id = ? AND user_id = ?;
+INSERT INTO community_member (community_id, user_id) VALUES (?, ?);
+SELECT COUNT(*) c FROM community_member WHERE community_id = ?;
+```
+
+---
+
+### E. Dashboard
+
+#### E1. User's saved builds
+**File:** `dashboard.php` · **Lines:** 11–13
+
+```sql
+SELECT * FROM `build` WHERE user_id=? ORDER BY created_at DESC LIMIT 10;
+```
+
+#### E2. Watchlist with live prices — 4-Table JOIN
+**File:** `dashboard.php` · **Lines:** 15–25  
+**Features:** JOIN, LEFT JOIN, Derived Table Subquery, GROUP BY, MIN(), COALESCE
 
 ```sql
 SELECT c.component_id as id, c.component_name as name, c.type,
-       COALESCE(sa.price,0) as price_bdt, COALESCE(s.store_name,"") as retailer,
-       w.added_at
+    COALESCE(sa.price,0) as price_bdt, COALESCE(s.store_name,"") as retailer, w.added_at
 FROM watchlist w
 JOIN component c ON c.component_id = w.component_id
-LEFT JOIN (SELECT component_id, MIN(price) as price, store_id FROM storeavailability GROUP BY component_id) sa ON sa.component_id = c.component_id
+LEFT JOIN (SELECT component_id, MIN(price) as price, store_id
+    FROM storeavailability GROUP BY component_id) sa ON sa.component_id = c.component_id
 LEFT JOIN store s ON s.store_id = sa.store_id
 WHERE w.user_id = ? ORDER BY w.added_at DESC LIMIT 8;
 ```
 
-### 4. Price History Trend Analysis (Date Math & Time-Series Aggregation)
-* **Location:** `dashboard.php` (Lines 30 to 34)
-* **Variable:** `$history`
-* **What it does:** Fetches the raw data used to draw the dynamic 30-day price trend charts for individual components.
-* **Why it's advanced:** It uses `DATE(changed_at)` to cast timestamps down to the day, and uses `WHERE changed_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)` to let the database handle the time-series boundary filtering automatically.
+#### E3. Price trend chart data — Date math
+**File:** `dashboard.php` · **Lines:** 30–34  
+**Features:** DATE(), DATE_SUB(), INTERVAL
 
 ```sql
-SELECT DATE(changed_at) as d, new_price 
+SELECT DATE(changed_at) as d, new_price
 FROM pricetracking
-WHERE component_id=? AND changed_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) 
+WHERE component_id=? AND changed_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
 ORDER BY d;
 ```
 
-### 5. Community Discovery Engine (Correlated Subqueries)
-* **Location:** `forum.php` (Lines 76 to 81)
-* **Variable:** `$sidebar_communities`
-* **What it does:** Ranks the top 5 most popular forum communities to show in the sidebar, and instantly determines if the currently logged-in user is already a member.
-* **Why it's advanced:** It uses Correlated Subqueries to count the members dynamically and accepts the `user_id` as a parameter to simultaneously check if the user belongs to the community.
+#### E4. Dashboard KPI counters — Aggregation
+**File:** `dashboard.php` · **Lines:** 41–42
 
 ```sql
-SELECT c.community_id, c.name,
-       (SELECT COUNT(*) FROM community_member cm WHERE cm.community_id = c.community_id) AS member_count,
-       (SELECT COUNT(*) FROM community_member cm WHERE cm.community_id = c.community_id AND cm.user_id = ?) AS is_joined
-FROM community c
-ORDER BY member_count DESC LIMIT 5;
+SELECT COUNT(*) c FROM component;
+SELECT COUNT(*) c FROM store;
 ```
+
+---
+
+### F. Store & Product Pages
+
+#### F1. Store price range bounds — Wrapper Subquery
+**File:** `store.php` · **Lines:** 29–32
+
+```sql
+SELECT MIN(sub.price_bdt) as min_val, MAX(sub.price_bdt) as max_val
+FROM (component_base_sql()) sub
+WHERE sub.category = ? OR ? = '';
+```
+
+#### F2. Store available brands — DISTINCT + Wrapper Subquery
+**File:** `store.php` · **Lines:** 38–42
+
+```sql
+SELECT DISTINCT sub.brand FROM (component_base_sql()) sub
+WHERE (sub.category = ? OR ? = '') AND sub.brand IS NOT NULL AND sub.brand != ''
+ORDER BY sub.brand;
+```
+
+#### F3. Store component listing — Wrapper Subquery + pagination
+**File:** `store.php` · **Lines:** 75–87
+
+```sql
+SELECT COUNT(*) c FROM (component_base_sql()) sub WHERE ...;
+SELECT sub.* FROM (component_base_sql()) sub WHERE ... ORDER BY ... LIMIT ? OFFSET ?;
+```
+
+#### F4. Store watchlist check
+**File:** `store.php` · **Line:** 95
+
+```sql
+SELECT component_id FROM watchlist WHERE user_id = ?;
+```
+
+#### F5. Product detail — Retailer price comparison
+**File:** `product.php` · **Lines:** 18–23  
+**Features:** JOIN, ORDER BY
+
+```sql
+SELECT sa.price, sa.stock_status, s.store_name
+FROM storeavailability sa
+JOIN store s ON s.store_id = sa.store_id
+WHERE sa.component_id = ?
+ORDER BY sa.price ASC;
+```
+
+#### F6. Compare — Fetch multiple components by ID list
+**File:** `compare.php` · **Lines:** 14–16
+
+```sql
+SELECT ... FROM component_base_sql() WHERE c.component_id IN (?,?,?);
+```
+
+---
+
+### G. Price History & Watchlist API
+
+#### G1. Price history chart data
+**File:** `price_history.php` · **Lines:** 17–23  
+**Features:** DATE(), ORDER BY
+
+```sql
+SELECT DATE(changed_at) d, old_price, new_price, changed_at
+FROM pricetracking WHERE component_id = ?
+ORDER BY changed_at DESC LIMIT 90;
+```
+
+#### G2. All components dropdown
+**File:** `price_history.php` · **Line:** 26
+
+```sql
+SELECT component_id as id, component_name as name, type FROM component ORDER BY type, component_name;
+```
+
+#### G3. Watchlist add/remove toggle
+**File:** `api/watchlist.php` · **Lines:** 14–18
+
+```sql
+INSERT IGNORE INTO watchlist (user_id, component_id) VALUES (?,?);
+DELETE FROM watchlist WHERE user_id=? AND component_id=?;
+SELECT COUNT(*) c FROM watchlist WHERE user_id=?;
+```
+
+---
+
+### H. Build Wizard & Save
+
+#### H1. Save a build
+**File:** `api/save_build.php` · **Lines:** 21–27
+
+```sql
+INSERT INTO `build` (user_id, name, purpose, total_price, score) VALUES (?,?,?,?,?);
+INSERT IGNORE INTO buildcomponent (build_id, component_id) VALUES (?,?);
+```
+
+#### H2. Get components filtered by category & budget
+**File:** `includes/functions.php` · **Lines:** 143–158
+
+```sql
+SELECT * FROM (component_base_sql()) sub
+WHERE category = ? AND price_bdt > 0 AND price_bdt <= ?
+ORDER BY benchmark_score DESC;
+```
+
+---
+
+### I. Upgrade Advisor
+
+#### I1. Find upgrade by benchmark — Complex WHERE + ORDER BY
+**File:** `upgrade.php` · **Lines:** 42–54  
+**Features:** Reuses component_base_sql(), filters by type, price ceiling, and benchmark floor
+
+```sql
+SELECT ... FROM component_base_sql()
+WHERE c.type IN ('GPU (graphics)','Graphics Card')
+    AND COALESCE(sa.price,0) <= ?
+    AND COALESCE(sa.price,0) > ?
+ORDER BY c.benchmark_score DESC LIMIT 1;
+```
+
+#### I2. Log upgrade suggestion
+**File:** `upgrade.php` · **Line:** 62
+
+```sql
+INSERT INTO upgradesuggestion (user_id, build_id, component_id) VALUES (?, NULL, ?);
+```
+
+#### I3. CPU & GPU dropdowns — LEFT JOIN + Derived Table
+**File:** `upgrade.php` · **Lines:** 67–74
+
+```sql
+SELECT c.component_id as id, c.component_name as name, c.benchmark_score,
+    COALESCE(sa.price,0) as price_bdt
+FROM component c
+LEFT JOIN (SELECT component_id, MIN(price) as price
+    FROM storeavailability GROUP BY component_id) sa ON sa.component_id=c.component_id
+WHERE c.type IN ('CPU','CPU (processing)')
+ORDER BY COALESCE(sa.price,0);
+```
+
+---
+
+### J. FPS Estimator
+
+#### J1. Fetch benchmark scores for CPU & GPU
+**File:** `includes/fps.php` · **Lines:** 3–5
+
+```sql
+SELECT benchmark_score FROM component WHERE component_id=?;
+SELECT * FROM fps_profiles WHERE game_slug=?;
+```
+
+#### J2. List all game profiles
+**File:** `includes/fps.php` · **Line:** 31
+
+```sql
+SELECT game_slug, game_name FROM fps_profiles ORDER BY game_name;
+```
+
+---
+
+### K. Admin Panel
+
+#### K1. Admin dashboard KPIs — COUNT aggregation
+**File:** `admin/index.php` · **Lines:** 8–10
+
+```sql
+SELECT COUNT(*) c FROM `user`;
+SELECT COUNT(*) c FROM component;
+SELECT COUNT(*) c FROM `build`;
+```
+
+#### K2. Recent users list
+**File:** `admin/index.php` · **Line:** 11
+
+```sql
+SELECT user_id, user_name, email, role, created_at FROM `user` ORDER BY created_at DESC LIMIT 5;
+```
+
+#### K3. Recent builds — JOIN
+**File:** `admin/index.php` · **Lines:** 12–15
+
+```sql
+SELECT b.build_id, b.name, b.total_price, b.score, b.created_at, u.user_name
+FROM `build` b JOIN `user` u ON u.user_id=b.user_id
+ORDER BY b.created_at DESC LIMIT 5;
+```
+
+#### K4. Admin component listing — LEFT JOIN + Derived Table
+**File:** `admin/components.php` · **Lines:** 81–84
+
+```sql
+SELECT c.*, COALESCE(sa.price,0) as price_bdt, COALESCE(sa.stock_status,'—') as stock_raw
+FROM component c
+LEFT JOIN (SELECT component_id, MIN(price) as price, stock_status
+    FROM storeavailability GROUP BY component_id) sa ON sa.component_id=c.component_id
+WHERE ... ORDER BY c.type, c.component_name LIMIT 15 OFFSET ?;
+```
+
+#### K5. Admin — Delete / Update / Insert component
+**File:** `admin/components.php` · **Lines:** 13, 58, 62
+
+```sql
+DELETE FROM component WHERE component_id=?;
+UPDATE component SET component_name=?,type=?,brand=?,... WHERE component_id=?;
+INSERT INTO component (component_name,type,brand,...) VALUES (?,?,?,...);
+```
+
+#### K6. Admin — Update user role
+**File:** `admin/users.php` · **Line:** 14
+
+```sql
+UPDATE `user` SET role=? WHERE user_id=?;
+```
+
+#### K7. Admin — User listing with pagination
+**File:** `admin/users.php` · **Lines:** 41–43
+
+```sql
+SELECT COUNT(*) c FROM `user` WHERE ...;
+SELECT * FROM `user` WHERE ... ORDER BY created_at DESC LIMIT 15 OFFSET ?;
+```
+
+#### K8. Admin — Price update with tracking
+**File:** `admin/prices.php` · **Lines:** 20–30
+
+```sql
+SELECT price FROM storeavailability WHERE component_id=? LIMIT 1;
+SELECT availability_id FROM storeavailability WHERE component_id=? LIMIT 1;
+UPDATE storeavailability SET price=?, stock_status=? WHERE component_id=?;
+INSERT INTO storeavailability (store_id, component_id, stock_status, price) VALUES (1,?,?,?);
+INSERT INTO pricetracking (component_id, old_price, new_price) VALUES (?,?,?);
+```
+
+#### K9. Admin — Sponsor ad CRUD
+**File:** `admin/sponsor.php` · **Lines:** 26–47
+
+```sql
+UPDATE sponsor_ads SET title=?,image_url=?,link_url=?,description=?,active=?,start_date=?,end_date=? WHERE ad_id=?;
+INSERT INTO sponsor_ads (title,image_url,link_url,description,active,start_date,end_date) VALUES (?,?,?,?,?,?,?);
+DELETE FROM sponsor_ads WHERE ad_id=?;
+SELECT * FROM sponsor_ads WHERE ad_id=?;
+```
+
+---
+
+### L. Miscellaneous API
+
+#### L1. Get sponsor ad
+**File:** `api/get_sponsor.php` · **Line:** 10
+
+```sql
+SELECT * FROM sponsor_ads WHERE active=1 AND start_date <= CURDATE() AND end_date >= CURDATE() ORDER BY RAND() LIMIT 1;
+```
+
+#### L2. Component search API (used by chatbot)
+**File:** `api/get_components.php` · **Line:** 28
+
+```sql
+SELECT * FROM (component_base_sql()) sub WHERE ... ORDER BY ... LIMIT ?;
+```
+
 
 ---
 
