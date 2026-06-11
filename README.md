@@ -433,58 +433,91 @@ Score = (Performance × 0.60) + (Value × 0.30) + (Availability × 0.10)
 | **EXISTS** (WHERE clause) | 1 | `forum.php` announcement filter |
 | **Wrapper Subquery** | 2 | `store.php` count, chatbot budget query |
 
-### Key Query: `component_base_sql()` (functions.php)
-
-The master query used by 10+ files. Contains a **derived table subquery**:
+### 1. The Component Catalog Matrix (Advanced JOINs & Dynamic Categorization)
+* **Location:** `includes/functions.php` (Lines 101 to 133)
+* **Variable:** `component_base_sql()`
+* **What it does:** This is the backbone of the entire store and builder. It pulls every hardware component and cross-references it with live pricing from multiple retailers.
+* **Why it's advanced:**
+  - **Dynamic Categorization (CASE WHEN):** We use a massive `CASE` statement with `LIKE` operators to intelligently map raw category strings into clean, unified system categories.
+  - **Aggregation Subqueries:** It uses a subquery `(SELECT component_id, MIN(price) ... GROUP BY component_id)` to group multiple store prices together and dynamically fetch the absolute lowest available price for the user.
+  - **LEFT JOINS & COALESCE:** It uses `LEFT JOIN` so components without prices still appear, and `COALESCE` to default null prices to 0.
 
 ```sql
-SELECT c.*, sa.price AS price_bdt, sa.stock_status, sa.store_id
+SELECT c.*,
+    CASE WHEN c.type LIKE 'CPU (%' THEN 'CPU' ELSE c.type END AS category,
+    COALESCE(sa.price, 0) AS price_bdt,
+    COALESCE(sa.stock_status, 'Out of Stock') AS stock_status_raw,
+    COALESCE(s.store_name, '') AS retailer
 FROM component c
 LEFT JOIN (
     SELECT component_id, MIN(price) AS price, stock_status, store_id
     FROM storeavailability
-    GROUP BY component_id          -- derived table subquery
+    GROUP BY component_id
 ) sa ON sa.component_id = c.component_id
+LEFT JOIN store s ON s.store_id = sa.store_id;
 ```
 
-### Key Query: Forum Post Listing (forum.php) — 5 Correlated Subqueries
+### 2. The Forum Feed Generator (Nested Subqueries & String Aggregation)
+* **Location:** `forum.php` (Lines 59 to 74)
+* **Variable:** `$posts`
+* **What it does:** Generates the social feed for the community forum, loading posts along with dynamic metadata.
+* **Why it's advanced:**
+  - **Inline Subqueries:** Instead of running 50 different queries to get the comment counts and upvote counts for each post, we use highly optimized inline subqueries directly in the `SELECT` statement.
+  - **GROUP_CONCAT:** This is a very advanced aggregation function that takes multiple rows of tags related to a post and merges them into a single comma-separated string (e.g., "gaming,gpu,help") inside the SQL engine itself.
 
 ```sql
-SELECT p.*,
-    u.user_name,
-    (SELECT COUNT(*) FROM comment WHERE post_id = p.post_id) AS comment_count,
-    (SELECT COUNT(*) FROM vote WHERE post_id = p.post_id AND vote_type = 'upvote')
-     - (SELECT COUNT(*) FROM vote WHERE post_id = p.post_id AND vote_type = 'downvote') AS score,
-    (SELECT GROUP_CONCAT(t.name) FROM posttag pt JOIN tag t ON pt.tag_id = t.tag_id
-     WHERE pt.post_id = p.post_id) AS tags,
-    (SELECT COUNT(*) FROM vote WHERE post_id = p.post_id AND user_id = ?) AS user_vote
+SELECT p.*, u.user_name, c.name AS community_name,
+    (SELECT COUNT(*) FROM comment comm WHERE comm.post_id = p.post_id) AS comment_count,
+    (SELECT COUNT(*) FROM vote v WHERE v.post_id = p.post_id AND v.vote_type = 'upvote') AS score,
+    (SELECT GROUP_CONCAT(t.name SEPARATOR ',') FROM posttag pt JOIN tag t ON pt.tag_id = t.tag_id WHERE pt.post_id = p.post_id) AS tags
 FROM post p
-JOIN user u ON u.user_id = p.user_id
-ORDER BY p.created_at DESC
-LIMIT ? OFFSET ?
+JOIN user u ON p.user_id = u.user_id
+LEFT JOIN community c ON p.community_id = c.community_id
+ORDER BY p.created_at DESC LIMIT 20;
 ```
 
-### Community Sidebar — 2 Correlated Subqueries (forum.php)
+### 3. The Live Watchlist Fetcher (Multi-Table Relational JOINs)
+* **Location:** `dashboard.php` (Lines 15 to 25)
+* **Variable:** `$watchlist`
+* **What it does:** Retrieves the user's saved wishlist items and attaches the current live price and retailer name.
+* **Why it's advanced:** It cleanly joins `watchlist`, `component`, `storeavailability`, and `store` in a single query. By using the bridge tables, the user can see real-time price drops on items they saved weeks ago without the database storing redundant price data.
 
 ```sql
-SELECT c.*,
-    (SELECT COUNT(*) FROM community_member cm
-     WHERE cm.community_id = c.community_id) AS member_count,
-    (SELECT COUNT(*) FROM community_member cm
-     WHERE cm.community_id = c.community_id AND cm.user_id = ?) AS is_joined
+SELECT c.component_id as id, c.component_name as name, c.type,
+       COALESCE(sa.price,0) as price_bdt, COALESCE(s.store_name,"") as retailer,
+       w.added_at
+FROM watchlist w
+JOIN component c ON c.component_id = w.component_id
+LEFT JOIN (SELECT component_id, MIN(price) as price, store_id FROM storeavailability GROUP BY component_id) sa ON sa.component_id = c.component_id
+LEFT JOIN store s ON s.store_id = sa.store_id
+WHERE w.user_id = ? ORDER BY w.added_at DESC LIMIT 8;
+```
+
+### 4. Price History Trend Analysis (Date Math & Time-Series Aggregation)
+* **Location:** `dashboard.php` (Lines 30 to 34)
+* **Variable:** `$history`
+* **What it does:** Fetches the raw data used to draw the dynamic 30-day price trend charts for individual components.
+* **Why it's advanced:** It uses `DATE(changed_at)` to cast timestamps down to the day, and uses `WHERE changed_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)` to let the database handle the time-series boundary filtering automatically.
+
+```sql
+SELECT DATE(changed_at) as d, new_price 
+FROM pricetracking
+WHERE component_id=? AND changed_at >= DATE_SUB(NOW(), INTERVAL 30 DAY) 
+ORDER BY d;
+```
+
+### 5. Community Discovery Engine (Correlated Subqueries)
+* **Location:** `forum.php` (Lines 76 to 81)
+* **Variable:** `$sidebar_communities`
+* **What it does:** Ranks the top 5 most popular forum communities to show in the sidebar, and instantly determines if the currently logged-in user is already a member.
+* **Why it's advanced:** It uses Correlated Subqueries to count the members dynamically and accepts the `user_id` as a parameter to simultaneously check if the user belongs to the community.
+
+```sql
+SELECT c.community_id, c.name,
+       (SELECT COUNT(*) FROM community_member cm WHERE cm.community_id = c.community_id) AS member_count,
+       (SELECT COUNT(*) FROM community_member cm WHERE cm.community_id = c.community_id AND cm.user_id = ?) AS is_joined
 FROM community c
-```
-
-### Chatbot Budget Query — Wrapper Subquery (chatbot_proxy.php)
-
-```sql
-SELECT * FROM (
-    -- component_base_sql() wrapped as outer derived table
-    SELECT c.*, sa.price AS price_bdt, sa.stock_status ...
-) c
-WHERE c.price_bdt > 0 AND c.price_bdt <= ?
-ORDER BY c.price_bdt DESC
-LIMIT 5
+ORDER BY member_count DESC LIMIT 5;
 ```
 
 ---
